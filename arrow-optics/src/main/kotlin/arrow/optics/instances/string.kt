@@ -152,3 +152,22 @@ interface StringSnocInstance : Snoc<String, Char> {
 
 }
 
+fun String.Companion.plated(): Plated<String> = StringPlatedInstance()
+
+interface StringPlatedInstance : Plated<String> {
+  override fun plate() = object : Traversal<String, String> {
+    override fun <F> modifyF(FA: Applicative<F>, s: String, f: (String) -> Kind<F, String>): Kind<F, String> =
+      s.firstOrNull()?.let { h ->
+        FA.run { f(s.drop(1)).map { h + it } }
+      } ?: FA.just("")
+  }
+
+  companion object {
+    /**
+     * Operator overload to instantiate typeclass instance.
+     *
+     * @return [Plated] instance for [String]
+     */
+    operator fun invoke(): Plated<String> = object : StringPlatedInstance {}
+  }
+}
