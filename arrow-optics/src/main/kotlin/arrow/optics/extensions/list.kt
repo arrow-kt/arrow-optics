@@ -1,12 +1,12 @@
-package arrow.optics.instances
+package arrow.optics.extensions
 
 import arrow.Kind
 import arrow.core.*
 import arrow.data.fix
 import arrow.core.*
 import arrow.data.k
-import arrow.instances.list.traverse.traverse
-import arrow.instances.option.applicative.applicative
+import arrow.data.extensions.list.traverse.traverse
+import arrow.core.extensions.option.applicative.applicative
 import arrow.optics.*
 import arrow.optics.typeclasses.*
 import arrow.optics.*

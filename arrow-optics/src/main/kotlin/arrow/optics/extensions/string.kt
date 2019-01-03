@@ -1,4 +1,4 @@
-package arrow.optics.instances
+package arrow.optics.extensions
 
 import arrow.*
 import arrow.core.Tuple2
@@ -7,8 +7,8 @@ import arrow.core.right
 import arrow.data.*
 import arrow.typeclasses.*
 import arrow.optics.*
-import arrow.optics.instances.listk.filterIndex.filterIndex
-import arrow.optics.instances.listk.index.index
+import arrow.optics.extensions.listk.filterIndex.filterIndex
+import arrow.optics.extensions.listk.index.index
 import arrow.optics.typeclasses.*
 
 /**

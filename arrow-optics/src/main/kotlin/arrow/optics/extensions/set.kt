@@ -1,4 +1,4 @@
-package arrow.optics.instances
+package arrow.optics.extensions
 
 import arrow.optics.Lens
 import arrow.optics.PLens

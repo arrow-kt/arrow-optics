@@ -1,9 +1,9 @@
-package arrow.optics.instances
+package arrow.optics.extensions
 
 import arrow.Kind
 import arrow.core.Try
+import arrow.core.extensions.traverse
 import arrow.extension
-import arrow.instances.traverse
 import arrow.optics.Traversal
 import arrow.optics.typeclasses.Each
 import arrow.typeclasses.Applicative
