@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
@@ -28,11 +27,13 @@ jobs:
         ./arrow/scripts/site-download.sh
         ./arrow/scripts/site-run-ank.sh
     - name: Run Dokka for arrow-optics
-      run: ./arrow/scripts/project-run-dokka.sh
+      run: |
+        git clone https://github.com/arrow-kt/arrow-optics.git
+        ./arrow/scripts/project-run-dokka.sh arrow-optics
     - name: Run Ank
-      run: ./arrow/scripts/project-run-ank.sh
+      run: ./arrow/scripts/project-run-ank.sh arrow-optics
     - name: Join docs to site
-      run: ./arrow/scripts/project-locate-doc.sh
+      run: ./arrow/scripts/project-locate-doc.sh arrow-optics
     - name: Prepare environment
       run: ./arrow/scripts/site-prepare-env.sh
     - name: Build site
