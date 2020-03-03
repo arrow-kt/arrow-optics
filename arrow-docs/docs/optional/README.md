@@ -57,6 +57,7 @@ ListK.head<Int>().modifyF(Option.applicative(), listOf(1, 3, 6).k()) { head ->
 ```
 ```kotlin:ank
 import arrow.fx.extensions.io.applicative.*
+import arrow.fx.fix
 
 val liftedFO = ListK.head<Int>().liftF(IO.applicative()) { head ->
     IO.effect { head / 0 }
