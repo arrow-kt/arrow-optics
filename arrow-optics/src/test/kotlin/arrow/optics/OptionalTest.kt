@@ -1,6 +1,5 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.Left
 import arrow.core.ListK
 import arrow.core.None
@@ -17,10 +16,7 @@ import arrow.core.identity
 import arrow.core.k
 import arrow.core.toOption
 import arrow.core.toT
-import arrow.fx.ForIO
-import arrow.fx.IO
 import arrow.fx.extensions.io.applicative.applicative
-import arrow.fx.fix
 import arrow.mtl.State
 import arrow.mtl.map
 import arrow.mtl.run
@@ -110,16 +106,6 @@ class OptionalTest : UnitSpec() {
       funcGen = Gen.functionAToB(Gen.int()),
       EQA = Eq.any()
     ))
-
-//    "Test" {
-//      val liftedFO: (source: List<Int>) -> Kind<ForIO, List<Int>> = ListK.head<Int>().liftF(IO.applicative()) { head ->
-//        IO.effect { head / 0 }
-//      }
-//
-//      val liftedFO1: Kind<ForIO, List<Int>> = liftedFO(listOf(1, 3, 6).k())
-//      val fix: IO<List<Int>> = liftedFO1.fix()
-//      fix.attempt().unsafeRunSync()
-//    }
 
     "asSetter should set absent optional" {
       forAll(genIncompleteUser, genToken) { user, token ->
