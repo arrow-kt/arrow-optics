@@ -61,7 +61,7 @@ import arrow.fx.extensions.io.applicative.*
 val liftedFO = ListK.head<Int>().liftF(IO.applicative()) { head ->
     IO.effect { head / 0 }
 }
-liftedFO(listOf(1, 3, 6).k()).attempt().unsafeRunSync()
+liftedFO(listOf(1, 3, 6).k()).fix().attempt().unsafeRunSync()
 ```
 
 An `Optional` instance can be manually constructed from any default or custom `Iso`, `Lens`, or `Prism` instance by calling their `asOptional()` or by creating a custom `Optional` instance as shown above.
