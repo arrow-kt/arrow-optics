@@ -63,7 +63,7 @@ import arrow.core.*
 import arrow.core.extensions.either.functor.*
 
 pointIsoTuple.modifyF(Either.functor(), point) {
-    Either.right((tuple.a / 2) toT (tuple.b / 2))
+    try { Either.right((tuple.a / 2) toT (tuple.b / 2)) } catch(e: Exception) { Either.left(e) }
 }
 ```
 
