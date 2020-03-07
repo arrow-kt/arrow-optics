@@ -1,4 +1,5 @@
 plugins {
+    id "maven-publish"
     id "base"
     id "org.jetbrains.kotlin.jvm"
     id "org.jetbrains.kotlin.kapt"
@@ -8,12 +9,11 @@ plugins {
 }
 
 apply from: "$SUBPROJECT_CONF"
+apply from: "$PUBLISH_CONF"
 
 dependencies {
     compile project(":arrow-optics")
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VERSION"
-    compile "io.arrow-kt:arrow-core:$VERSION_NAME", excludeArrow
     compile "io.arrow-kt:arrow-core-test:$VERSION_NAME", excludeArrow
     compile "io.kotlintest:kotlintest-runner-junit5:$KOTLIN_TEST_VERSION", excludeArrow
 
