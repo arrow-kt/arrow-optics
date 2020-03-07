@@ -16,7 +16,6 @@ import arrow.core.identity
 import arrow.core.k
 import arrow.core.toOption
 import arrow.core.toT
-import arrow.fx.extensions.io.applicative.applicative
 import arrow.mtl.State
 import arrow.mtl.map
 import arrow.mtl.run
