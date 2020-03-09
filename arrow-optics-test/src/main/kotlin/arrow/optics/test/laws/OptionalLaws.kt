@@ -11,8 +11,8 @@ import arrow.core.extensions.id.applicative.applicative
 import arrow.core.identity
 import arrow.core.value
 import arrow.optics.Optional
-import arrow.test.laws.Law
-import arrow.test.laws.equalUnderTheLaw
+import arrow.core.test.laws.Law
+import arrow.core.test.laws.equalUnderTheLaw
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
 import io.kotlintest.properties.Gen
