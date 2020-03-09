@@ -9,10 +9,10 @@ import arrow.core.k
 import arrow.core.extensions.monoid
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.test.UnitSpec
-import arrow.test.generators.either
-import arrow.test.generators.functionAToB
-import arrow.test.generators.tuple2
+import arrow.core.test.UnitSpec
+import arrow.core.test.generators.either
+import arrow.core.test.generators.functionAToB
+import arrow.core.test.generators.tuple2
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.SetterLaws

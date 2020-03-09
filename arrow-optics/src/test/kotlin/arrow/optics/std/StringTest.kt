@@ -2,7 +2,7 @@ package arrow.optics.std
 
 import arrow.optics.test.generators.char
 import arrow.optics.toList
-import arrow.test.UnitSpec
+import arrow.core.test.UnitSpec
 import arrow.optics.test.laws.IsoLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid

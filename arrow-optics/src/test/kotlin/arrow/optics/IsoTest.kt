@@ -10,8 +10,8 @@ import arrow.core.extensions.option.functor.functor
 import arrow.core.toT
 import arrow.core.ListK
 import arrow.core.k
-import arrow.test.UnitSpec
-import arrow.test.generators.functionAToB
+import arrow.core.test.UnitSpec
+import arrow.core.test.generators.functionAToB
 import arrow.optics.test.laws.IsoLaws
 import arrow.optics.test.laws.LensLaws
 import arrow.optics.test.laws.OptionalLaws

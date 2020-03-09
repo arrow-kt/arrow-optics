@@ -11,10 +11,10 @@ import arrow.optics.none
 import arrow.optics.some
 import arrow.optics.toEither
 import arrow.optics.toNullable
-import arrow.test.UnitSpec
-import arrow.test.generators.either
-import arrow.test.generators.functionAToB
-import arrow.test.generators.option
+import arrow.core.test.UnitSpec
+import arrow.core.test.generators.either
+import arrow.core.test.generators.functionAToB
+import arrow.core.test.generators.option
 import arrow.optics.test.laws.IsoLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.typeclasses.Eq

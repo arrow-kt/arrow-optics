@@ -28,10 +28,10 @@ import arrow.optics.mtl.toState
 import arrow.optics.mtl.update
 import arrow.optics.mtl.updateOld
 import arrow.optics.mtl.update_
-import arrow.test.UnitSpec
-import arrow.test.generators.`try`
-import arrow.test.generators.functionAToB
-import arrow.test.generators.tuple2
+import arrow.core.test.UnitSpec
+import arrow.core.test.generators.`try`
+import arrow.core.test.generators.functionAToB
+import arrow.core.test.generators.tuple2
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.SetterLaws
 import arrow.optics.test.laws.TraversalLaws

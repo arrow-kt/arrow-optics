@@ -13,9 +13,9 @@ import arrow.optics.extensions.filterIndex
 import arrow.optics.extensions.index
 import arrow.optics.extensions.snoc
 import arrow.optics.test.generators.char
-import arrow.test.UnitSpec
-import arrow.test.generators.functionAToB
-import arrow.test.generators.tuple2
+import arrow.core.test.UnitSpec
+import arrow.core.test.generators.functionAToB
+import arrow.core.test.generators.tuple2
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.TraversalLaws
