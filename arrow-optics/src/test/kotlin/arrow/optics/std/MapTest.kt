@@ -8,7 +8,7 @@ import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.genSetK
 import arrow.test.generators.mapK
-import arrow.test.laws.IsoLaws
+import arrow.optics.test.laws.IsoLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

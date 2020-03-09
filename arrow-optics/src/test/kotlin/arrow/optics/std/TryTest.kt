@@ -18,8 +18,8 @@ import arrow.test.generators.either
 import arrow.test.generators.functionAToB
 import arrow.test.generators.throwable
 import arrow.test.generators.validated
-import arrow.test.laws.IsoLaws
-import arrow.test.laws.PrismLaws
+import arrow.optics.test.laws.IsoLaws
+import arrow.optics.test.laws.PrismLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
 import io.kotlintest.properties.Gen

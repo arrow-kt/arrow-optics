@@ -5,7 +5,7 @@ import arrow.core.extensions.monoid
 import arrow.optics.toValue
 import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
-import arrow.test.laws.IsoLaws
+import arrow.optics.test.laws.IsoLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

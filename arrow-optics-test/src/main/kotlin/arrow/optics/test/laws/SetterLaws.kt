@@ -1,8 +1,10 @@
-package arrow.test.laws
+package arrow.optics.test.laws
 
 import arrow.core.compose
 import arrow.core.identity
 import arrow.optics.Setter
+import arrow.test.laws.Law
+import arrow.test.laws.equalUnderTheLaw
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll

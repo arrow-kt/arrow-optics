@@ -16,8 +16,8 @@ import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.nonEmptyList
 import arrow.test.generators.option
-import arrow.test.laws.IsoLaws
-import arrow.test.laws.OptionalLaws
+import arrow.optics.test.laws.IsoLaws
+import arrow.optics.test.laws.OptionalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

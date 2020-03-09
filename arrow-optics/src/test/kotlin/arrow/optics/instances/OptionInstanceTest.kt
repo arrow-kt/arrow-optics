@@ -8,7 +8,7 @@ import arrow.optics.extensions.option.each.each
 import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.option
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

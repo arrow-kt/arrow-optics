@@ -17,15 +17,15 @@ import arrow.optics.extensions.mapk.at.at
 import arrow.optics.extensions.mapk.each.each
 import arrow.optics.extensions.mapk.filterIndex.filterIndex
 import arrow.optics.extensions.mapk.index.index
+import arrow.optics.test.generators.char
 import arrow.test.UnitSpec
-import arrow.test.generators.char
 import arrow.test.generators.functionAToB
 import arrow.test.generators.intSmall
 import arrow.test.generators.mapK
 import arrow.test.generators.option
-import arrow.test.laws.LensLaws
-import arrow.test.laws.OptionalLaws
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.LensLaws
+import arrow.optics.test.laws.OptionalLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

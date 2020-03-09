@@ -30,10 +30,10 @@ import arrow.optics.mtl.updateOld
 import arrow.optics.mtl.update_
 import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
-import arrow.test.laws.LensLaws
-import arrow.test.laws.OptionalLaws
-import arrow.test.laws.SetterLaws
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.LensLaws
+import arrow.optics.test.laws.OptionalLaws
+import arrow.optics.test.laws.SetterLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll

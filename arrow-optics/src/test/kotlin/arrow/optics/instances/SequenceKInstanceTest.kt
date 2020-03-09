@@ -13,8 +13,8 @@ import arrow.optics.extensions.sequencek.index.index
 import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.sequenceK
-import arrow.test.laws.OptionalLaws
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.OptionalLaws
+import arrow.optics.test.laws.TraversalLaws
 import io.kotlintest.properties.Gen
 
 class SequenceKInstanceTest : UnitSpec() {

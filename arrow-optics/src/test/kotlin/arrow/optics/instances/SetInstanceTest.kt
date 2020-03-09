@@ -8,7 +8,7 @@ import arrow.optics.extensions.setk.at.at
 import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.genSetK
-import arrow.test.laws.LensLaws
+import arrow.optics.test.laws.LensLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
 import io.kotlintest.properties.Gen

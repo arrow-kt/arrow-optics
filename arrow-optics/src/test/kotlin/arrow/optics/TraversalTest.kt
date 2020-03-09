@@ -28,8 +28,8 @@ import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.listK
 import arrow.test.generators.tuple2
-import arrow.test.laws.SetterLaws
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.SetterLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll

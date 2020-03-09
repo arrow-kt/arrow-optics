@@ -15,7 +15,7 @@ import arrow.optics.mtl.update_
 import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.option
-import arrow.test.laws.SetterLaws
+import arrow.optics.test.laws.SetterLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll

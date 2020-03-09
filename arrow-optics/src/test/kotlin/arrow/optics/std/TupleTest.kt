@@ -29,8 +29,8 @@ import arrow.test.generators.tuple6
 import arrow.test.generators.tuple7
 import arrow.test.generators.tuple8
 import arrow.test.generators.tuple9
-import arrow.test.laws.LensLaws
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.LensLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

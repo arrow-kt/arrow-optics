@@ -9,7 +9,7 @@ import arrow.optics.extensions.`try`.each.each
 import arrow.test.UnitSpec
 import arrow.test.generators.`try`
 import arrow.test.generators.functionAToB
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 

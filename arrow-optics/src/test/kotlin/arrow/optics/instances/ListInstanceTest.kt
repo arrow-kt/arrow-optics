@@ -20,9 +20,9 @@ import arrow.test.UnitSpec
 import arrow.test.generators.functionAToB
 import arrow.test.generators.listK
 import arrow.test.generators.tuple2
-import arrow.test.laws.OptionalLaws
-import arrow.test.laws.PrismLaws
-import arrow.test.laws.TraversalLaws
+import arrow.optics.test.laws.OptionalLaws
+import arrow.optics.test.laws.PrismLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 
