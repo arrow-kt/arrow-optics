@@ -1,5 +1,9 @@
 buildscript {
     apply from: "$COMMON_SETUP"
+    dependencies {
+        // TODO: make use of KOTLINX_VALIDATOR_VERSION when available
+        classpath "org.jetbrains.kotlinx:binary-compatibility-validator:0.2.2"
+    }
 }
 
 plugins {
@@ -14,6 +18,8 @@ plugins {
 }
 
 apply from: "$GENERIC_CONF"
+
+apply plugin: 'binary-compatibility-validator'
 
 subprojects {
     apply plugin: 'ru.vyarus.animalsniffer'
