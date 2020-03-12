@@ -13,6 +13,10 @@ apply from: "$SUBPROJECT_CONF"
 apply from: "$DOC_CONF"
 apply from: "$PUBLISH_CONF"
 
+apiValidation {
+    ignoredProjects += ["arrow-docs", "arrow-optics-test"]
+}
+
 dependencies {
     compile "io.arrow-kt:arrow-core:$VERSION_NAME"
 
