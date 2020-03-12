@@ -1,8 +1,7 @@
 buildscript {
     apply from: "$COMMON_SETUP"
     dependencies {
-        // TODO: make use of KOTLINX_VALIDATOR_VERSION when available
-        classpath "org.jetbrains.kotlinx:binary-compatibility-validator:0.2.2"
+        classpath "org.jetbrains.kotlinx:binary-compatibility-validator:$KOTLINX_VALIDATOR_VERSION"
     }
 }
 
