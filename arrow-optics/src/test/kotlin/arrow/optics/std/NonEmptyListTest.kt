@@ -10,7 +10,7 @@ import arrow.core.test.generators.nonEmptyList
 import arrow.optics.test.laws.LensLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class NonEmptyListTest : UnitSpec() {
 
@@ -19,9 +19,9 @@ class NonEmptyListTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = NonEmptyList.head(),
-        aGen = Gen.nonEmptyList(Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        aGen = Arb.nonEmptyList(Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = String.monoid()
@@ -30,9 +30,9 @@ class NonEmptyListTest : UnitSpec() {
 
     testLaws(LensLaws.laws(
       lens = NonEmptyList.tail(),
-      aGen = Gen.nonEmptyList(Gen.string()),
-      bGen = Gen.list(Gen.string()),
-      funcGen = Gen.functionAToB(Gen.list(Gen.string())),
+      aGen = Arb.nonEmptyList(Arb.string()),
+      bGen = Arb.list(Arb.string()),
+      funcGen = Arb.functionAToB(Arb.list(Arb.string())),
       EQA = Eq.any(),
       EQB = Eq.any(),
       MB = object : Monoid<List<String>> {

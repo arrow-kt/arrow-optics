@@ -16,12 +16,12 @@ import arrow.core.test.laws.Law
 import arrow.core.test.laws.equalUnderTheLaw
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.forAll
+import io.kotest.property.Arb
+import io.kotest.property.forAll
 
 object PrismLaws {
 
-  fun <A, B> laws(prism: Prism<A, B>, aGen: Gen<A>, bGen: Gen<B>, funcGen: Gen<(B) -> B>, EQA: Eq<A>, EQOptionB: Eq<Option<B>>): List<Law> = listOf(
+  fun <A, B> laws(prism: Prism<A, B>, aGen: Arb<A>, bGen: Arb<B>, funcGen: Arb<(B) -> B>, EQA: Eq<A>, EQOptionB: Eq<Option<B>>): List<Law> = listOf(
     Law("Prism law: partial round trip one way") { prism.partialRoundTripOneWay(aGen, EQA) },
     Law("Prism law: round trip other way") { prism.roundTripOtherWay(bGen, EQOptionB) },
     Law("Prism law: modify identity") { prism.modifyIdentity(aGen, EQA) },
@@ -31,39 +31,39 @@ object PrismLaws {
     Law("Prism law: consistent get option modify id") { prism.consistentGetOptionModifyId(aGen, EQOptionB) }
   )
 
-  fun <A, B> Prism<A, B>.partialRoundTripOneWay(aGen: Gen<A>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> Prism<A, B>.partialRoundTripOneWay(aGen: Arb<A>, EQA: Eq<A>) =
     forAll(aGen) { a ->
       getOrModify(a).fold(::identity, ::reverseGet)
         .equalUnderTheLaw(a, EQA)
     }
 
-  fun <A, B> Prism<A, B>.roundTripOtherWay(bGen: Gen<B>, EQOptionB: Eq<Option<B>>): Unit =
+  private suspend fun <A, B> Prism<A, B>.roundTripOtherWay(bGen: Arb<B>, EQOptionB: Eq<Option<B>>) =
     forAll(bGen) { b ->
       getOption(reverseGet(b))
         .equalUnderTheLaw(Some(b), EQOptionB)
     }
 
-  fun <A, B> Prism<A, B>.modifyIdentity(aGen: Gen<A>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> Prism<A, B>.modifyIdentity(aGen: Arb<A>, EQA: Eq<A>) =
     forAll(aGen) { a ->
       modify(a, ::identity).equalUnderTheLaw(a, EQA)
     }
 
-  fun <A, B> Prism<A, B>.composeModify(aGen: Gen<A>, funcGen: Gen<(B) -> B>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> Prism<A, B>.composeModify(aGen: Arb<A>, funcGen: Arb<(B) -> B>, EQA: Eq<A>) =
     forAll(aGen, funcGen, funcGen) { a, f, g ->
       modify(modify(a, f), g).equalUnderTheLaw(modify(a, g compose f), EQA)
     }
 
-  fun <A, B> Prism<A, B>.consistentSetModify(aGen: Gen<A>, bGen: Gen<B>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> Prism<A, B>.consistentSetModify(aGen: Arb<A>, bGen: Arb<B>, EQA: Eq<A>) =
     forAll(aGen, bGen) { a, b ->
       set(a, b).equalUnderTheLaw(modify(a) { b }, EQA)
     }
 
-  fun <A, B> Prism<A, B>.consistentModifyModifyFId(aGen: Gen<A>, funcGen: Gen<(B) -> B>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> Prism<A, B>.consistentModifyModifyFId(aGen: Arb<A>, funcGen: Arb<(B) -> B>, EQA: Eq<A>) =
     forAll(aGen, funcGen) { a, f ->
       modifyF(Id.applicative(), a) { Id.just(f(it)) }.value().equalUnderTheLaw(modify(a, f), EQA)
     }
 
-  fun <A, B> Prism<A, B>.consistentGetOptionModifyId(aGen: Gen<A>, EQOptionB: Eq<Option<B>>): Unit =
+  private suspend fun <A, B> Prism<A, B>.consistentGetOptionModifyId(aGen: Arb<A>, EQOptionB: Eq<Option<B>>) =
     forAll(aGen) { a ->
       modifyF(Const.applicative(object : Monoid<Option<B>> {
         override fun Option<B>.combine(b: Option<B>): Option<B> = orElse { b }

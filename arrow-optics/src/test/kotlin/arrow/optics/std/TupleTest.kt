@@ -32,7 +32,7 @@ import arrow.core.test.generators.tuple9
 import arrow.optics.test.laws.LensLaws
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class TupleTest : UnitSpec() {
 
@@ -41,9 +41,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = Tuple2.first(),
-        aGen = Gen.tuple2(Gen.int(), Gen.string()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple2(Arb.int(), Arb.string()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = Int.monoid()
@@ -53,9 +53,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = Tuple2.second(),
-        aGen = Gen.tuple2(Gen.int(), Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        aGen = Arb.tuple2(Arb.int(), Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = String.monoid()
@@ -65,9 +65,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = Tuple3.first(),
-        aGen = Gen.tuple3(Gen.int(), Gen.string(), Gen.string()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple3(Arb.int(), Arb.string(), Arb.string()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = Int.monoid()
@@ -77,9 +77,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = Tuple3.second(),
-        aGen = Gen.tuple3(Gen.int(), Gen.string(), Gen.int()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        aGen = Arb.tuple3(Arb.int(), Arb.string(), Arb.int()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = String.monoid()
@@ -89,9 +89,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = Tuple3.third(),
-        aGen = Gen.tuple3(Gen.int(), Gen.int(), Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        aGen = Arb.tuple3(Arb.int(), Arb.int(), Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = String.monoid()
@@ -101,9 +101,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple2.traversal(),
-        aGen = Gen.tuple2(Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple2(Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -113,9 +113,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple3.traversal(),
-        aGen = Gen.tuple3(Gen.int(), Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple3(Arb.int(), Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -125,9 +125,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple4.traversal(),
-        aGen = Gen.tuple4(Gen.int(), Gen.int(), Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple4(Arb.int(), Arb.int(), Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -137,9 +137,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple5.traversal(),
-        aGen = Gen.tuple5(Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple5(Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -149,9 +149,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple6.traversal(),
-        aGen = Gen.tuple6(Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple6(Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -161,9 +161,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple7.traversal(),
-        aGen = Gen.tuple7(Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple7(Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -173,9 +173,9 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple8.traversal(),
-        aGen = Gen.tuple8(Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int(), Gen.int()),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.tuple8(Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int(), Arb.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -185,19 +185,19 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple9.traversal(),
-        aGen = Gen.tuple9(
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int()
+        aGen = Arb.tuple9(
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int()
         ),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -207,20 +207,20 @@ class TupleTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = Tuple10.traversal(),
-        aGen = Gen.tuple10(
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int(),
-          Gen.int()
+        aGen = Arb.tuple10(
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int(),
+          Arb.int()
         ),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())

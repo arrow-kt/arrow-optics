@@ -11,7 +11,7 @@ import arrow.core.test.generators.genSetK
 import arrow.optics.test.laws.LensLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class SetInstanceTest : UnitSpec() {
 
@@ -24,10 +24,10 @@ class SetInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { SetK.at<String>().at(it) },
-        aGen = Gen.genSetK(Gen.string()),
-        bGen = Gen.bool(),
-        funcGen = Gen.functionAToB(Gen.bool()),
+        lensGen = Arb.string().map { SetK.at<String>().at(it) },
+        aGen = Arb.genSetK(Arb.string()),
+        bGen = Arb.bool(),
+        funcGen = Arb.functionAToB(Arb.bool()),
         EQA = SetK.eq(String.eq()),
         EQB = Eq.any(),
         MB = AndMonoid
@@ -36,10 +36,10 @@ class SetInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { SetAt<String>().at(it) },
-        aGen = Gen.set(Gen.string()),
-        bGen = Gen.bool(),
-        funcGen = Gen.functionAToB(Gen.bool()),
+        lensGen = Arb.string().map { SetAt<String>().at(it) },
+        aGen = Arb.set(Arb.string()),
+        bGen = Arb.bool(),
+        funcGen = Arb.functionAToB(Arb.bool()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = AndMonoid

@@ -13,7 +13,7 @@ import arrow.core.test.generators.validated
 import arrow.optics.test.laws.IsoLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class ValidatedTest : UnitSpec() {
 
@@ -22,9 +22,9 @@ class ValidatedTest : UnitSpec() {
     testLaws(
       IsoLaws.laws(
         iso = Validated.toEither(),
-        aGen = Gen.validated(Gen.string(), Gen.int()),
-        bGen = Gen.either(Gen.string(), Gen.int()),
-        funcGen = Gen.functionAToB(Gen.either(Gen.string(), Gen.int())),
+        aGen = Arb.validated(Arb.string(), Arb.int()),
+        bGen = Arb.either(Arb.string(), Arb.int()),
+        funcGen = Arb.functionAToB(Arb.either(Arb.string(), Arb.int())),
         EQA = Eq.any(),
         EQB = Eq.any(),
         bMonoid = object : Monoid<Either<String, Int>> {

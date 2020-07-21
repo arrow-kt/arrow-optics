@@ -15,16 +15,17 @@ import arrow.core.test.laws.Law
 import arrow.core.test.laws.equalUnderTheLaw
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.forAll
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.constant
+import io.kotest.property.forAll
 
 object OptionalLaws {
 
   fun <A, B> laws(
-    optionalGen: Gen<Optional<A, B>>,
-    aGen: Gen<A>,
-    bGen: Gen<B>,
-    funcGen: Gen<(B) -> B>,
+    optionalGen: Arb<Optional<A, B>>,
+    aGen: Arb<A>,
+    bGen: Arb<B>,
+    funcGen: Arb<(B) -> B>,
     EQA: Eq<A>,
     EQOptionB: Eq<Option<B>>
   ): List<Law> = listOf(
@@ -52,18 +53,18 @@ object OptionalLaws {
   )
 
   /**
-   * Warning: Use only when a `Gen.constant()` applies
+   * Warning: Use only when a `Arb.constant()` applies
    */
   fun <A, B> laws(
     optional: Optional<A, B>,
-    aGen: Gen<A>,
-    bGen: Gen<B>,
-    funcGen: Gen<(B) -> B>,
+    aGen: Arb<A>,
+    bGen: Arb<B>,
+    funcGen: Arb<(B) -> B>,
     EQA: Eq<A>,
     EQOptionB: Eq<Option<B>>
-  ): List<Law> = laws(Gen.constant(optional), aGen, bGen, funcGen, EQA, EQOptionB)
+  ): List<Law> = laws(Arb.constant(optional), aGen, bGen, funcGen, EQA, EQOptionB)
 
-  fun <A, B> getOptionSet(optionalGen: Gen<Optional<A, B>>, aGen: Gen<A>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> getOptionSet(optionalGen: Arb<Optional<A, B>>, aGen: Arb<A>, EQA: Eq<A>) =
     forAll(optionalGen, aGen) { optional, a ->
       optional.run {
         getOrModify(a).fold(::identity) { set(a, it) }
@@ -71,12 +72,12 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> setGetOption(
-    optionalGen: Gen<Optional<A, B>>,
-    aGen: Gen<A>,
-    bGen: Gen<B>,
+  private suspend fun <A, B> setGetOption(
+    optionalGen: Arb<Optional<A, B>>,
+    aGen: Arb<A>,
+    bGen: Arb<B>,
     EQOptionB: Eq<Option<B>>
-  ): Unit =
+  ) =
     forAll(optionalGen, aGen, bGen) { optional, a, b ->
       optional.run {
         getOption(set(a, b))
@@ -84,7 +85,7 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> setIdempotent(optionalGen: Gen<Optional<A, B>>, aGen: Gen<A>, bGen: Gen<B>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> setIdempotent(optionalGen: Arb<Optional<A, B>>, aGen: Arb<A>, bGen: Arb<B>, EQA: Eq<A>) =
     forAll(optionalGen, aGen, bGen) { optional, a, b ->
       optional.run {
         set(set(a, b), b)
@@ -92,7 +93,7 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> modifyIdentity(optionalGen: Gen<Optional<A, B>>, aGen: Gen<A>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> modifyIdentity(optionalGen: Arb<Optional<A, B>>, aGen: Arb<A>, EQA: Eq<A>) =
     forAll(optionalGen, aGen) { optional, a ->
       optional.run {
         modify(a, ::identity)
@@ -100,7 +101,7 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> composeModify(optionalGen: Gen<Optional<A, B>>, aGen: Gen<A>, funcGen: Gen<(B) -> B>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> composeModify(optionalGen: Arb<Optional<A, B>>, aGen: Arb<A>, funcGen: Arb<(B) -> B>, EQA: Eq<A>) =
     forAll(optionalGen, aGen, funcGen, funcGen) { optional, a, f, g ->
       optional.run {
         modify(modify(a, f), g)
@@ -108,7 +109,7 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> consistentSetModify(optionalGen: Gen<Optional<A, B>>, aGen: Gen<A>, bGen: Gen<B>, EQA: Eq<A>): Unit =
+  private suspend fun <A, B> consistentSetModify(optionalGen: Arb<Optional<A, B>>, aGen: Arb<A>, bGen: Arb<B>, EQA: Eq<A>) =
     forAll(optionalGen, aGen, bGen) { optional, a, b ->
       optional.run {
         set(a, b)
@@ -116,12 +117,12 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> consistentModifyModifyId(
-    optionalGen: Gen<Optional<A, B>>,
-    aGen: Gen<A>,
-    funcGen: Gen<(B) -> B>,
+  private suspend fun <A, B> consistentModifyModifyId(
+    optionalGen: Arb<Optional<A, B>>,
+    aGen: Arb<A>,
+    funcGen: Arb<(B) -> B>,
     EQA: Eq<A>
-  ): Unit =
+  ) =
     forAll(optionalGen, aGen, funcGen) { optional, a, f ->
       optional.run {
         modify(a, f)
@@ -129,9 +130,9 @@ object OptionalLaws {
       }
     }
 
-  fun <A, B> consistentGetOptionModifyId(
-    optionalGen: Gen<Optional<A, B>>,
-    aGen: Gen<A>,
+  private suspend fun <A, B> consistentGetOptionModifyId(
+    optionalGen: Arb<Optional<A, B>>,
+    aGen: Arb<A>,
     EQOptionB: Eq<Option<B>>
   ) {
     val firstMonoid = object : Monoid<FirstOption<B>> {

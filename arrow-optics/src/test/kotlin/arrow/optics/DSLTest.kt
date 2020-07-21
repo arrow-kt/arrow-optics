@@ -10,7 +10,7 @@ import arrow.optics.extensions.mapk.at.at
 import arrow.optics.extensions.mapk.each.each
 import arrow.optics.extensions.traversal
 import arrow.core.test.UnitSpec
-import io.kotlintest.shouldBe
+import io.kotest.matchers.shouldBe
 
 @optics
 data class Street(val number: Int, val name: String) {

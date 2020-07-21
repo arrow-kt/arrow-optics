@@ -26,16 +26,16 @@ import arrow.core.test.generators.nonEmptyList
 import arrow.core.test.generators.sequenceK
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class FilterIndexInstanceTest : UnitSpec() {
 
   init {
     testLaws(TraversalLaws.laws(
       traversal = ListK.filterIndex<String>().filter { true },
-      aGen = Gen.listK(Gen.string()),
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
+      aGen = Arb.listK(Arb.string()),
+      bGen = Arb.string(),
+      funcGen = Arb.functionAToB(Arb.string()),
       EQA = Eq.any(),
       EQListB = Eq.any(),
       EQOptionB = Eq.any()
@@ -43,9 +43,9 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = ListFilterIndex<String>().filter { true },
-      aGen = Gen.list(Gen.string()),
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
+      aGen = Arb.list(Arb.string()),
+      bGen = Arb.string(),
+      funcGen = Arb.functionAToB(Arb.string()),
       EQA = Eq.any(),
       EQListB = Eq.any(),
       EQOptionB = Eq.any()
@@ -53,9 +53,9 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = NonEmptyList.filterIndex<String>().filter { true },
-      aGen = Gen.nonEmptyList(Gen.string()),
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
+      aGen = Arb.nonEmptyList(Arb.string()),
+      bGen = Arb.string(),
+      funcGen = Arb.functionAToB(Arb.string()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())
@@ -63,9 +63,9 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = SequenceK.filterIndex<Char>().filter { true },
-      aGen = Gen.sequenceK(Gen.char()),
-      bGen = Gen.char(),
-      funcGen = Gen.functionAToB(Gen.char()),
+      aGen = Arb.sequenceK(Arb.char()),
+      bGen = Arb.char(),
+      funcGen = Arb.functionAToB(Arb.char()),
       EQA = SequenceK.eq(Char.eq()),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())
@@ -73,9 +73,9 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = MapK.filterIndex<Char, Int>().filter { true },
-      aGen = Gen.mapK(Gen.char(), Gen.intSmall()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.mapK(Arb.char(), Arb.intSmall()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())
@@ -83,9 +83,9 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = filterMapIndex<Char, Int>().filter { true },
-      aGen = Gen.map(Gen.char(), Gen.intSmall()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.map(Arb.char(), Arb.intSmall()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())
@@ -93,9 +93,9 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = String.filterIndex().filter { true },
-      aGen = Gen.string(),
-      bGen = Gen.char(),
-      funcGen = Gen.functionAToB(Gen.char()),
+      aGen = Arb.string(),
+      bGen = Arb.char(),
+      funcGen = Arb.functionAToB(Arb.char()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())

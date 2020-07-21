@@ -20,7 +20,7 @@ import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class StringInstanceTest : UnitSpec() {
 
@@ -29,9 +29,9 @@ class StringInstanceTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = String.each().each(),
-        aGen = Gen.string(),
-        bGen = Gen.char(),
-        funcGen = Gen.functionAToB(Gen.char()),
+        aGen = Arb.string(),
+        bGen = Arb.char(),
+        funcGen = Arb.functionAToB(Arb.char()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -41,9 +41,9 @@ class StringInstanceTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = String.filterIndex().filter { true },
-        aGen = Gen.string(),
-        bGen = Gen.char(),
-        funcGen = Gen.functionAToB(Gen.char()),
+        aGen = Arb.string(),
+        bGen = Arb.char(),
+        funcGen = Arb.functionAToB(Arb.char()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -52,10 +52,10 @@ class StringInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.int().map { String.index().index(it) },
-        aGen = Gen.string(),
-        bGen = Gen.char(),
-        funcGen = Gen.functionAToB(Gen.char()),
+        optionalGen = Arb.int().map { String.index().index(it) },
+        aGen = Arb.string(),
+        bGen = Arb.char(),
+        funcGen = Arb.functionAToB(Arb.char()),
         EQOptionB = Eq.any(),
         EQA = Eq.any()
       )
@@ -64,9 +64,9 @@ class StringInstanceTest : UnitSpec() {
     testLaws(
       PrismLaws.laws(
         prism = String.cons().cons(),
-        aGen = Gen.string(),
-        bGen = Gen.tuple2(Gen.char(), Gen.string()),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.char(), Gen.string())),
+        aGen = Arb.string(),
+        bGen = Arb.tuple2(Arb.char(), Arb.string()),
+        funcGen = Arb.functionAToB(Arb.tuple2(Arb.char(), Arb.string())),
         EQA = String.eq(),
         EQOptionB = Option.eq(Tuple2.eq(Char.eq(), String.eq()))
       )
@@ -75,9 +75,9 @@ class StringInstanceTest : UnitSpec() {
     testLaws(
       PrismLaws.laws(
         prism = String.snoc().snoc(),
-        aGen = Gen.string(),
-        bGen = Gen.tuple2(Gen.string(), Gen.char()),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.string(), Gen.char())),
+        aGen = Arb.string(),
+        bGen = Arb.tuple2(Arb.string(), Arb.char()),
+        funcGen = Arb.functionAToB(Arb.tuple2(Arb.string(), Arb.char())),
         EQA = String.eq(),
         EQOptionB = Option.eq(Tuple2.eq(String.eq(), Char.eq()))
       )

@@ -19,7 +19,7 @@ import arrow.optics.test.laws.IsoLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class OptionTest : UnitSpec() {
 
@@ -27,37 +27,37 @@ class OptionTest : UnitSpec() {
 
     testLaws(PrismLaws.laws(
       prism = Option.some(),
-      aGen = Gen.option(Gen.int()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.option(Arb.int()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Eq.any()
     ))
 
     testLaws(PrismLaws.laws(
       prism = Option.none(),
-      aGen = Gen.option(Gen.int()),
-      bGen = Gen.create { Unit },
-      funcGen = Gen.functionAToB(Gen.create { Unit }),
+      aGen = Arb.option(Arb.int()),
+      bGen = Arb.create { Unit },
+      funcGen = Arb.functionAToB(Arb.create { Unit }),
       EQA = Eq.any(),
       EQOptionB = Eq.any()
     ))
 
     testLaws(IsoLaws.laws(
       iso = Option.toNullable<Int>().reverse(),
-      aGen = Gen.int().orNull(),
-      bGen = Gen.option(Gen.int()),
+      aGen = Arb.int().orNull(),
+      bGen = Arb.option(Arb.int()),
       EQA = Eq.any(),
       EQB = Eq.any(),
-      funcGen = Gen.functionAToB(Gen.option(Gen.int())),
+      funcGen = Arb.functionAToB(Arb.option(Arb.int())),
       bMonoid = Option.monoid(Int.monoid())
     ))
 
     testLaws(IsoLaws.laws(
       iso = Option.toEither(),
-      aGen = Gen.option(Gen.int()),
-      bGen = Gen.either(Gen.create { Unit }, Gen.int()),
-      funcGen = Gen.functionAToB(Gen.either(Gen.create { Unit }, Gen.int())),
+      aGen = Arb.option(Arb.int()),
+      bGen = Arb.either(Arb.create { Unit }, Arb.int()),
+      funcGen = Arb.functionAToB(Arb.either(Arb.create { Unit }, Arb.int())),
       EQA = Eq.any(),
       EQB = Eq.any(),
       bMonoid = object : Monoid<Either<Unit, Int>> {

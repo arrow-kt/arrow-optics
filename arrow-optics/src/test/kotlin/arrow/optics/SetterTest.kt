@@ -17,8 +17,10 @@ import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.option
 import arrow.optics.test.laws.SetterLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.forAll
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.string
+import io.kotest.property.forAll
 
 class SetterTest : UnitSpec() {
 
@@ -26,25 +28,25 @@ class SetterTest : UnitSpec() {
 
     testLaws(SetterLaws.laws(
       setter = Setter.id(),
-      aGen = Gen.int(),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.int(),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any()
     ))
 
     testLaws(SetterLaws.laws(
       setter = tokenSetter,
       aGen = genToken,
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
+      bGen = Arb.string(),
+      funcGen = Arb.functionAToB(Arb.string()),
       EQA = Eq.any()
     ))
 
     testLaws(SetterLaws.laws(
       setter = Setter.fromFunctor<ForOption, String, String>(Option.functor()),
-      aGen = Gen.option(Gen.string()).map<Kind<ForOption, String>> { it },
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
+      aGen = Arb.option(Arb.string()) as Arb<Kind<ForOption, String>>,
+      bGen = Arb.string(),
+      funcGen = Arb.functionAToB(Arb.string()),
       EQA = Eq.any()
     ))
 
@@ -62,13 +64,13 @@ class SetterTest : UnitSpec() {
     }
 
     "Lifting a function should yield the same result as direct modify" {
-      forAll(genToken, Gen.string()) { token, value ->
+      forAll(genToken, Arb.string()) { token, value ->
         tokenSetter.modify(token) { value } == tokenSetter.lift { value }(token)
       }
     }
 
     "update_ f should be as modify f within State and returning Unit" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { generatedToken, f ->
         tokenSetter.update_(f).run(generatedToken) ==
           State { token: Token ->
             tokenSetter.modify(token, f) toT Unit
@@ -77,7 +79,7 @@ class SetterTest : UnitSpec() {
     }
 
     "assign_ f should be as modify f within State and returning Unit" {
-      forAll(genToken, Gen.string()) { generatedToken, string ->
+      forAll(genToken, Arb.string()) { generatedToken, string ->
         tokenSetter.assign_(string).run(generatedToken) ==
           State { token: Token ->
             tokenSetter.set(token, string) toT Unit

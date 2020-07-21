@@ -9,7 +9,7 @@ import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.sequenceK
 import arrow.optics.test.laws.OptionalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class IndexInstanceTest : UnitSpec() {
 
@@ -17,10 +17,10 @@ class IndexInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.int().map { SequenceK.index<String>().index(it) },
-        aGen = Gen.sequenceK(Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        optionalGen = Arb.int().map { SequenceK.index<String>().index(it) },
+        aGen = Arb.sequenceK(Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQOptionB = Eq.any(),
         EQA = SequenceK.eq(String.eq())
       )

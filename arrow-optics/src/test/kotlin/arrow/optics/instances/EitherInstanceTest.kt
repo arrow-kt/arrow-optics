@@ -11,7 +11,7 @@ import arrow.core.test.generators.either
 import arrow.core.test.generators.functionAToB
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class EitherInstanceTest : UnitSpec() {
 
@@ -19,9 +19,9 @@ class EitherInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = Either.each<String, Int>().each(),
-      aGen = Gen.either(Gen.string(), Gen.int()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.either(Arb.string(), Arb.int()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())

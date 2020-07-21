@@ -19,8 +19,10 @@ import arrow.optics.mtl.toReader
 import arrow.optics.mtl.toState
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.forAll
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.string
+import io.kotest.property.forAll
 
 class GetterTest : UnitSpec() {
 
@@ -128,14 +130,14 @@ class GetterTest : UnitSpec() {
 
     "Creating a first pair with a type should result in the target to value" {
       val first = tokenGetter.first<Int>()
-      forAll(genToken, Gen.int()) { token: Token, int: Int ->
+      forAll(genToken, Arb.int()) { token: Token, int: Int ->
         first.get(token toT int) == token.value toT int
       }
     }
 
     "Creating a second pair with a type should result in the value target" {
       val first = tokenGetter.second<Int>()
-      forAll(Gen.int(), genToken) { int: Int, token: Token ->
+      forAll(Arb.int(), genToken) { int: Int, token: Token ->
         first.get(int toT token) == int toT token.value
       }
     }
@@ -153,7 +155,7 @@ class GetterTest : UnitSpec() {
     }
 
     "Asks with f is the same as applying f to the focus of the lens" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { token, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { token, f ->
         tokenGetter.asks(f).runId(token) == f(token.value)
       }
     }
@@ -174,7 +176,7 @@ class GetterTest : UnitSpec() {
     }
 
     "extractMap with f should be same as extract and map" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { token, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { token, f ->
         tokenGetter.extractMap(f).run(token) == tokenGetter.extract().map(f).run(token)
       }
     }

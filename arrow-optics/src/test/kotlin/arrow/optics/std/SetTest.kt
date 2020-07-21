@@ -9,7 +9,7 @@ import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.genSetK
 import arrow.optics.test.laws.IsoLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class SetTest : UnitSpec() {
 
@@ -17,9 +17,9 @@ class SetTest : UnitSpec() {
 
     testLaws(IsoLaws.laws(
       iso = SetExtensions.toSetK(),
-      aGen = Gen.set(Gen.int()),
-      bGen = Gen.genSetK(Gen.int()),
-      funcGen = Gen.functionAToB(Gen.genSetK(Gen.int())),
+      aGen = Arb.set(Arb.int()),
+      bGen = Arb.genSetK(Arb.int()),
+      funcGen = Arb.functionAToB(Arb.genSetK(Arb.int())),
       EQA = Eq.any(),
       EQB = Eq.any(),
       bMonoid = SetK.monoid()

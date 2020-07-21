@@ -10,7 +10,7 @@ import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.option
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class OptionInstanceTest : UnitSpec() {
 
@@ -18,9 +18,9 @@ class OptionInstanceTest : UnitSpec() {
 
     testLaws(TraversalLaws.laws(
       traversal = Option.each<String>().each(),
-      aGen = Gen.option(Gen.string()),
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
+      aGen = Arb.option(Arb.string()),
+      bGen = Arb.string(),
+      funcGen = Arb.functionAToB(Arb.string()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())

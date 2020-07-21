@@ -6,7 +6,7 @@ import arrow.core.test.UnitSpec
 import arrow.optics.test.laws.IsoLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class StringTest : UnitSpec() {
 
@@ -15,9 +15,9 @@ class StringTest : UnitSpec() {
     testLaws(
       IsoLaws.laws(
         iso = String.toList(),
-        aGen = Gen.string(),
-        bGen = Gen.list(Gen.char()),
-        funcGen = Gen.list(Gen.char()).map { list -> { chars: List<Char> -> list + chars } },
+        aGen = Arb.string(),
+        bGen = Arb.list(Arb.char()),
+        funcGen = Arb.list(Arb.char()).map { list -> { chars: List<Char> -> list + chars } },
         EQA = Eq.any(),
         EQB = Eq.any(),
         bMonoid = object : Monoid<List<Char>> {

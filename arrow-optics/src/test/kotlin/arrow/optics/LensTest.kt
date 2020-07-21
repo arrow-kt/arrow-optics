@@ -35,8 +35,11 @@ import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.SetterLaws
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.forAll
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.bool
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.string
+import io.kotest.property.forAll
 
 class LensTest : UnitSpec() {
 
@@ -45,8 +48,8 @@ class LensTest : UnitSpec() {
       LensLaws.laws(
         lens = tokenLens,
         aGen = genToken,
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = String.monoid()
@@ -55,8 +58,8 @@ class LensTest : UnitSpec() {
       TraversalLaws.laws(
         traversal = tokenLens.asTraversal(),
         aGen = genToken,
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
         EQListB = ListK.eq(Eq.any())
@@ -65,8 +68,8 @@ class LensTest : UnitSpec() {
       OptionalLaws.laws(
         optional = tokenLens.asOptional(),
         aGen = genToken,
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any())
       ),
@@ -74,8 +77,8 @@ class LensTest : UnitSpec() {
       SetterLaws.laws(
         setter = tokenLens.asSetter(),
         aGen = genToken,
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = Token.eq()
       )
     )
@@ -83,9 +86,9 @@ class LensTest : UnitSpec() {
     testLaws(
       LensLaws.laws(
         lens = Lens.id(),
-        aGen = Gen.int(),
-        bGen = Gen.int(),
-        funcGen = Gen.functionAToB(Gen.int()),
+        aGen = Arb.int(),
+        bGen = Arb.int(),
+        funcGen = Arb.functionAToB(Arb.int()),
         EQA = Eq.any(),
         EQB = Eq.any(),
         MB = Int.monoid()
@@ -147,25 +150,25 @@ class LensTest : UnitSpec() {
     }
 
     "asGetter should behave as valid Getter: find" {
-      forAll(genToken, Gen.functionAToB<String, Boolean>(Gen.bool())) { token, p ->
+      forAll(genToken, Arb.functionAToB<String, Boolean>(Arb.bool())) { token, p ->
         tokenLens.asGetter().find(token, p) == tokenGetter.find(token, p)
       }
     }
 
     "asGetter should behave as valid Getter: exist" {
-      forAll(genToken, Gen.functionAToB<String, Boolean>(Gen.bool())) { token, p ->
+      forAll(genToken, Arb.functionAToB<String, Boolean>(Arb.bool())) { token, p ->
         tokenLens.asGetter().exist(token, p) == tokenGetter.exist(token, p)
       }
     }
 
     "Lifting a function should yield the same result as not yielding" {
-      forAll(genToken, Gen.string()) { token, value ->
+      forAll(genToken, Arb.string()) { token, value ->
         tokenLens.set(token, value) == tokenLens.lift { value }(token)
       }
     }
 
     "Lifting a function as a functor should yield the same result as not yielding" {
-      forAll(genToken, Gen.string()) { token, value ->
+      forAll(genToken, Arb.string()) { token, value ->
         tokenLens.modifyF(Option.functor(), token) { Some(value) } == tokenLens.liftF(Option.functor()) { Some(value) }(
           token
         )
@@ -204,14 +207,14 @@ class LensTest : UnitSpec() {
 
     "Creating a first pair with a type should result in the target to value" {
       val first = tokenLens.first<Int>()
-      forAll(genToken, Gen.int()) { token: Token, int: Int ->
+      forAll(genToken, Arb.int()) { token: Token, int: Int ->
         first.get(token toT int) == token.value toT int
       }
     }
 
     "Creating a second pair with a type should result in the value target" {
       val second = tokenLens.second<Int>()
-      forAll(Gen.int(), genToken) { int: Int, token: Token ->
+      forAll(Arb.int(), genToken) { int: Int, token: Token ->
         second.get(int toT token) == int toT token.value
       }
     }
@@ -229,7 +232,7 @@ class LensTest : UnitSpec() {
     }
 
     "Asks with f is the same as applying f to the focus of the lens" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { token, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { token, f ->
         tokenLens.asks(f).runId(token) == f(token.value)
       }
     }
@@ -250,13 +253,13 @@ class LensTest : UnitSpec() {
     }
 
     "Extracts with f should be same as extract and map" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { generatedToken, f ->
         tokenLens.extractMap(f).run(generatedToken) == tokenLens.extract().map(f).run(generatedToken)
       }
     }
 
     "update f should be same modify f within State and returning new state" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { generatedToken, f ->
         tokenLens.update(f).run(generatedToken) ==
           State { token: Token ->
             tokenLens.modify(token, f)
@@ -266,7 +269,7 @@ class LensTest : UnitSpec() {
     }
 
     "updateOld f should be same as modify f within State and returning old state" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { generatedToken, f ->
         tokenLens.updateOld(f).run(generatedToken) ==
           State { token: Token ->
             tokenLens.modify(token, f) toT tokenLens.get(token)
@@ -275,7 +278,7 @@ class LensTest : UnitSpec() {
     }
 
     "update_ f should be as modify f within State and returning Unit" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
+      forAll(genToken, Arb.functionAToB<String, String>(Arb.string())) { generatedToken, f ->
         tokenLens.update_(f).run(generatedToken) ==
           State { token: Token ->
             tokenLens.modify(token, f) toT Unit
@@ -284,7 +287,7 @@ class LensTest : UnitSpec() {
     }
 
     "assign a should be same set a within State and returning new value" {
-      forAll(genToken, Gen.string()) { generatedToken, string ->
+      forAll(genToken, Arb.string()) { generatedToken, string ->
         tokenLens.assign(string).run(generatedToken) ==
           State { token: Token ->
             tokenLens.set(token, string)
@@ -294,7 +297,7 @@ class LensTest : UnitSpec() {
     }
 
     "assignOld f should be same as modify f within State and returning old state" {
-      forAll(genToken, Gen.string()) { generatedToken, string ->
+      forAll(genToken, Arb.string()) { generatedToken, string ->
         tokenLens.assignOld(string).run(generatedToken) ==
           State { token: Token ->
             tokenLens.set(token, string) toT tokenLens.get(token)
@@ -303,7 +306,7 @@ class LensTest : UnitSpec() {
     }
 
     "assign_ f should be as modify f within State and returning Unit" {
-      forAll(genToken, Gen.string()) { generatedToken, string ->
+      forAll(genToken, Arb.string()) { generatedToken, string ->
         tokenLens.assign_(string).run(generatedToken) ==
           State { token: Token ->
             tokenLens.set(token, string) toT Unit

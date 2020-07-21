@@ -35,8 +35,11 @@ import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.SetterLaws
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.forAll
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.bool
+import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.list
+import io.kotest.property.forAll
 
 class OptionalTest : UnitSpec() {
 
@@ -44,54 +47,54 @@ class OptionalTest : UnitSpec() {
 
     testLaws(OptionalLaws.laws(
       optional = ListK.head(),
-      aGen = Gen.list(Gen.int()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.list(Arb.int()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(OptionalLaws.laws(
       optional = Optional.id(),
-      aGen = Gen.int(),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.int(),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(OptionalLaws.laws(
       optional = ListK.head<Int>().first(),
-      aGen = Gen.tuple2(Gen.list(Gen.int()), Gen.bool()),
-      bGen = Gen.tuple2(Gen.int(), Gen.bool()),
-      funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.bool())),
+      aGen = Arb.tuple2(Arb.list(Arb.int()), Arb.bool()),
+      bGen = Arb.tuple2(Arb.int(), Arb.bool()),
+      funcGen = Arb.functionAToB(Arb.tuple2(Arb.int(), Arb.bool())),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(OptionalLaws.laws(
       optional = ListK.head<Int>().first(),
-      aGen = Gen.tuple2(Gen.list(Gen.int()), Gen.bool()),
-      bGen = Gen.tuple2(Gen.int(), Gen.bool()),
-      funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.bool())),
+      aGen = Arb.tuple2(Arb.list(Arb.int()), Arb.bool()),
+      bGen = Arb.tuple2(Arb.int(), Arb.bool()),
+      funcGen = Arb.functionAToB(Arb.tuple2(Arb.int(), Arb.bool())),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(OptionalLaws.laws(
       optional = ListK.head<Int>().second(),
-      aGen = Gen.tuple2(Gen.bool(), Gen.list(Gen.int())),
-      bGen = Gen.tuple2(Gen.bool(), Gen.int()),
-      funcGen = Gen.functionAToB(Gen.tuple2(Gen.bool(), Gen.int())),
+      aGen = Arb.tuple2(Arb.bool(), Arb.list(Arb.int())),
+      bGen = Arb.tuple2(Arb.bool(), Arb.int()),
+      funcGen = Arb.functionAToB(Arb.tuple2(Arb.bool(), Arb.int())),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(TraversalLaws.laws(
       traversal = ListK.head<Int>().asTraversal(),
-      aGen = Gen.list(Gen.int()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.list(Arb.int()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())
@@ -99,9 +102,9 @@ class OptionalTest : UnitSpec() {
 
     testLaws(SetterLaws.laws(
       setter = ListK.head<Int>().asSetter(),
-      aGen = Gen.list(Gen.int()),
-      bGen = Gen.int(),
-      funcGen = Gen.functionAToB(Gen.int()),
+      aGen = Arb.list(Arb.int()),
+      bGen = Arb.int(),
+      funcGen = Arb.functionAToB(Arb.int()),
       EQA = Eq.any()
     ))
 
@@ -178,45 +181,45 @@ class OptionalTest : UnitSpec() {
     }
 
     "Checking if there is no target" {
-      forAll(Gen.list(Gen.int())) { list ->
+      forAll(Arb.list(Arb.int())) { list ->
         ListK.head<Int>().nonEmpty(list) == list.isNotEmpty()
       }
     }
 
     "Lift should be consistent with modify" {
-      forAll(Gen.list(Gen.int())) { list ->
+      forAll(Arb.list(Arb.int())) { list ->
         val f = { i: Int -> i + 5 }
         ListK.head<Int>().lift(f)(list) == ListK.head<Int>().modify(list, f)
       }
     }
 
     "LiftF should be consistent with modifyF" {
-      forAll(Gen.list(Gen.int()), Gen.option(Gen.int())) { list, tryInt ->
+      forAll(Arb.list(Arb.int()), Arb.option(Arb.int())) { list, tryInt ->
         val f = { _: Int -> tryInt }
         ListK.head<Int>().liftF(Option.applicative(), f)(list) == ListK.head<Int>().modifyF(Option.applicative(), list, f)
       }
     }
 
     "Checking if a target exists" {
-      forAll(Gen.list(Gen.int())) { list ->
+      forAll(Arb.list(Arb.int())) { list ->
         ListK.head<Int>().isEmpty(list) == list.isEmpty()
       }
     }
 
     "Finding a target using a predicate should be wrapped in the correct option result" {
-      forAll(Gen.list(Gen.int()), Gen.bool()) { list, predicate ->
+      forAll(Arb.list(Arb.int()), Arb.bool()) { list, predicate ->
         ListK.head<Int>().find(list) { predicate }.fold({ false }, { true }) == (predicate && list.nonEmpty())
       }
     }
 
     "Checking existence predicate over the target should result in same result as predicate" {
-      forAll(Gen.list(Gen.int()), Gen.bool()) { list, predicate ->
+      forAll(Arb.list(Arb.int()), Arb.bool()) { list, predicate ->
         ListK.head<Int>().exists(list) { predicate } == (predicate && list.nonEmpty())
       }
     }
 
     "Checking satisfaction of predicate over the target should result in opposite result as predicate" {
-      forAll(Gen.list(Gen.int()), Gen.bool()) { list, predicate ->
+      forAll(Arb.list(Arb.int()), Arb.bool()) { list, predicate ->
         ListK.head<Int>().all(list) { predicate } == if (list.isEmpty()) true else predicate
       }
     }
@@ -224,7 +227,7 @@ class OptionalTest : UnitSpec() {
     "Joining two optionals together with same target should yield same result" {
       val joinedOptional = ListK.head<Int>().choice(defaultHead)
 
-      forAll(Gen.int()) { int ->
+      forAll(Arb.int()) { int ->
         joinedOptional.getOption(Left(listOf(int))) == joinedOptional.getOption(Right(int))
       }
     }
@@ -232,7 +235,7 @@ class OptionalTest : UnitSpec() {
     val successInt = Option.some<Int>().asOptional()
 
     "Extract should extract the focus from the state" {
-      forAll(Gen.option(Gen.int())) { tryInt ->
+      forAll(Arb.option(Arb.int())) { tryInt ->
         successInt.extract().run(tryInt) ==
           State { x: Option<Int> ->
             x toT successInt.getOption(x)
@@ -241,19 +244,19 @@ class OptionalTest : UnitSpec() {
     }
 
     "toState should be an alias to extract" {
-      forAll(Gen.option(Gen.int())) { x ->
+      forAll(Arb.option(Arb.int())) { x ->
         successInt.toState().run(x) == successInt.extract().run(x)
       }
     }
 
     "extractMap with f should be same as extract and map" {
-      forAll(Gen.option(Gen.int()), Gen.functionAToB<Int, Int>(Gen.int())) { x, f ->
+      forAll(Arb.option(Arb.int()), Arb.functionAToB<Int, Int>(Arb.int())) { x, f ->
         successInt.extractMap(f).run(x) == successInt.extract().map { it.map(f) }.run(x)
       }
     }
 
     "update f should be same modify f within State and returning new state" {
-      forAll(Gen.option(Gen.int()), Gen.functionAToB<Int, Int>(Gen.int())) { x, f ->
+      forAll(Arb.option(Arb.int()), Arb.functionAToB<Int, Int>(Arb.int())) { x, f ->
         successInt.update(f).run(x) ==
           State { xx: Option<Int> ->
             successInt.modify(xx, f)
@@ -263,7 +266,7 @@ class OptionalTest : UnitSpec() {
     }
 
     "updateOld f should be same as modify f within State and returning old state" {
-      forAll(Gen.option(Gen.int()), Gen.functionAToB<Int, Int>(Gen.int())) { x, f ->
+      forAll(Arb.option(Arb.int()), Arb.functionAToB<Int, Int>(Arb.int())) { x, f ->
         successInt.updateOld(f).run(x) ==
           State { xx: Option<Int> ->
             successInt.modify(xx, f) toT successInt.getOption(xx)
@@ -272,7 +275,7 @@ class OptionalTest : UnitSpec() {
     }
 
     "update_ f should be as modify f within State and returning Unit" {
-      forAll(Gen.option(Gen.int()), Gen.functionAToB<Int, Int>(Gen.int())) { x, f ->
+      forAll(Arb.option(Arb.int()), Arb.functionAToB<Int, Int>(Arb.int())) { x, f ->
         successInt.update_(f).run(x) ==
           State { xx: Option<Int> ->
             successInt.modify(xx, f) toT Unit
@@ -281,7 +284,7 @@ class OptionalTest : UnitSpec() {
     }
 
     "assign a should be same set a within State and returning new value" {
-      forAll(Gen.option(Gen.int()), Gen.int()) { x, i ->
+      forAll(Arb.option(Arb.int()), Arb.int()) { x, i ->
         successInt.assign(i).run(x) ==
           State { xx: Option<Int> ->
             successInt.set(xx, i)
@@ -291,7 +294,7 @@ class OptionalTest : UnitSpec() {
     }
 
     "assignOld f should be same as modify f within State and returning old state" {
-      forAll(Gen.option(Gen.int()), Gen.int()) { x, i ->
+      forAll(Arb.option(Arb.int()), Arb.int()) { x, i ->
         successInt.assignOld(i).run(x) ==
           State { xx: Option<Int> ->
             successInt.set(xx, i) toT successInt.getOption(xx)
@@ -300,7 +303,7 @@ class OptionalTest : UnitSpec() {
     }
 
     "assign_ f should be as modify f within State and returning Unit" {
-      forAll(Gen.option(Gen.int()), Gen.int()) { x, i ->
+      forAll(Arb.option(Arb.int()), Arb.int()) { x, i ->
         successInt.assign_(i).run(x) ==
           State { xx: Option<Int> ->
             successInt.set(xx, i) toT Unit

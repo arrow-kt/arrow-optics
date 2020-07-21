@@ -15,7 +15,7 @@ import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.sequenceK
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.TraversalLaws
-import io.kotlintest.properties.Gen
+import io.kotest.property.Arb
 
 class SequenceKInstanceTest : UnitSpec() {
 
@@ -24,9 +24,9 @@ class SequenceKInstanceTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = SequenceK.each<String>().each(),
-        aGen = Gen.sequenceK(Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        aGen = Arb.sequenceK(Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = SequenceK.eq(String.eq()),
         EQOptionB = Option.eq(String.eq()),
         EQListB = ListK.eq(String.eq())
@@ -36,9 +36,9 @@ class SequenceKInstanceTest : UnitSpec() {
     testLaws(
       TraversalLaws.laws(
         traversal = SequenceK.filterIndex<String>().filter { true },
-        aGen = Gen.sequenceK(Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        aGen = Arb.sequenceK(Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQA = SequenceK.eq(String.eq()),
         EQListB = ListK.eq(String.eq()),
         EQOptionB = Option.eq(String.eq())
@@ -47,10 +47,10 @@ class SequenceKInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.int().map { SequenceK.index<String>().index(it) },
-        aGen = Gen.sequenceK(Gen.string()),
-        bGen = Gen.string(),
-        funcGen = Gen.functionAToB(Gen.string()),
+        optionalGen = Arb.int().map { SequenceK.index<String>().index(it) },
+        aGen = Arb.sequenceK(Arb.string()),
+        bGen = Arb.string(),
+        funcGen = Arb.functionAToB(Arb.string()),
         EQOptionB = Option.eq(String.eq()),
         EQA = SequenceK.eq(String.eq())
       )
