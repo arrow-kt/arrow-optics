@@ -22,11 +22,6 @@ import arrow.typeclasses.Monoid
  */
 typealias Prism<S, A> = PPrism<S, S, A, A>
 
-typealias ForPrism = ForPPrism
-typealias PrismOf<S, A> = PPrismOf<S, S, A, A>
-typealias PrismPartialOf<S> = Kind<ForPrism, S>
-typealias PrismKindedJ<S, A> = PPrismKindedJ<S, S, A, A>
-
 /**
  * A [Prism] is a loss less invertible optic that can look into a structure and optionally find its focus.
  * Mostly used for finding a focus that is only present under certain conditions i.e. list head Prism<List<Int>, Int>
@@ -43,8 +38,7 @@ typealias PrismKindedJ<S, A> = PPrismKindedJ<S, S, A, A>
  * @param A the focus of a [PPrism]
  * @param B the modified focus of a [PPrism]
  */
-@higherkind
-interface PPrism<S, T, A, B> : PPrismOf<S, T, A, B> {
+interface PPrism<S, T, A, B> {
 
   fun getOrModify(s: S): Either<T, A>
   fun reverseGet(b: B): T

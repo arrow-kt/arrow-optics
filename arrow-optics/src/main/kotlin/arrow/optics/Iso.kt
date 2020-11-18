@@ -20,11 +20,6 @@ import arrow.typeclasses.Monoid
  */
 typealias Iso<S, A> = PIso<S, S, A, A>
 
-typealias ForIso = ForPIso
-typealias IsoOf<S, A> = PIsoOf<S, S, A, A>
-typealias IsoPartialOf<S> = Kind<ForIso, S>
-typealias IsoKindedJ<S, A> = PIsoKindedJ<S, S, A, A>
-
 /**
  * An [Iso] is a loss less invertible optic that defines an isomorphism between a type [S] and [A]
  * i.e. a data class and its properties represented by TupleN
@@ -39,8 +34,7 @@ typealias IsoKindedJ<S, A> = PIsoKindedJ<S, S, A, A>
  * @param A the focus of a [PIso]
  * @param B the modified target of a [PIso]
  */
-@higherkind
-interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
+interface PIso<S, T, A, B> {
 
   /**
    * Get the focus of a [PIso]

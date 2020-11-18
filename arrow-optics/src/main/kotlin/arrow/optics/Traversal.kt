@@ -26,11 +26,6 @@ import arrow.typeclasses.Traverse
  */
 typealias Traversal<S, A> = PTraversal<S, S, A, A>
 
-typealias ForTraversal = ForPTraversal
-typealias TraversalOf<S, A> = PTraversalOf<S, S, A, A>
-typealias TraversalPartialOf<S> = Kind<ForTraversal, S>
-typealias TraversalKindedJ<S, A> = PTraversalKindedJ<S, S, A, A>
-
 /**
  * A [Traversal] is an optic that allows to see into a structure with 0 to N foci.
  *
@@ -42,8 +37,7 @@ typealias TraversalKindedJ<S, A> = PTraversalKindedJ<S, S, A, A>
  * @param A the target of a [PTraversal]
  * @param B the modified target of a [PTraversal]
  */
-@higherkind
-interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
+interface PTraversal<S, T, A, B> {
 
   fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T>
 

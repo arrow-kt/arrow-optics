@@ -19,11 +19,6 @@ import arrow.typeclasses.Monoid
  */
 typealias Lens<S, A> = PLens<S, S, A, A>
 
-typealias ForLens = ForPLens
-typealias LensOf<S, A> = PLensOf<S, S, A, A>
-typealias LensPartialOf<S> = Kind<ForLens, S>
-typealias LensKindedJ<S, A> = PLensKindedJ<S, S, A, A>
-
 /**
  * A [Lens] (or Functional Reference) is an optic that can focus into a structure for
  * getting, setting or modifying the focus (target).
@@ -40,8 +35,7 @@ typealias LensKindedJ<S, A> = PLensKindedJ<S, S, A, A>
  * @param A the focus of a [PLens]
  * @param B the modified focus of a [PLens]
  */
-@higherkind
-interface PLens<S, T, A, B> : PLensOf<S, T, A, B> {
+interface PLens<S, T, A, B> {
 
   fun get(s: S): A
   fun set(s: S, b: B): T

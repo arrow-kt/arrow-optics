@@ -20,8 +20,7 @@ import arrow.typeclasses.Monoid
  * @param S the source of a [Getter]
  * @param A the focus of a [Getter]
  */
-@higherkind
-interface Getter<S, A> : GetterOf<S, A> {
+interface Getter<S, A> {
 
   /**
    * Get the focus of a [Getter]
