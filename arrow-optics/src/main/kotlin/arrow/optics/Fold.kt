@@ -23,8 +23,7 @@ import arrow.typeclasses.Monoid
  * @param S the source of a [Fold]
  * @param A the target of a [Fold]
  */
-@higherkind
-interface Fold<S, A> : FoldOf<S, A> {
+interface Fold<S, A> {
 
   /**
    * Map each target to a type R and use a Monoid to fold the results

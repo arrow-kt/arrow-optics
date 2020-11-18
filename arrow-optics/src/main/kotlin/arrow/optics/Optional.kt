@@ -20,11 +20,6 @@ import arrow.typeclasses.Monoid
  */
 typealias Optional<S, A> = POptional<S, S, A, A>
 
-typealias ForOptional = ForPOptional
-typealias OptionalOf<S, A> = POptionalOf<S, S, A, A>
-typealias OptionalPartialOf<S> = Kind<ForOptional, S>
-typealias OptionalKindedJ<S, A> = POptionalKindedJ<S, S, A, A>
-
 @Suppress("FunctionName")
 fun <S, A> Optional(getOption: (source: S) -> Option<A>, set: (source: S, focus: A) -> S): Optional<S, A> =
   POptional({ s -> getOption(s).toEither { s } }, set)
@@ -67,8 +62,7 @@ fun <S, A> Optional(getOption: (source: S) -> Option<A>, set: (source: S, focus:
  * @param A the focus of a [POptional]
  * @param B the modified focus of a [POptional]
  */
-@higherkind
-interface POptional<S, T, A, B> : POptionalOf<S, T, A, B> {
+interface POptional<S, T, A, B> {
 
   /**
    * Get the modified source of a [POptional]
