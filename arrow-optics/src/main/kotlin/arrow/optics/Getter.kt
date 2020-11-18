@@ -8,8 +8,6 @@ import arrow.core.Tuple2
 import arrow.core.compose
 import arrow.core.identity
 import arrow.core.toT
-import arrow.higherkind
-import arrow.typeclasses.Monoid
 
 /**
  * A [Getter] is an optic that allows to see into a structure and getting a focus.
@@ -20,8 +18,7 @@ import arrow.typeclasses.Monoid
  * @param S the source of a [Getter]
  * @param A the focus of a [Getter]
  */
-@higherkind
-interface Getter<S, A> : GetterOf<S, A> {
+fun interface Getter<S, A> {
 
   /**
    * Get the focus of a [Getter]
@@ -35,14 +32,9 @@ interface Getter<S, A> : GetterOf<S, A> {
     /**
      * [Getter] that takes either [S] or [S] and strips the choice of [S].
      */
-    fun <S> codiagonal(): Getter<Either<S, S>, S> = Getter { aa -> aa.fold(::identity, ::identity) }
+    fun <S> codiagonal(): Getter<Either<S, S>, S> =
+      Getter { aa -> aa.fold(::identity, ::identity) }
 
-    /**
-     * Invoke operator overload to create a [Getter] of type `S` with focus `A`.
-     */
-    operator fun <S, A> invoke(get: (S) -> A) = object : Getter<S, A> {
-      override fun get(s: S): A = get(s)
-    }
   }
 
   /**
@@ -122,11 +114,6 @@ interface Getter<S, A> : GetterOf<S, A> {
   infix fun <C> compose(other: Iso<A, C>): Getter<S, C> = Getter(other::get compose this::get)
 
   /**
-   * Compose a [Getter] with a [Fold]
-   */
-  infix fun <C> compose(other: Fold<A, C>): Fold<S, C> = asFold() compose other
-
-  /**
    * Plus operator overload to compose optionals
    */
   operator fun <C> plus(other: Getter<A, C>): Getter<S, C> = compose(other)
@@ -135,9 +122,16 @@ interface Getter<S, A> : GetterOf<S, A> {
 
   operator fun <C> plus(other: Iso<A, C>): Getter<S, C> = compose(other)
 
-  operator fun <C> plus(other: Fold<A, C>): Fold<S, C> = compose(other)
-
-  fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = f(get(s))
-  }
 }
+
+fun <S : Iterable<A>, A, R> Getter<S, A>.asFold(): Fold<S, A, R> =
+  Fold { _, _, f -> f(get(this)) }
+
+/**
+ * Compose a [Getter] with a [Fold]
+ */
+infix fun <S : Iterable<C>, A : Iterable<C>, C: A, R> Getter<S, A>.compose(other: Fold<A, C, R>): Fold<S, C, R> =
+  asFold<S, A, R>().compose(other)
+
+operator fun <S : Iterable<C>, A : Iterable<C>, C: A, R> Getter<S, A>.plus(other: Fold<A, C, R>): Fold<S, C, R> =
+  compose(other)

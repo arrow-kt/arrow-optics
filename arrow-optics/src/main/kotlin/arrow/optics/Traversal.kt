@@ -24,12 +24,7 @@ import arrow.typeclasses.Traverse
  * [Traversal] is a type alias for [PTraversal] which fixes the type arguments
  * and restricts the [PTraversal] to monomorphic updates.
  */
-typealias Traversal<S, A> = PTraversal<S, S, A, A>
-
-typealias ForTraversal = ForPTraversal
-typealias TraversalOf<S, A> = PTraversalOf<S, S, A, A>
-typealias TraversalPartialOf<S> = Kind<ForTraversal, S>
-typealias TraversalKindedJ<S, A> = PTraversalKindedJ<S, S, A, A>
+typealias Traversal<F, S, A> = PTraversal<F, S, S, A, A>
 
 /**
  * A [Traversal] is an optic that allows to see into a structure with 0 to N foci.
@@ -42,19 +37,18 @@ typealias TraversalKindedJ<S, A> = PTraversalKindedJ<S, S, A, A>
  * @param A the target of a [PTraversal]
  * @param B the modified target of a [PTraversal]
  */
-@higherkind
-interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
+fun interface PTraversal<F: Iterable<T>, S : Iterable<A>, T: Iterable<B>, A, B> : PTraversalOf<S, T, A, B> {
 
-  fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T>
+  fun S.modifyF(s: S, f: (A) -> T): F
 
   companion object {
     fun <S> id() = PIso.id<S>().asTraversal()
-
-    fun <S> codiagonal(): Traversal<Either<S, S>, S> = object : Traversal<Either<S, S>, S> {
-      override fun <F> modifyF(FA: Applicative<F>, s: Either<S, S>, f: (S) -> Kind<F, S>): Kind<F, Either<S, S>> = FA.run {
-        s.bimap(f, f).fold({ fa -> fa.map { a -> Either.Left(a) } }, { fa -> fa.map { a -> Either.Right(a) } })
-      }
-    }
+//    TODO Make Either Iterable
+//    fun <S> codiagonal(): Traversal<Either<S, S>, S> = object : Traversal<Either<S, S>, S> {
+//      override fun <F> modifyF(FA: Applicative<F>, s: Either<S, S>, f: (S) -> Kind<F, S>): Kind<F, Either<S, S>> = FA.run {
+//        s.bimap(f, f).fold({ fa -> fa.map { a -> Either.Left(a) } }, { fa -> fa.map { a -> Either.Right(a) } })
+//      }
+//    }
 
     /**
      * Construct a [PTraversal] from a [Traverse] instance.
@@ -72,7 +66,7 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
     /**
      * [PTraversal] constructor from multiple getters of the same source.
      */
-    operator fun <S, T, A, B> invoke(get1: (S) -> A, get2: (S) -> A, set: (B, B, S) -> T): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
+    operator fun <F, S, T, A, B> invoke(get1: (S) -> A, get2: (S) -> A, set: (B, B, S) -> T): PTraversal<F, S, T, A, B> = object : PTraversal<F, S, T, A, B> {
       override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> =
         FA.mapN(
           f(get1(s)), f(get2(s))
@@ -207,8 +201,8 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
   /**
    * Map each target to a Monoid and combine the results
    */
-  fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R =
-    modifyF(Const.applicative(M), s) { b -> Const(f(b)) }.value()
+  fun <R> foldMap(empty: R, plus: (R, R) -> R, s: S, f: (A) -> R): R =
+    s.fol
 
   /**
    * Fold using the given [Monoid] instance.
@@ -298,11 +292,6 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
   infix fun <C, D> compose(other: PIso<A, B, C, D>): PTraversal<S, T, C, D> = compose(other.asTraversal())
 
   /**
-   * Compose a [PTraversal] with a [Fold]
-   */
-  infix fun <C> compose(other: Fold<A, C>): Fold<S, C> = asFold() compose other
-
-  /**
    * Plus operator overload to compose [PTraversal] with other optics
    */
   operator fun <C, D> plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
@@ -317,14 +306,7 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
 
   operator fun <C, D> plus(other: PIso<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
 
-  operator fun <C> plus(other: Fold<A, C>): Fold<S, C> = compose(other)
-
   fun asSetter(): PSetter<S, T, A, B> = PSetter { s, f -> modify(s, f) }
-
-  fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R =
-      this@PTraversal.foldMap(M, s, f)
-  }
 
   /**
    * Find the first target matching the predicate
@@ -357,3 +339,16 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
    */
   fun forall(s: S, p: (A) -> Boolean): Boolean = foldMap(s, p, AndMonoid)
 }
+
+/**
+ * Compose a [PTraversal] with a [Fold]
+ */
+infix fun <S : Iterable<C>, A : Iterable<C>, R, C : A, T, B> PTraversal<S, T, A, B>.compose(other: Fold<A, C, R>): Fold<S, C, R> =
+  asFold<S, A, R, C, T, B>() compose other
+
+operator fun <S : Iterable<C>, A : Iterable<C>, R, C : A, T, B> PTraversal<S, T, A, B>.plus(other: Fold<A, C, R>): Fold<S, C, R> = compose(other)
+
+fun <S : Iterable<C>, A : Iterable<C>, R, C : A, T, B> PTraversal<S, T, A, B>.asFold(): Fold<S, A, R> =
+  Fold { empty, plus, f ->
+    this@asFold.foldMap(empty, plus, f)
+  }

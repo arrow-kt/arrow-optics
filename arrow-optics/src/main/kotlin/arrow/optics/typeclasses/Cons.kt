@@ -17,7 +17,7 @@ import arrow.optics.second
  * @param S source of [Prism] and tail of [Prism] focus.
  * @param A first element of [Prism] focus, [A] is supposed to be unique for a given [S].
  */
-interface Cons<S, A> {
+fun interface Cons<S, A> {
 
   /**
    * Provides a [Prism] between [S] and its first element [A] and tail [S].

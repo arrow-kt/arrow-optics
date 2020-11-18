@@ -9,21 +9,12 @@ import arrow.core.Tuple2
 import arrow.core.compose
 import arrow.core.identity
 import arrow.core.toT
-import arrow.higherkind
-import arrow.typeclasses.Applicative
-import arrow.typeclasses.Functor
-import arrow.typeclasses.Monoid
 
 /**
  * [Iso] is a type alias for [PIso] which fixes the type arguments
  * and restricts the [PIso] to monomorphic updates.
  */
 typealias Iso<S, A> = PIso<S, S, A, A>
-
-typealias ForIso = ForPIso
-typealias IsoOf<S, A> = PIsoOf<S, S, A, A>
-typealias IsoPartialOf<S> = Kind<ForIso, S>
-typealias IsoKindedJ<S, A> = PIsoKindedJ<S, S, A, A>
 
 /**
  * An [Iso] is a loss less invertible optic that defines an isomorphism between a type [S] and [A]
@@ -39,8 +30,7 @@ typealias IsoKindedJ<S, A> = PIsoKindedJ<S, S, A, A>
  * @param A the focus of a [PIso]
  * @param B the modified target of a [PIso]
  */
-@higherkind
-interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
+interface PIso<S, T, A, B> {
 
   /**
    * Get the focus of a [PIso]
@@ -71,30 +61,6 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
 
       override fun reverseGet(b: B): T = reverseGet(b)
     }
-  }
-
-  /**
-   * Lift a [PIso] to a Functor level
-   */
-  fun <F> mapping(FF: Functor<F>): PIso<Kind<F, S>, Kind<F, T>, Kind<F, A>, Kind<F, B>> = FF.run {
-    PIso(
-      { fa -> fa.map(::get) },
-      { fb -> fb.map(::reverseGet) }
-    )
-  }
-
-  /**
-   * Modify polymorphically the target of a [PIso] with a Functor function
-   */
-  fun <F> modifyF(FF: Functor<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FF.run {
-    f(get(s)).map(::reverseGet)
-  }
-
-  /**
-   * Lift a function [f] with a functor: `(A) -> Kind<F, B> to the context of `S`: `(S) -> Kind<F, T>`
-   */
-  fun <F> liftF(FF: Functor<F>, f: (A) -> Kind<F, B>): (S) -> Kind<F, T> = FF.run {
-    { s -> f(get(s)).map(::reverseGet) }
   }
 
   /**
@@ -163,16 +129,6 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
   )
 
   /**
-   * Compose a [PIso] with a [PLens]
-   */
-  infix fun <C, D> compose(other: PLens<A, B, C, D>): PLens<S, T, C, D> = asLens() compose other
-
-  /**
-   * Compose a [PIso] with a [PPrism]
-   */
-  infix fun <C, D> compose(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> = asPrism() compose other
-
-  /**
    * Compose a [PIso] with a [Getter]
    */
   infix fun <C> compose(other: Getter<A, C>): Getter<S, C> = asGetter() compose other
@@ -183,38 +139,13 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
   infix fun <C, D> compose(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = asSetter() compose other
 
   /**
-   * Compose a [PIso] with a [POptional]
-   */
-  infix fun <C, D> compose(other: POptional<A, B, C, D>): POptional<S, T, C, D> = asOptional() compose other
-
-  /**
-   * Compose a [PIso] with a [Fold]
-   */
-  infix fun <C> compose(other: Fold<A, C>): Fold<S, C> = asFold() compose other
-
-  /**
-   * Compose a [PIso] with a [PTraversal]
-   */
-  infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
-
-  /**
    * Plus operator overload to compose lenses
    */
   operator fun <C, D> plus(other: PIso<A, B, C, D>): PIso<S, T, C, D> = compose(other)
 
-  operator fun <C, D> plus(other: PLens<A, B, C, D>): PLens<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> = compose(other)
-
   operator fun <C> plus(other: Getter<A, C>): Getter<S, C> = compose(other)
 
   operator fun <C, D> plus(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: POptional<A, B, C, D>): POptional<S, T, C, D> = compose(other)
-
-  operator fun <C> plus(other: Fold<A, C>): Fold<S, C> = compose(other)
-
-  operator fun <C, D> plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
 
   /**
    * View a [PIso] as a [PPrism]
@@ -248,22 +179,6 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
   fun asSetter(): PSetter<S, T, A, B> = PSetter { s, f -> modify(s, f) }
 
   /**
-   * View a [PIso] as a [Fold]
-   */
-  fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = f(get(s))
-  }
-
-  /**
-   * View a [PIso] as a [PTraversal]
-   */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      f(get(s)).map(this@PIso::reverseGet)
-    }
-  }
-
-  /**
    * Check if the focus satisfies the predicate
    */
   fun exist(s: S, p: (A) -> Boolean): Boolean = p(get(s))
@@ -278,9 +193,55 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
    */
   fun lift(f: (A) -> B): (S) -> T = { s -> reverseGet(f(get(s))) }
 
-  /**
-   * Lift a function [f] with a functor: `(A) -> Kind<F, B> to the context of `S`: `(S) -> Kind<F, T>`
-   */
-  fun <F> liftF(FF: Functor<F>, dummy: Unit = Unit, f: (A) -> Kind<F, B>): (S) -> Kind<F, T> =
-    liftF(FF) { a -> f(a) }
+}
+
+operator fun <S, T, A, B, C, D> Iso<S, A>.plus(other: PLens<A, B, C, D>): PLens<S, T, C, D> = compose(other)
+
+operator fun <S, T, A, B, C, D> Iso<S, A>.plus(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> = compose(other)
+
+/**
+ * Compose a [PIso] with a [PLens]
+ */
+infix fun <S, T, A, B, C, D> Iso<S, A>.compose(other: PLens<A, B, C, D>): PLens<S, T, C, D> = asLens().compose(other)
+
+/**
+ * Compose a [PIso] with a [PPrism]
+ */
+infix fun <S, T, A, B, C, D> Iso<S, A>. compose(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> = asPrism() compose other
+
+/**
+ * Compose a [PIso] with a [PTraversal]
+ */
+infix fun <S, T, A, B, C, D> Iso<S, A>.compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
+
+operator fun <S : Iterable<C>, A : Iterable<C>, R, C : A> Iso<S, A>. plus(other: Fold<A, C, R>): Fold<S, C, R> = compose(other)
+
+operator fun <S, T, A, B, C, D> Iso<S, A>.plus(other: POptional<A, B, C, D>): POptional<S, T, C, D> = compose(other)
+
+operator fun <S, T, A, B, C, D> Iso<S, A>.plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
+
+/**
+ * Compose a [PIso] with a [POptional]
+ */
+infix fun <S, T, A, B, C, D> Iso<S, A>.compose(other: POptional<A, B, C, D>): POptional<S, T, C, D> = asOptional().compose(other)
+
+/**
+ * Compose a [PIso] with a [Fold]
+ */
+infix fun <S : Iterable<C>, A : Iterable<C>, R, C : A> Iso<S, A>.compose(other: Fold<A, C, R>): Fold<S, C, R> =
+  asFold<S, A, R, C>().compose(other)
+
+/**
+ * View a [PIso] as a [Fold]
+ */
+fun  <S : Iterable<C>, A : Iterable<C>, R, C : A> Iso<S, A>.asFold(): Fold<S, A, R> =
+  Fold { _, _, f -> f(get(this)) }
+
+/**
+ * View a [PIso] as a [PTraversal]
+ */
+fun <S, T, A, B> Iso<S, A>.asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
+  override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
+    f(get(s)).map(this@PIso::reverseGet)
+  }
 }

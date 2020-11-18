@@ -17,7 +17,7 @@ import arrow.optics.Traversal
  * @param I index
  * @param A focus of [Optional], [A] is supposed to be unique for a given pair [S] and [I].
  */
-interface Index<S, I, A> {
+fun interface Index<S, I, A> {
 
   /**
    * Get [Optional] focus [A] for a structure [S] at index [i].

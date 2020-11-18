@@ -18,7 +18,7 @@ import arrow.typeclasses.Traverse
  * @param S source of the [Traversal]
  * @param A focus of [Traversal]
  */
-interface Each<S, A> {
+fun interface Each<S, A> {
 
   /**
    * Provide a [Traversal] for a structure [S] with focus in [A]

@@ -1,7 +1,6 @@
 package arrow.optics.extensions
 
 import arrow.Kind
-import arrow.core.SequenceK
 import arrow.core.k
 import arrow.core.left
 import arrow.core.right
@@ -14,34 +13,35 @@ import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.typeclasses.Applicative
+import kotlin.reflect.KClass
 
 /**
- * [Traversal] for [SequenceK] that has focus in each [A].
+ * [Traversal] for [Sequence] that has focus in each [A].
  *
- * @receiver [SequenceK.Companion] to make it statically available.
- * @return [Traversal] with source [SequenceK] and focus in every [A] of the source.
+ * @receiver KClass of [Sequence] to make it statically available.
+ * @return [Traversal] with source [Sequence] and focus in every [A] of the source.
  */
-fun <A> SequenceK.Companion.traversal(): Traversal<SequenceK<A>, A> = object : Traversal<SequenceK<A>, A> {
-  override fun <F> modifyF(FA: Applicative<F>, s: SequenceK<A>, f: (A) -> Kind<F, A>): Kind<F, SequenceK<A>> =
+fun <A> KClass<Sequence<A>>.traversal(): Traversal<Sequence<A>, A> = object : Traversal<Sequence<A>, A> {
+  override fun <F> modifyF(FA: Applicative<F>, s: Sequence<A>, f: (A) -> Kind<F, A>): Kind<F, Sequence<A>> =
     s.traverse(FA, f)
 }
 
 /**
- * [Each] instance definition for [SequenceK].
+ * [Each] instance definition for [Sequence].
  */
 @extension
-interface SequenceKEach<A> : Each<SequenceK<A>, A> {
-  override fun each(): Traversal<SequenceK<A>, A> =
-    SequenceK.traversal()
+interface SequenceEach<A> : Each<Sequence<A>, A> {
+  override fun each(): Traversal<Sequence<A>, A> =
+    Sequence::class.traversal()
 }
 
 /**
- * [FilterIndex] instance definition for [SequenceK].
+ * [FilterIndex] instance definition for [Sequence].
  */
 @extension
-interface SequenceKFilterIndex<A> : FilterIndex<SequenceK<A>, Int, A> {
-  override fun filter(p: (Int) -> Boolean): Traversal<SequenceK<A>, A> = object : Traversal<SequenceK<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: SequenceK<A>, f: (A) -> Kind<F, A>): Kind<F, SequenceK<A>> = FA.run {
+interface SequenceFilterIndex<A> : FilterIndex<Sequence<A>, Int, A> {
+  override fun filter(p: (Int) -> Boolean): Traversal<Sequence<A>, A> = object : Traversal<Sequence<A>, A> {
+    override fun <F> modifyF(FA: Applicative<F>, s: Sequence<A>, f: (A) -> Kind<F, A>): Kind<F, Sequence<A>> = FA.run {
       s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
         if (p(j)) f(a) else just(a)
       }
@@ -50,11 +50,11 @@ interface SequenceKFilterIndex<A> : FilterIndex<SequenceK<A>, Int, A> {
 }
 
 /**
- * [Index] instance definition for [SequenceK].
+ * [Index] instance definition for [Sequence].
  */
 @extension
-interface SequenceKIndex<A> : Index<SequenceK<A>, Int, A> {
-  override fun index(i: Int): Optional<SequenceK<A>, A> = POptional(
+interface SequenceIndex<A> : Index<Sequence<A>, Int, A> {
+  override fun index(i: Int): Optional<Sequence<A>, A> = POptional(
     getOrModify = { it.elementAtOrNull(i)?.right() ?: it.left() },
     set = { s, a -> s.mapIndexed { index, aa -> if (index == i) a else aa }.k() }
   )

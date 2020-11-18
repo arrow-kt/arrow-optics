@@ -4,19 +4,15 @@ import arrow.Kind
 import arrow.core.Tuple2
 import arrow.core.left
 import arrow.core.right
-import arrow.core.ListK
 import arrow.core.k
 import arrow.optics.Optional
 import arrow.optics.Prism
 import arrow.optics.Traversal
-import arrow.optics.toListK
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
-import arrow.optics.extensions.listk.filterIndex.filterIndex
-import arrow.optics.extensions.listk.index.index
 import arrow.typeclasses.Applicative
 
 /**
@@ -37,25 +33,12 @@ fun String.Companion.traversal(): Traversal<String, Char> = object : Traversal<S
  * @receiver [String.Companion] to make the instance statically available.
  * @return [Each] instance
  */
-fun String.Companion.each(): Each<String, Char> = StringEach()
+fun String.Companion.each(): Each<String, Char> = StringEach
 
 /**
  * [Each] instance for [String].
  */
-interface StringEach : Each<String, Char> {
-
-  override fun each(): Traversal<String, Char> =
-    String.traversal()
-
-  companion object {
-    /**
-     * Operator overload to instantiate typeclass instance.
-     *
-     * @return [FilterIndex] instance for [String]
-     */
-    operator fun invoke(): Each<String, Char> = object : StringEach {}
-  }
-}
+val StringEach = Each { String.traversal() }
 
 /**
  * [String]'s [FilterIndex] instance
@@ -98,19 +81,11 @@ fun String.Companion.index(): Index<String, Int, Char> = StringIndex()
  * [Index] instance for [String].
  * It allows access to every [Char] in a [String] by its index's position.
  */
-interface StringIndex : Index<String, Int, Char> {
+object StringIndex : Index<String, Int, Char> {
 
   override fun index(i: Int): Optional<String, Char> =
     String.toListK() compose ListK.index<Char>().index(i)
 
-  companion object {
-    /**
-     * Operator overload to instantiate typeclass instance.
-     *
-     * @return [Index] instance for [String]
-     */
-    operator fun invoke(): Index<String, Int, Char> = object : StringIndex {}
-  }
 }
 
 /**

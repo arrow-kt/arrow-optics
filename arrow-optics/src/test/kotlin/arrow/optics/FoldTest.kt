@@ -43,7 +43,7 @@ class FoldTest : UnitSpec() {
 
       "Folding and mapping a list of strings" {
         forAll(Gen.list(Gen.int())) { ints ->
-          stringFold.run { foldMap(Int.monoid(), ints.map(Int::toString).k(), String::toInt) } == ints.sum()
+          stringFold.run { ints.map(Int::toString).k().foldMap(Int.monoid(), String::toInt) } == ints.sum()
         }
       }
 
