@@ -20,7 +20,7 @@ import arrow.optics.Traversal
  * @param I index that uniquely identifies the focus of the [Lens]
  * @param A focus that is supposed to be unique for a given pair [S] and [I].
  */
-interface At<S, I, A> {
+fun interface At<S, I, A> {
 
   /**
    * Get a [Lens] for a structure [S] with focus in [A] at index [i].

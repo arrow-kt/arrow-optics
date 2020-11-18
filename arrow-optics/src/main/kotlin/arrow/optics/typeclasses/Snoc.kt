@@ -19,7 +19,7 @@ typealias Conj<S, A> = Snoc<S, A>
  * @param [S] source of [Prism] and init of [Prism] target.
  * @param [A] last of [Prism] focus, [A] is supposed to be unique for a given [S].
  */
-interface Snoc<S, A> {
+fun interface Snoc<S, A> {
 
   /**
    * Provides a [Prism] between a [S] and its [init] [S] and last element [A].
