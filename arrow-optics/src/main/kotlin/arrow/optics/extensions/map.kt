@@ -18,6 +18,7 @@ import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.typeclasses.Applicative
+import kotlin.reflect.KClass
 
 fun <K, V> MapInstances.at(): At<Map<K, V>, K, Option<V>> = MapAt()
 
@@ -46,7 +47,10 @@ interface MapAt<K, V> : At<Map<K, V>, K, Option<V>> {
   }
 }
 
+@Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.traversal()"))
 fun <K, V> MapInstances.traversal(): Traversal<Map<K, V>, V> = MapTraversal()
+
+fun <K, V> KClass<Map<*, *>>.traversal(): Traversal<Map<K, V>, V> = MapTraversal()
 
 /**
  * [Traversal] for [Map] that focuses in each [V] of the source [Map].
@@ -66,6 +70,7 @@ interface MapTraversal<K, V> : Traversal<Map<K, V>, V> {
   }
 }
 
+@Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.each()"))
 fun <K, V> MapInstances.each(): Each<Map<K, V>, V> = MapEach()
 
 /**
@@ -84,12 +89,18 @@ interface MapEach<K, V> : Each<Map<K, V>, V> {
   }
 }
 
-fun <K, V> MapInstances.filterIndex(): FilterIndex<Map<K, V>, K, V> = filterMapIndex()
+@Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.filterIndex()"))
+fun <K, V> MapInstances.filterIndex(): FilterIndex<Map<K, V>, K, V> = FilterMapIndex()
+
+fun <K, V> KClass<Map<*, *>>.filterIndex(): FilterIndex<Map<K, V>, K, V> = FilterMapIndex()
+
+@Deprecated("Use the type with the correct capitalization", ReplaceWith("FilterMapIndex<K, V>"))
+typealias filterMapIndex<K, V> = FilterMapIndex<K, V>
 
 /**
  * [FilterIndex] instance definition for [Map].
  */
-interface filterMapIndex<K, V> : FilterIndex<Map<K, V>, K, V> {
+interface FilterMapIndex<K, V> : FilterIndex<Map<K, V>, K, V> {
   override fun filter(p: Predicate<K>) = object : Traversal<Map<K, V>, V> {
     override fun <F> modifyF(FA: Applicative<F>, s: Map<K, V>, f: (V) -> Kind<F, V>): Kind<F, Map<K, V>> = FA.run {
       s.toList().k().traverse(FA) { (k, v) ->
@@ -106,11 +117,14 @@ interface filterMapIndex<K, V> : FilterIndex<Map<K, V>, K, V> {
      *
      * @return [Index] instance for [String]
      */
-    operator fun <K, V> invoke() = object : filterMapIndex<K, V> {}
+    operator fun <K, V> invoke() = object : FilterMapIndex<K, V> {}
   }
 }
 
+@Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.index()"))
 fun <K, V> MapInstances.index(): Index<Map<K, V>, K, V> = MapIndex()
+
+fun <K, V> KClass<Map<*, *>>.index(): Index<Map<K, V>, K, V> = MapIndex()
 
 /**
  * [Index] instance definition for [Map].
