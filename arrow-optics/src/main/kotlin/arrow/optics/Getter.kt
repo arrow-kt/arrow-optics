@@ -20,7 +20,7 @@ import arrow.typeclasses.Monoid
  * @param S the source of a [Getter]
  * @param A the focus of a [Getter]
  */
-interface Getter<S, A> {
+fun interface Getter<S, A> {
 
   /**
    * Get the focus of a [Getter]
@@ -35,13 +35,6 @@ interface Getter<S, A> {
      * [Getter] that takes either [S] or [S] and strips the choice of [S].
      */
     fun <S> codiagonal(): Getter<Either<S, S>, S> = Getter { aa -> aa.fold(::identity, ::identity) }
-
-    /**
-     * Invoke operator overload to create a [Getter] of type `S` with focus `A`.
-     */
-    operator fun <S, A> invoke(get: (S) -> A) = object : Getter<S, A> {
-      override fun get(s: S): A = get(s)
-    }
   }
 
   /**
