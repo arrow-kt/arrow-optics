@@ -26,17 +26,12 @@ typealias Setter<S, A> = PSetter<S, S, A, A>
  * @param A the focus of a [PSetter]
  * @param B the modified focus of a [PSetter]
  */
-interface PSetter<S, T, A, B> {
+fun interface PSetter<S, T, A, B> {
 
   /**
    * Modify polymorphically the focus of a [PSetter] with a function [f].
    */
   fun modify(s: S, f: (A) -> B): T
-
-  /**
-   * Set polymorphically the focus of a [PSetter] with a value [b].
-   */
-  fun set(s: S, b: B): T
 
   companion object {
 
@@ -48,22 +43,17 @@ interface PSetter<S, T, A, B> {
     fun <S> codiagonal(): Setter<Either<S, S>, S> = Setter { aa, f -> aa.bimap(f, f) }
 
     /**
-     * Invoke operator overload to create a [PSetter] of type `S` with target `A`.
-     * Can also be used to construct [Setter]
-     */
-    operator fun <S, T, A, B> invoke(modify: (S, ((A) -> B)) -> T): PSetter<S, T, A, B> = object : PSetter<S, T, A, B> {
-      override fun modify(s: S, f: (A) -> B): T = modify(s, f)
-
-      override fun set(s: S, b: B): T = modify(s) { b }
-    }
-
-    /**
      * Create a [PSetter] from a [arrow.Functor]
      */
     fun <F, A, B> fromFunctor(FF: Functor<F>): PSetter<Kind<F, A>, Kind<F, B>, A, B> = FF.run {
       PSetter { fs: Kind<F, A>, f -> fs.map(f) }
     }
   }
+
+  /**
+   * Set polymorphically the focus of a [PSetter] with a value [b].
+   */
+  fun set(s: S, b: B): T = modify(s) { b }
 
   /**
    * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> T`
