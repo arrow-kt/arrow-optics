@@ -1,13 +1,13 @@
 package arrow.optics.instances
 
+import arrow.core.SetExtensions
 import arrow.core.extensions.eq
-import arrow.core.SetK
-import arrow.core.extensions.setk.eq.eq
 import arrow.optics.extensions.SetAt
-import arrow.optics.extensions.setk.at.at
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.genSetK
+import arrow.optics.extensions.at
+import arrow.optics.extensions.eq
 import arrow.optics.test.laws.LensLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
@@ -24,11 +24,11 @@ class SetInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { SetK.at<String>().at(it) },
-        aGen = Gen.genSetK(Gen.string()),
+        lensGen = Gen.string().map { SetExtensions.at<String>().at(it) },
+        aGen = Gen.genSetK(Gen.string()).map { it.toSet() }, // TODO: Add genSet to Gen
         bGen = Gen.bool(),
         funcGen = Gen.functionAToB(Gen.bool()),
-        EQA = SetK.eq(String.eq()),
+        EQA = SetExtensions.eq(String.eq()),
         EQB = Eq.any(),
         MB = AndMonoid
       )

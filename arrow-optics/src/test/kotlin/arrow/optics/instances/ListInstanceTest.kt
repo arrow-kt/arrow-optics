@@ -5,21 +5,16 @@ import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.core.extensions.eq
 import arrow.core.ListK
+import arrow.core.extensions.ListKEq
+import arrow.core.extensions.ListKEqK
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.tuple2.eq.eq
-import arrow.optics.extensions.each
-import arrow.optics.extensions.filterIndex
-import arrow.optics.extensions.index
-import arrow.optics.extensions.listk.cons.cons
-import arrow.optics.extensions.listk.each.each
-import arrow.optics.extensions.listk.filterIndex.filterIndex
-import arrow.optics.extensions.listk.index.index
-import arrow.optics.extensions.listk.snoc.snoc
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.listK
 import arrow.core.test.generators.tuple2
+import arrow.optics.extensions.*
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.TraversalLaws
@@ -32,8 +27,8 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = ListK.each<String>().each(),
-        aGen = Gen.listK(Gen.string()),
+        traversal = ListExtensions.each<String>().each(),
+        aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
@@ -56,8 +51,8 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = ListK.filterIndex<String>().filter { true },
-        aGen = Gen.listK(Gen.string()),
+        traversal = ListExtensions.filterIndex<String>().filter { true },
+        aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
@@ -80,8 +75,8 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.int().map { ListK.index<String>().index(it) },
-        aGen = Gen.listK(Gen.string()),
+        optionalGen = Gen.int().map { ListExtensions.index<String>().index(it) },
+        aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
         EQOptionB = Eq.any(),
@@ -102,23 +97,23 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       PrismLaws.laws(
-        prism = ListK.cons<Int>().cons(),
-        aGen = Gen.listK(Gen.int()),
-        bGen = Gen.tuple2(Gen.int(), Gen.listK(Gen.int())),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.listK(Gen.int()))),
-        EQA = ListK.eq(Int.eq()),
-        EQOptionB = Option.eq(Tuple2.eq(Int.eq(), ListK.eq(Int.eq())))
+        prism = ListExtensions.cons<Int>().cons(),
+        aGen = Gen.list(Gen.int()),
+        bGen = Gen.tuple2(Gen.int(), Gen.list(Gen.int())),
+        funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.list(Gen.int()))),
+        EQA = ListExtensions.eq(Int.eq()),
+        EQOptionB = Option.eq(Tuple2.eq(Int.eq(), ListExtensions.eq(Int.eq())))
       )
     )
 
     testLaws(
       PrismLaws.laws(
-        prism = ListK.snoc<Int>().snoc(),
-        aGen = Gen.listK(Gen.int()),
-        bGen = Gen.tuple2(Gen.listK(Gen.int()), Gen.int()),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.listK(Gen.int()), Gen.int())),
-        EQA = ListK.eq(Int.eq()),
-        EQOptionB = Option.eq(Tuple2.eq(ListK.eq(Int.eq()), Int.eq()))
+        prism = ListExtensions.snoc<Int>().snoc(),
+        aGen = Gen.list(Gen.int()),
+        bGen = Gen.tuple2(Gen.list(Gen.int()), Gen.int()),
+        funcGen = Gen.functionAToB(Gen.tuple2(Gen.list(Gen.int()), Gen.int())),
+        EQA = ListExtensions.eq(Int.eq()),
+        EQOptionB = Option.eq(Tuple2.eq(ListExtensions.eq(Int.eq()), Int.eq()))
       )
     )
   }

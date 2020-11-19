@@ -1,13 +1,10 @@
 package arrow.optics
 
-import arrow.core.ListExtensions
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.identity
 import arrow.core.ListK
 import arrow.core.NonEmptyList
-import arrow.core.k
 
 /**
  * [Optional] to safely operate on the head of a list
@@ -41,16 +38,3 @@ fun <A, B> ListK.Companion.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmpt
  * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
 fun <A> ListK.Companion.toOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = toPOptionNel()
-
-/**
- * [PIso] that defines the equality between a [List] and a [ListK]
- */
-fun <A, B> ListExtensions.toPListK(): PIso<List<A>, List<B>, ListK<A>, ListK<B>> = PIso(
-  get = List<A>::k,
-  reverseGet = ::identity
-)
-
-/**
- * [Iso] that defines the equality between a [List] and a [ListK]
- */
-fun <A> ListExtensions.toListK(): Iso<List<A>, ListK<A>> = toPListK()

@@ -5,6 +5,7 @@ import arrow.core.Either
 import arrow.core.ListExtensions
 import arrow.core.Option
 import arrow.core.Tuple2
+import arrow.core.extensions.ListKEq
 import arrow.core.identity
 import arrow.core.left
 import arrow.core.right
@@ -24,6 +25,7 @@ import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
 import arrow.typeclasses.Applicative
+import arrow.typeclasses.Eq
 
 fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = ListTraversal()
 
@@ -142,3 +144,23 @@ interface ListSnoc<A> : Snoc<List<A>, A> {
     operator fun <A> invoke() = object : ListSnoc<A> {}
   }
 }
+
+// TODO: List Eq should be in Arrow Core
+interface ListEq<A>: Eq<List<A>> {
+  fun EQA(): Eq<A>
+
+  override fun List<A>.eqv(b: List<A>): Boolean =
+    if (this.size == b.size) {
+      this.zip(b).map { (a, b) -> EQA().run { a.eqv(b) } }.all { it }
+    } else {
+      false
+    }
+
+  companion object {
+    operator fun <A> invoke(eqA: Eq<A>): ListEq<A> = object : ListEq<A> {
+      override fun EQA(): Eq<A> = eqA
+    }
+  }
+}
+
+fun <A> ListExtensions.eq(eqA: Eq<A>): ListEq<A> = ListEq(eqA)

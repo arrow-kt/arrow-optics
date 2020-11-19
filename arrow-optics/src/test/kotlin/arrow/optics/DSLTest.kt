@@ -1,15 +1,12 @@
 package arrow.optics
 
-import arrow.core.None
-import arrow.core.ListK
-import arrow.core.MapK
-import arrow.core.k
+import arrow.core.*
 import arrow.optics.dsl.at
-import arrow.optics.extensions.listk.index.index
-import arrow.optics.extensions.mapk.at.at
-import arrow.optics.extensions.mapk.each.each
-import arrow.optics.extensions.traversal
 import arrow.core.test.UnitSpec
+import arrow.optics.extensions.at
+import arrow.optics.extensions.each
+import arrow.optics.extensions.index
+import arrow.optics.extensions.traversal
 import io.kotlintest.shouldBe
 
 @optics
@@ -33,7 +30,7 @@ data class Employee(val name: String, val company: Company?) {
 }
 
 @optics
-data class CompanyEmployees(val employees: ListK<Employee>) {
+data class CompanyEmployees(val employees: List<Employee>) {
   companion object
 }
 
@@ -44,7 +41,7 @@ object Three : Keys()
 object Four : Keys()
 
 @optics
-data class Db(val content: MapK<Keys, String>) {
+data class Db(val content: Map<Keys, String>) {
   companion object
 }
 
@@ -83,13 +80,13 @@ class BoundedTest : UnitSpec() {
     }
 
     "Index enables special Index syntax" {
-      ListK.index<Employee>().run {
+      ListExtensions.index<Employee>().run {
         CompanyEmployees.employees[1].company.address.street.name.modify(
           employees,
           String::toUpperCase
         )
       } shouldBe (CompanyEmployees.employees compose
-          ListK.index<Employee>().index(1) compose
+          ListExtensions.index<Employee>().index(1) compose
           Employee.company compose
           Company.address compose
           Address.street compose
@@ -97,15 +94,15 @@ class BoundedTest : UnitSpec() {
     }
 
     "Working with At in Optics should be same as in DSL" {
-      MapK.at<Keys, String>().run {
-        Db.content.at(MapK.at(), One).set(db, None)
-      } shouldBe (Db.content compose MapK.at<Keys, String>().at(One)).set(db, None)
+      MapInstances.at<Keys, String>().run {
+        Db.content.at(MapInstances.at(), One).set(db, None)
+      } shouldBe (Db.content compose MapInstances.at<Keys, String>().at(One)).set(db, None)
     }
 
     "Working with Each in Optics should be same as in DSL" {
-      MapK.each<Keys, String>().run {
+      MapInstances.each<Keys, String>().run {
         Db.content.every.modify(db, String::toUpperCase)
-      } shouldBe (Db.content compose MapK.traversal()).modify(db, String::toUpperCase)
+      } shouldBe (Db.content compose MapInstances.traversal()).modify(db, String::toUpperCase)
     }
   }
 }
