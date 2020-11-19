@@ -13,10 +13,6 @@ import arrow.optics.extensions.at
 import arrow.optics.extensions.each
 import arrow.optics.extensions.filterIndex
 import arrow.optics.extensions.index
-import arrow.optics.extensions.mapk.at.at
-import arrow.optics.extensions.mapk.each.each
-import arrow.optics.extensions.mapk.filterIndex.filterIndex
-import arrow.optics.extensions.mapk.index.index
 import arrow.optics.test.generators.char
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
@@ -35,8 +31,8 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapK.each<Int, String>().each(),
-        aGen = Gen.mapK(Gen.int(), Gen.string()),
+        traversal = MapInstances.each<Int, String>().each(),
+        aGen = Gen.map(Gen.int(), Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
@@ -59,8 +55,8 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapK.filterIndex<Char, Int>().filter { true },
-        aGen = Gen.mapK(Gen.char(), Gen.intSmall()),
+        traversal = MapInstances.filterIndex<Char, Int>().filter { true },
+        aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
         EQA = Eq.any(),
@@ -83,8 +79,8 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.string().map { MapK.index<String, Int>().index(it) },
-        aGen = Gen.mapK(Gen.string(), Gen.int()),
+        optionalGen = Gen.string().map { MapInstances.index<String, Int>().index(it) },
+        aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
         EQOptionB = Eq.any(),
@@ -105,8 +101,8 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { MapK.at<String, Int>().at(it) },
-        aGen = Gen.mapK(Gen.string(), Gen.int()),
+        lensGen = Gen.string().map { MapInstances.at<String, Int>().at(it) },
+        aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.option(Gen.int()),
         funcGen = Gen.functionAToB(Gen.option(Gen.int())),
         EQA = Eq.any(),

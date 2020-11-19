@@ -1,22 +1,17 @@
 package arrow.optics.extensions
 
 import arrow.Kind
-import arrow.core.Tuple2
-import arrow.core.left
-import arrow.core.right
-import arrow.core.ListK
-import arrow.core.k
+import arrow.core.*
 import arrow.optics.Optional
 import arrow.optics.Prism
 import arrow.optics.Traversal
-import arrow.optics.toListK
+import arrow.optics.extensions.sequence.filterIndex.Sequence.filterIndex
+import arrow.optics.toList
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
-import arrow.optics.extensions.listk.filterIndex.filterIndex
-import arrow.optics.extensions.listk.index.index
 import arrow.typeclasses.Applicative
 
 /**
@@ -72,7 +67,7 @@ fun String.Companion.filterIndex(): FilterIndex<String, Int, Char> = StringFilte
  */
 interface StringFilterIndex : FilterIndex<String, Int, Char> {
   override fun filter(p: (Int) -> Boolean): Traversal<String, Char> =
-    String.toListK() compose ListK.filterIndex<Char>().filter(p)
+    String.toList() compose ListExtensions.filterIndex<Char>().filter(p)
 
   companion object {
     /**
@@ -101,7 +96,7 @@ fun String.Companion.index(): Index<String, Int, Char> = StringIndex()
 interface StringIndex : Index<String, Int, Char> {
 
   override fun index(i: Int): Optional<String, Char> =
-    String.toListK() compose ListK.index<Char>().index(i)
+    String.toList() compose ListExtensions.index<Char>().index(i)
 
   companion object {
     /**

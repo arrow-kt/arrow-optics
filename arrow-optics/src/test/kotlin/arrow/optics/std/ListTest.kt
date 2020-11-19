@@ -10,7 +10,6 @@ import arrow.core.extensions.listk.monoid.monoid
 import arrow.core.extensions.nonemptylist.semigroup.semigroup
 import arrow.optics.head
 import arrow.optics.tail
-import arrow.optics.toListK
 import arrow.optics.toOptionNel
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
@@ -52,15 +51,5 @@ class ListTest : UnitSpec() {
       EQB = Eq.any(),
       bMonoid = Option.monoid(NonEmptyList.semigroup<Int>())
     ))
-
-    testLaws(IsoLaws.laws(
-      iso = ListExtensions.toListK(),
-      aGen = Gen.list(Gen.int()),
-      bGen = Gen.list(Gen.int()).map { it.k() },
-      funcGen = Gen.functionAToB(Gen.list(Gen.int()).map { it.k() }),
-      EQA = Eq.any(),
-      EQB = Eq.any(),
-      bMonoid = ListK.monoid())
-    )
   }
 }
