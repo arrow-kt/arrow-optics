@@ -6,6 +6,7 @@ import arrow.core.ListExtensions
 import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.core.extensions.ListKEq
+import arrow.core.extensions.list.traverse.traverse
 import arrow.core.identity
 import arrow.core.left
 import arrow.core.right
@@ -26,8 +27,12 @@ import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Eq
+import kotlin.reflect.KClass
 
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.traversal()"))
 fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = ListTraversal()
+
+fun <A> KClass<List<*>>.traversal(): Traversal<List<A>, A> = ListTraversal()
 
 /**
  * [Traversal] for [List] that focuses in each [A] of the source [List].
@@ -35,7 +40,9 @@ fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = ListTraversal()
 interface ListTraversal<A> : Traversal<List<A>, A> {
 
   override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
-    s.k().traverse(FA, f)
+    FA.run {
+      s.traverse(FA, f).map { it.fix() }
+    }
 
   companion object {
     /**
@@ -47,7 +54,10 @@ interface ListTraversal<A> : Traversal<List<A>, A> {
   }
 }
 
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.each()"))
 fun <A> ListExtensions.each(): Each<List<A>, A> = ListEach()
+
+fun <A> KClass<List<*>>.each(): Each<List<A>, A> = ListEach()
 
 /**
  * [Each] instance definition for [List] that summons a [Traversal] to focus in each [A] of the source [List].
@@ -65,7 +75,10 @@ interface ListEach<A> : Each<List<A>, A> {
   }
 }
 
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.filterIndex()"))
 fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = ListFilterIndex()
+
+fun <A> KClass<List<*>>.filterIndex(): FilterIndex<List<A>, Int, A> = ListFilterIndex()
 
 /**
  * [FilterIndex] instance definition for [List].
@@ -88,7 +101,10 @@ interface ListFilterIndex<A> : FilterIndex<List<A>, Int, A> {
   }
 }
 
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.index()"))
 fun <A> ListExtensions.index(): Index<List<A>, Int, A> = ListIndex()
+
+fun <A> KClass<List<*>>.index(): Index<List<A>, Int, A> = ListIndex()
 
 /**
  * [Index] instance definition for [List].
@@ -105,7 +121,10 @@ interface ListIndex<A> : Index<List<A>, Int, A> {
   }
 }
 
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.cons()"))
 fun <A> ListExtensions.cons(): Cons<List<A>, A> = ListCons()
+
+fun <A> KClass<List<*>>.cons(): Cons<List<A>, A> = ListCons()
 
 /**
  * [Cons] instance definition for [List].
@@ -122,7 +141,10 @@ interface ListCons<A> : Cons<List<A>, A> {
   }
 }
 
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.snoc()"))
 fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = ListSnoc()
+
+fun <A> KClass<List<*>>.snoc(): Snoc<List<A>, A> = ListSnoc()
 
 /**
  * [Snoc] instance definition for [List].
@@ -163,4 +185,4 @@ interface ListEq<A>: Eq<List<A>> {
   }
 }
 
-fun <A> ListExtensions.eq(eqA: Eq<A>): ListEq<A> = ListEq(eqA)
+fun <A> KClass<List<*>>.eq(eqA: Eq<A>): ListEq<A> = ListEq(eqA)

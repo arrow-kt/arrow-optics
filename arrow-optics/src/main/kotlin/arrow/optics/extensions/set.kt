@@ -1,10 +1,15 @@
 package arrow.optics.extensions
 
 import arrow.core.SetExtensions
+import arrow.core.SetK
+import arrow.core.extensions.setk.monoid.monoid
 import arrow.optics.Lens
 import arrow.optics.PLens
 import arrow.optics.typeclasses.At
 import arrow.typeclasses.Eq
+import arrow.typeclasses.Monoid
+import arrow.typeclasses.Semigroup
+import kotlin.reflect.KClass
 
 /**
  * [At] instance definition for [Set].
@@ -25,7 +30,10 @@ interface SetAt<A> : At<Set<A>, A, Boolean> {
   }
 }
 
+@Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.at()"))
 fun <A> SetExtensions.at(): SetAt<A> = SetAt()
+
+fun <A> KClass<Set<*>>.at(): SetAt<A> = SetAt()
 
 // TODO: Move to Arrow Core
 interface SetEq<A> : Eq<Set<A>> {
@@ -49,4 +57,30 @@ interface SetEq<A> : Eq<Set<A>> {
   }
 }
 
+@Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.eq(eqa)"))
 fun <A> SetExtensions.eq(eqa: Eq<A>): SetEq<A> = SetEq(eqa)
+
+fun <A> KClass<Set<*>>.eq(eqa: Eq<A>): SetEq<A> = SetEq(eqa)
+
+// TODO: Move to Arrow Core
+interface SetSemigroup<A>: Semigroup<Set<A>> {
+  override fun Set<A>.combine(b: Set<A>): Set<A> = this + b
+
+  companion object {
+    operator fun <A> invoke(): SetSemigroup<A> = object : SetSemigroup<A> {}
+  }
+}
+
+fun <A> KClass<Set<*>>.semigroup(): SetSemigroup<A> = SetSemigroup()
+
+// TODO: Move to Arrow Core
+interface SetMonoid<A>: Monoid<Set<A>>, SetSemigroup<A> {
+
+  override fun empty(): Set<A> = emptySet()
+
+  companion object {
+    operator fun <A> invoke(): SetMonoid<A> = object : SetMonoid<A> {}
+  }
+}
+
+fun <A> KClass<Set<*>>.monoid(): SetMonoid<A> = SetMonoid()
