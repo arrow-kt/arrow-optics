@@ -2,11 +2,11 @@ package arrow.optics.std
 
 import arrow.core.NonEmptyList
 import arrow.core.extensions.monoid
-import arrow.optics.head
-import arrow.optics.tail
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.nonEmptyList
+import arrow.optics.head
+import arrow.optics.tail
 import arrow.optics.test.laws.LensLaws
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid

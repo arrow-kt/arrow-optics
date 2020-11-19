@@ -1,18 +1,15 @@
 package arrow.optics.instances
 
 import arrow.core.ListExtensions
+import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.core.extensions.eq
-import arrow.core.ListK
-import arrow.core.extensions.ListKEq
-import arrow.core.extensions.ListKEqK
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.tuple2.eq.eq
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import arrow.core.test.generators.listK
 import arrow.core.test.generators.tuple2
 import arrow.optics.extensions.*
 import arrow.optics.test.laws.OptionalLaws
@@ -101,8 +98,8 @@ class ListInstanceTest : UnitSpec() {
         aGen = Gen.list(Gen.int()),
         bGen = Gen.tuple2(Gen.int(), Gen.list(Gen.int())),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.list(Gen.int()))),
-        EQA = ListExtensions.eq(Int.eq()),
-        EQOptionB = Option.eq(Tuple2.eq(Int.eq(), ListExtensions.eq(Int.eq())))
+        EQA = List::class.eq(Int.eq()),
+        EQOptionB = Option.eq(Tuple2.eq(Int.eq(), List::class.eq(Int.eq())))
       )
     )
 
@@ -112,8 +109,8 @@ class ListInstanceTest : UnitSpec() {
         aGen = Gen.list(Gen.int()),
         bGen = Gen.tuple2(Gen.list(Gen.int()), Gen.int()),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.list(Gen.int()), Gen.int())),
-        EQA = ListExtensions.eq(Int.eq()),
-        EQOptionB = Option.eq(Tuple2.eq(ListExtensions.eq(Int.eq()), Int.eq()))
+        EQA = List::class.eq(Int.eq()),
+        EQOptionB = Option.eq(Tuple2.eq(List::class.eq(Int.eq()), Int.eq()))
       )
     )
   }

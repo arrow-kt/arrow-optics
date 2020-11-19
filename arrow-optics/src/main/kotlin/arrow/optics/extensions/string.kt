@@ -5,7 +5,6 @@ import arrow.core.*
 import arrow.optics.Optional
 import arrow.optics.Prism
 import arrow.optics.Traversal
-import arrow.optics.extensions.sequence.filterIndex.Sequence.filterIndex
 import arrow.optics.toList
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.Each
