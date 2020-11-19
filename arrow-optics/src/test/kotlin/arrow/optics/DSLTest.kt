@@ -1,8 +1,11 @@
 package arrow.optics
 
-import arrow.core.*
-import arrow.optics.dsl.at
+import arrow.core.ListExtensions
+import arrow.core.MapInstances
+import arrow.core.None
+import arrow.core.k
 import arrow.core.test.UnitSpec
+import arrow.optics.dsl.at
 import arrow.optics.extensions.at
 import arrow.optics.extensions.each
 import arrow.optics.extensions.index

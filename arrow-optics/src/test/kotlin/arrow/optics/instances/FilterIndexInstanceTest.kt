@@ -4,20 +4,17 @@ import arrow.core.*
 import arrow.core.extensions.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.listk.eq.eq
-import arrow.core.extensions.sequencek.eq.eq
 import arrow.optics.extensions.ListFilterIndex
-import arrow.optics.extensions.filterMapIndex
+import arrow.optics.extensions.FilterMapIndex
 import arrow.optics.extensions.filterIndex
 import arrow.optics.extensions.nonemptylist.filterIndex.filterIndex
-import arrow.optics.extensions.sequencek.filterIndex.filterIndex
 import arrow.optics.test.generators.char
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.intSmall
-import arrow.core.test.generators.listK
-import arrow.core.test.generators.mapK
 import arrow.core.test.generators.nonEmptyList
 import arrow.core.test.generators.sequenceK
+import arrow.optics.extensions.eq
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
@@ -56,11 +53,11 @@ class FilterIndexInstanceTest : UnitSpec() {
     ))
 
     testLaws(TraversalLaws.laws(
-      traversal = SequenceK.filterIndex<Char>().filter { true },
-      aGen = Gen.sequenceK(Gen.char()),
+      traversal = Sequence::class.filterIndex<Char>().filter { true },
+      aGen = Gen.sequenceK(Gen.char()).map { it.sequence },
       bGen = Gen.char(),
       funcGen = Gen.functionAToB(Gen.char()),
-      EQA = SequenceK.eq(Char.eq()),
+      EQA = Sequence::class.eq(Char.eq()),
       EQOptionB = Option.eq(Eq.any()),
       EQListB = ListK.eq(Eq.any())
     ))
@@ -76,7 +73,7 @@ class FilterIndexInstanceTest : UnitSpec() {
     ))
 
     testLaws(TraversalLaws.laws(
-      traversal = filterMapIndex<Char, Int>().filter { true },
+      traversal = FilterMapIndex<Char, Int>().filter { true },
       aGen = Gen.map(Gen.char(), Gen.intSmall()),
       bGen = Gen.int(),
       funcGen = Gen.functionAToB(Gen.int()),

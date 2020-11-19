@@ -2,15 +2,15 @@ package arrow.optics.std
 
 import arrow.core.Either
 import arrow.core.Right
+import arrow.core.Validated
 import arrow.core.extensions.either.applicative.applicative
 import arrow.core.fix
-import arrow.core.Validated
-import arrow.optics.toEither
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.either
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.validated
 import arrow.optics.test.laws.IsoLaws
+import arrow.optics.toEither
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
 import io.kotlintest.properties.Gen

@@ -1,11 +1,11 @@
 package arrow.optics
 
-import arrow.core.Option
-import arrow.core.extensions.monoid
 import arrow.core.ForListK
 import arrow.core.ListK
+import arrow.core.Option
 import arrow.core.extensions.list.foldable.nonEmpty
 import arrow.core.extensions.listk.foldable.foldable
+import arrow.core.extensions.monoid
 import arrow.core.k
 import arrow.core.test.UnitSpec
 import io.kotlintest.properties.Gen

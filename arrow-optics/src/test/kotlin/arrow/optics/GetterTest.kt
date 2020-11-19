@@ -1,24 +1,14 @@
 package arrow.optics
 
-import arrow.core.Left
-import arrow.core.Right
-import arrow.core.Some
-import arrow.core.Tuple2
+import arrow.core.*
 import arrow.core.extensions.monoid
-import arrow.core.toT
+import arrow.core.test.UnitSpec
+import arrow.core.test.generators.functionAToB
 import arrow.mtl.State
-import arrow.core.k
 import arrow.mtl.map
 import arrow.mtl.run
 import arrow.mtl.runId
-import arrow.optics.mtl.ask
-import arrow.optics.mtl.asks
-import arrow.optics.mtl.extract
-import arrow.optics.mtl.extractMap
-import arrow.optics.mtl.toReader
-import arrow.optics.mtl.toState
-import arrow.core.test.UnitSpec
-import arrow.core.test.generators.functionAToB
+import arrow.optics.mtl.*
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll
 

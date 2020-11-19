@@ -1,21 +1,17 @@
 package arrow.optics.instances
 
+import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.core.extensions.eq
-import arrow.core.ListK
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.tuple2.eq.eq
-import arrow.optics.extensions.cons
-import arrow.optics.extensions.each
-import arrow.optics.extensions.filterIndex
-import arrow.optics.extensions.index
-import arrow.optics.extensions.snoc
-import arrow.optics.test.generators.char
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.tuple2
+import arrow.optics.extensions.*
+import arrow.optics.test.generators.char
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.TraversalLaws
