@@ -140,14 +140,14 @@ class PrismTest : UnitSpec() {
 
       "asFold should behave as valid Fold: combineAll" {
         forAll(genSum) { sum: SumType ->
-          combineAll(String.monoid(), sum) ==
+          combineAll(sum, "", String::plus) ==
               sumPrism.getOption(sum).fold({ String.monoid().empty() }, ::identity)
         }
       }
 
       "asFold should behave as valid Fold: fold" {
         forAll(genSum) { sum: SumType ->
-          fold(String.monoid(), sum) ==
+          fold(sum, "", String::plus) ==
               sumPrism.getOption(sum).fold({ String.monoid().empty() }, ::identity)
         }
       }

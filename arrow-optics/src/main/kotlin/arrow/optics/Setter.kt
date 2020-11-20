@@ -2,7 +2,6 @@ package arrow.optics
 
 import arrow.Kind
 import arrow.core.Either
-import arrow.higherkind
 import arrow.typeclasses.Functor
 
 /**

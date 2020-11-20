@@ -107,13 +107,13 @@ class IsoTest : UnitSpec() {
 
       "asFold should behave as valid Fold: combineAll" {
         forAll(genToken) { token ->
-          combineAll(String.monoid(), token) == token.value
+          combineAll(token, "", String::plus) == token.value
         }
       }
 
       "asFold should behave as valid Fold: fold" {
         forAll(genToken) { token ->
-          fold(String.monoid(), token) == token.value
+          fold(token, "", String::plus) == token.value
         }
       }
 

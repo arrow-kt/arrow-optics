@@ -1,11 +1,7 @@
 package arrow.optics
 
-import arrow.core.ForListK
-import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.extensions.list.foldable.nonEmpty
-import arrow.core.extensions.listk.foldable.foldable
-import arrow.core.extensions.monoid
 import arrow.core.k
 import arrow.core.test.UnitSpec
 import io.kotlintest.properties.Gen
@@ -15,8 +11,8 @@ class FoldTest : UnitSpec() {
 
   init {
 
-    val intFold = Fold.fromFoldable<ForListK, Int>(ListK.foldable())
-    val stringFold = Fold.fromFoldable<ForListK, String>(ListK.foldable())
+    val intFold = Fold<List<Int>, Int>()
+    val stringFold = Fold<List<String>, String>()
 
     "Fold select a list that contains one" {
       val select = Fold.select<List<Int>> { it.contains(1) }
@@ -31,19 +27,21 @@ class FoldTest : UnitSpec() {
 
       "Folding a list of ints" {
         forAll(Gen.list(Gen.int())) { ints ->
-          fold(Int.monoid(), ints.k()) == ints.sum()
+          fold(ints, 0, Int::plus) == ints.sum()
         }
       }
 
       "Folding a list should yield same result as combineAll" {
         forAll(Gen.list(Gen.int())) { ints ->
-          combineAll(Int.monoid(), ints.k()) == ints.sum()
+          combineAll(ints, 0, Int::plus) == ints.sum()
         }
       }
 
       "Folding and mapping a list of strings" {
         forAll(Gen.list(Gen.int())) { ints ->
-          stringFold.run { foldMap(Int.monoid(), ints.map(Int::toString).k(), String::toInt) } == ints.sum()
+          stringFold.run {
+            foldMap(ints.map(Int::toString), 0, Int::plus, String::toInt)
+          } == ints.sum()
         }
       }
 

@@ -1,17 +1,9 @@
 package arrow.optics
 
 import arrow.Kind
-import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.Tuple2
-import arrow.core.identity
-import arrow.core.toT
-import arrow.higherkind
+import arrow.core.*
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Functor
-import arrow.typeclasses.Monoid
 
 /**
  * [Lens] is a type alias for [PLens] which fixes the type arguments
@@ -192,7 +184,8 @@ interface PLens<S, T, A, B> {
    * View a [PLens] as a [Fold]
    */
   fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = f(get(s))
+    override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
+      map(get(s))
   }
 
   /**

@@ -100,13 +100,13 @@ class LensTest : UnitSpec() {
 
     "asFold should behave as valid Fold: combineAll" {
       forAll(genToken) { token ->
-        tokenLens.asFold().combineAll(String.monoid(), token) == token.value
+        tokenLens.asFold().combineAll(token, "", String::plus) == token.value
       }
     }
 
     "asFold should behave as valid Fold: fold" {
       forAll(genToken) { token ->
-        tokenLens.asFold().fold(String.monoid(), token) == token.value
+        tokenLens.asFold().fold(token, "", String::plus) == token.value
       }
     }
 

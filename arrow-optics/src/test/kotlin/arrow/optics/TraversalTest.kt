@@ -84,13 +84,13 @@ class TraversalTest : UnitSpec() {
 
       "asFold should behave as valid Fold: combineAll" {
         forAll(Gen.listK(Gen.int())) { ints ->
-          combineAll(Int.monoid(), ints) == ints.sum()
+          combineAll(ints, 0, Int::plus) == ints.sum()
         }
       }
 
       "asFold should behave as valid Fold: fold" {
         forAll(Gen.listK(Gen.int())) { ints ->
-          fold(Int.monoid(), ints) == ints.sum()
+          fold(ints, 0, Int::plus) == ints.sum()
         }
       }
 
