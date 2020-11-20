@@ -1,15 +1,6 @@
 package arrow.optics
 
-import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.Tuple2
-import arrow.core.compose
-import arrow.core.identity
-import arrow.core.toT
-import arrow.higherkind
-import arrow.typeclasses.Monoid
+import arrow.core.*
 
 /**
  * A [Getter] is an optic that allows to see into a structure and getting a focus.
@@ -130,6 +121,7 @@ fun interface Getter<S, A> {
   operator fun <C> plus(other: Fold<A, C>): Fold<S, C> = compose(other)
 
   fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = f(get(s))
+    override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
+      map(get(s))
   }
 }

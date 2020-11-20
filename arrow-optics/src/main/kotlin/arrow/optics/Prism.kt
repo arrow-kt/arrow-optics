@@ -1,20 +1,9 @@
 package arrow.optics
 
 import arrow.Kind
-import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.Tuple2
-import arrow.core.compose
-import arrow.core.flatMap
-import arrow.core.getOrElse
-import arrow.core.identity
-import arrow.core.toT
-import arrow.higherkind
+import arrow.core.*
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Eq
-import arrow.typeclasses.Monoid
 
 /**
  * [Prism] is a type alias for [PPrism] which fixes the type arguments
@@ -254,7 +243,8 @@ interface PPrism<S, T, A, B> {
    * View a [PPrism] as a [Fold]
    */
   fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = getOption(s).map(f).getOrElse(M::empty)
+    override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
+      getOption(s).map(map).getOrElse { empty }
   }
 
   /**

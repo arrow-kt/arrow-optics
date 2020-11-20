@@ -123,14 +123,14 @@ class OptionalTest : UnitSpec() {
 
       "asFold should behave as valid Fold: combineAll" {
         forAll { ints: List<Int> ->
-          combineAll(Int.monoid(), ints) ==
+          combineAll(ints, 0, Int::plus) ==
             ints.firstOrNull().toOption().fold({ Int.monoid().empty() }, ::identity)
         }
       }
 
       "asFold should behave as valid Fold: fold" {
         forAll { ints: List<Int> ->
-          fold(Int.monoid(), ints) ==
+          fold(ints, 0, Int::plus) ==
             ints.firstOrNull().toOption().fold({ Int.monoid().empty() }, ::identity)
         }
       }

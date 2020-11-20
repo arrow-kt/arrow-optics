@@ -1,21 +1,11 @@
 package arrow.optics
 
 import arrow.Kind
-import arrow.core.Const
-import arrow.core.Either
-import arrow.core.Id
-import arrow.core.ListK
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.extensions.AndMonoid
+import arrow.core.*
 import arrow.core.extensions.const.applicative.applicative
 import arrow.core.extensions.id.applicative.applicative
 import arrow.core.extensions.listk.monoid.monoid
 import arrow.core.extensions.monoid
-import arrow.core.identity
-import arrow.core.value
-import arrow.higherkind
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Monoid
 import arrow.typeclasses.Traverse
@@ -316,8 +306,15 @@ interface PTraversal<S, T, A, B> {
   fun asSetter(): PSetter<S, T, A, B> = PSetter { s, f -> modify(s, f) }
 
   fun asFold(): Fold<S, A> = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R =
-      this@PTraversal.foldMap(M, s, f)
+    // TODO: Temporary while Traversal is not refactored
+    override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
+      this@PTraversal.foldMap(object : Monoid<R> {
+        override fun empty(): R =
+          empty
+
+        override fun R.combine(b: R): R =
+          combine(this, b)
+      }, s, map)
   }
 
   /**

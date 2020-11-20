@@ -1,18 +1,8 @@
 package arrow.optics
 
 import arrow.Kind
-import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.Tuple2
-import arrow.core.flatMap
-import arrow.core.getOrElse
-import arrow.core.identity
-import arrow.core.toT
-import arrow.higherkind
+import arrow.core.*
 import arrow.typeclasses.Applicative
-import arrow.typeclasses.Monoid
 
 /**
  * [Optional] is a type alias for [POptional] which fixes the type arguments
@@ -249,7 +239,8 @@ interface POptional<S, T, A, B> {
    * View a [POptional] as a [Fold]
    */
   fun asFold() = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = getOption(s).map(f).getOrElse(M::empty)
+    override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
+      getOption(s).map(map).getOrElse { empty }
   }
 
   /**
