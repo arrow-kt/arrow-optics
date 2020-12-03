@@ -29,11 +29,10 @@ interface MapAt<K, V> : At<Map<K, V>, K, Option<V>> {
   override fun at(i: K): Lens<Map<K, V>, Option<V>> = PLens(
     get = { it.getOption(i) },
     set = { map, optV ->
-      optV.fold({
-        (map - i)
-      }, {
-        (map + (i to it))
-      })
+      optV.fold(
+        { (map - i) },
+        { (map + (i to it)) }
+      )
     }
   )
 

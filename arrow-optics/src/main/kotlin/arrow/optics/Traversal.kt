@@ -316,13 +316,17 @@ interface PTraversal<S, T, A, B> {
   fun asFold(): Fold<S, A> = object : Fold<S, A> {
     // TODO: Temporary while Traversal is not refactored
     override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
-      this@PTraversal.foldMap(object : Monoid<R> {
-        override fun empty(): R =
-          empty
+      this@PTraversal.foldMap(
+        object : Monoid<R> {
+          override fun empty(): R =
+            empty
 
-        override fun R.combine(b: R): R =
-          combine(this, b)
-      }, s, map)
+          override fun R.combine(b: R): R =
+            combine(this, b)
+        },
+        s,
+        map
+      )
   }
 
   /**

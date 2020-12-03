@@ -47,7 +47,7 @@ interface Fold<S, A> {
      */
     fun <A, B> void() = POptional.void<A, B>().asFold()
 
-    operator fun <S: Iterable<A>, A> invoke(): Fold<S, A> = object : Fold<S, A> {
+    operator fun <S : Iterable<A>, A> invoke(): Fold<S, A> = object : Fold<S, A> {
       override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
         s.map(map).fold(empty, combine)
     }
@@ -76,16 +76,26 @@ interface Fold<S, A> {
   /**
    * Get the first target
    */
-  fun headOption(s: S): Option<A> = foldMap(s, Const(None), { acc, a ->
-    if (acc.value().isDefined()) acc else a
-  }, { Const<Option<A>, Unit>(Some(it)) }).value()
+  fun headOption(s: S): Option<A> = foldMap(
+    s,
+    Const(None),
+    { acc, a ->
+      if (acc.value().isDefined()) acc else a
+    },
+    { Const<Option<A>, Unit>(Some(it)) }
+  ).value()
 
   /**
    * Get the last target
    */
-  fun lastOption(s: S): Option<A> = foldMap(s, Const(None), { acc, a ->
-    if (a.value().isDefined()) a else acc
-  }, { Const<Option<A>, Unit>(Some(it)) }).value()
+  fun lastOption(s: S): Option<A> = foldMap(
+    s,
+    Const(None),
+    { acc, a ->
+      if (a.value().isDefined()) a else acc
+    },
+    { Const<Option<A>, Unit>(Some(it)) }
+  ).value()
 
   /**
    * Fold using the given [Monoid] instance.
@@ -196,9 +206,11 @@ interface Fold<S, A> {
    * Find the first element matching the predicate, if one exists.
    */
   fun find(s: S, p: (A) -> Boolean): Option<A> =
-    foldMap(s, Const(None), { acc, a ->
-      if (acc.value().isDefined()) acc else a
-    }) { b ->
+    foldMap(
+      s,
+      Const(None),
+      { acc, a -> if (acc.value().isDefined()) acc else a }
+    ) { b ->
       if (p(b)) Const<Option<A>, Unit>(Some(b)) else Const(None)
     }.value()
 

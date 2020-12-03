@@ -1,8 +1,6 @@
 package arrow.optics.extensions
 
 import arrow.core.SetExtensions
-import arrow.core.SetK
-import arrow.core.extensions.setk.monoid.monoid
 import arrow.optics.Lens
 import arrow.optics.PLens
 import arrow.optics.typeclasses.At
@@ -63,7 +61,7 @@ fun <A> SetExtensions.eq(eqa: Eq<A>): SetEq<A> = SetEq(eqa)
 fun <A> KClass<Set<*>>.eq(eqa: Eq<A>): SetEq<A> = SetEq(eqa)
 
 // TODO: Move to Arrow Core
-interface SetSemigroup<A>: Semigroup<Set<A>> {
+interface SetSemigroup<A> : Semigroup<Set<A>> {
   override fun Set<A>.combine(b: Set<A>): Set<A> = this + b
 
   companion object {
@@ -74,7 +72,7 @@ interface SetSemigroup<A>: Semigroup<Set<A>> {
 fun <A> KClass<Set<*>>.semigroup(): SetSemigroup<A> = SetSemigroup()
 
 // TODO: Move to Arrow Core
-interface SetMonoid<A>: Monoid<Set<A>>, SetSemigroup<A> {
+interface SetMonoid<A> : Monoid<Set<A>>, SetSemigroup<A> {
 
   override fun empty(): Set<A> = emptySet()
 

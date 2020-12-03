@@ -83,7 +83,7 @@ interface SequenceIndex<A> : Index<Sequence<A>, Int, A> {
 
 fun <A> KClass<Sequence<*>>.index(): SequenceIndex<A> = SequenceIndex()
 
-interface SequenceEq<A>: Eq<Sequence<A>> {
+interface SequenceEq<A> : Eq<Sequence<A>> {
   fun EQA(): Eq<A>
 
   override fun Sequence<A>.eqv(b: Sequence<A>): Boolean =
