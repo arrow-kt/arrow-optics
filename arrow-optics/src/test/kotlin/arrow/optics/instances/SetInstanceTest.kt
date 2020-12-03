@@ -1,6 +1,5 @@
 package arrow.optics.instances
 
-import arrow.core.SetExtensions
 import arrow.core.extensions.eq
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
@@ -24,7 +23,7 @@ class SetInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { SetExtensions.at<String>().at(it) },
+        lensGen = Gen.string().map { Set::class.at<String>().at(it) },
         aGen = Gen.genSetK(Gen.string()).map { it.toSet() }, // TODO: Add genSet to Gen
         bGen = Gen.bool(),
         funcGen = Gen.functionAToB(Gen.bool()),
