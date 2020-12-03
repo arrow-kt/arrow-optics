@@ -172,7 +172,7 @@ interface ListEq<A> : Eq<List<A>> {
 
   override fun List<A>.eqv(b: List<A>): Boolean =
     if (this.size == b.size) {
-      this.zip(b).map { (a, b) -> EQA().run { a.eqv(b) } }.all { it }
+      this.zip(b).all { (a, b) -> EQA().run { a.eqv(b) } }
     } else {
       false
     }

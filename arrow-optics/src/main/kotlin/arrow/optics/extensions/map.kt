@@ -20,7 +20,10 @@ import arrow.optics.typeclasses.Index
 import arrow.typeclasses.Applicative
 import kotlin.reflect.KClass
 
+@Deprecated("Obtain instance through Map class", ReplaceWith("Map::class.at()"))
 fun <K, V> MapInstances.at(): At<Map<K, V>, K, Option<V>> = MapAt()
+
+fun <K, V> KClass<Map<*, *>>.at(): At<Map<K, V>, K, Option<V>> = MapAt()
 
 /**
  * [At] instance definition for [Map].
@@ -71,6 +74,8 @@ interface MapTraversal<K, V> : Traversal<Map<K, V>, V> {
 
 @Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.each()"))
 fun <K, V> MapInstances.each(): Each<Map<K, V>, V> = MapEach()
+
+fun <K, V> KClass<Map<*, *>>.each(): Each<Map<K, V>, V> = MapEach()
 
 /**
  * [Each] instance definition for [Map].
