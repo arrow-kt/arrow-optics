@@ -1,6 +1,5 @@
 package arrow.optics
 
-import arrow.core.ListExtensions
 import arrow.core.MapInstances
 import arrow.core.None
 import arrow.core.k
@@ -85,14 +84,14 @@ class BoundedTest : UnitSpec() {
     }
 
     "Index enables special Index syntax" {
-      ListExtensions.index<Employee>().run {
+      List::class.index<Employee>().run {
         CompanyEmployees.employees[1].company.address.street.name.modify(
           employees,
           String::toUpperCase
         )
       } shouldBe (
         CompanyEmployees.employees compose
-          ListExtensions.index<Employee>().index(1) compose
+          List::class.index<Employee>().index(1) compose
           Employee.company compose
           Company.address compose
           Address.street compose

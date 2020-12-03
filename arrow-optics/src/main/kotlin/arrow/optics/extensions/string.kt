@@ -1,7 +1,6 @@
 package arrow.optics.extensions
 
 import arrow.Kind
-import arrow.core.ListExtensions
 import arrow.core.Tuple2
 import arrow.core.k
 import arrow.core.left
@@ -70,7 +69,7 @@ fun String.Companion.filterIndex(): FilterIndex<String, Int, Char> = StringFilte
  */
 interface StringFilterIndex : FilterIndex<String, Int, Char> {
   override fun filter(p: (Int) -> Boolean): Traversal<String, Char> =
-    String.toList() compose ListExtensions.filterIndex<Char>().filter(p)
+    String.toList() compose List::class.filterIndex<Char>().filter(p)
 
   companion object {
     /**
@@ -99,7 +98,7 @@ fun String.Companion.index(): Index<String, Int, Char> = StringIndex()
 interface StringIndex : Index<String, Int, Char> {
 
   override fun index(i: Int): Optional<String, Char> =
-    String.toList() compose ListExtensions.index<Char>().index(i)
+    String.toList() compose List::class.index<Char>().index(i)
 
   companion object {
     /**

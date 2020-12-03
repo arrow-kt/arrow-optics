@@ -1,6 +1,5 @@
 package arrow.optics.instances
 
-import arrow.core.ListExtensions
 import arrow.core.ListK
 import arrow.core.MapInstances
 import arrow.core.NonEmptyList
@@ -28,7 +27,7 @@ class FilterIndexInstanceTest : UnitSpec() {
   init {
     testLaws(
       TraversalLaws.laws(
-        traversal = ListExtensions.filterIndex<String>().filter { true },
+        traversal = List::class.filterIndex<String>().filter { true },
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
