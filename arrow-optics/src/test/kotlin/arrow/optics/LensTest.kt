@@ -1,16 +1,13 @@
 package arrow.optics
 
 import arrow.core.Left
-import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Right
 import arrow.core.Some
 import arrow.core.Tuple2
-import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.monoid
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.option.functor.functor
-import arrow.core.k
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.toT
@@ -18,6 +15,7 @@ import arrow.mtl.State
 import arrow.mtl.map
 import arrow.mtl.run
 import arrow.mtl.runId
+import arrow.optics.extensions.eq
 import arrow.optics.mtl.ask
 import arrow.optics.mtl.asks
 import arrow.optics.mtl.assign
@@ -59,7 +57,7 @@ class LensTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       ),
 
       OptionalLaws.laws(
@@ -112,7 +110,7 @@ class LensTest : UnitSpec() {
 
     "asFold should behave as valid Fold: getAll" {
       forAll(genToken) { token ->
-        tokenLens.asFold().getAll(token) == listOf(token.value).k()
+        tokenLens.asFold().getAll(token) == listOf(token.value)
       }
     }
 
