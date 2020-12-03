@@ -14,14 +14,16 @@ class MapTest : UnitSpec() {
 
   init {
 
-    testLaws(IsoLaws.laws(
-      iso = Map::class.toSet<String>(),
-      aGen = Gen.mapK(Gen.string(), Gen.create { Unit }).map { it },
-      bGen = Gen.genSetK(Gen.string()).map { it },
-      funcGen = Gen.functionAToB(Gen.genSetK(Gen.string()).map { it }),
-      EQA = Eq.any(),
-      EQB = Eq.any(),
-      bMonoid = Set::class.monoid()
-    ))
+    testLaws(
+      IsoLaws.laws(
+        iso = Map::class.toSet<String>(),
+        aGen = Gen.mapK(Gen.string(), Gen.create { Unit }).map { it },
+        bGen = Gen.genSetK(Gen.string()).map { it },
+        funcGen = Gen.functionAToB(Gen.genSetK(Gen.string()).map { it }),
+        EQA = Eq.any(),
+        EQB = Eq.any(),
+        bMonoid = Set::class.monoid()
+      )
+    )
   }
 }

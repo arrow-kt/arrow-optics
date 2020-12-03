@@ -32,7 +32,8 @@ class ValidatedTest : UnitSpec() {
 
           override fun Either<String, Int>.combine(b: Either<String, Int>): Either<String, Int> =
             Either.applicative<String>().run { this@combine.map2(b) { (a, b) -> a + b }.fix() }
-        })
+        }
+      )
     )
   }
 }

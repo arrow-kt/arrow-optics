@@ -5,7 +5,6 @@ import arrow.core.Either
 import arrow.core.ListExtensions
 import arrow.core.Option
 import arrow.core.Tuple2
-import arrow.core.extensions.ListKEq
 import arrow.core.extensions.list.traverse.traverse
 import arrow.core.identity
 import arrow.core.left
@@ -168,7 +167,7 @@ interface ListSnoc<A> : Snoc<List<A>, A> {
 }
 
 // TODO: List Eq should be in Arrow Core
-interface ListEq<A>: Eq<List<A>> {
+interface ListEq<A> : Eq<List<A>> {
   fun EQA(): Eq<A>
 
   override fun List<A>.eqv(b: List<A>): Boolean =
