@@ -1,18 +1,16 @@
 package arrow.optics
 
-import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.monoid
 import arrow.core.extensions.option.eq.eq
 import arrow.core.getOrElse
 import arrow.core.identity
-import arrow.core.k
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.either
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.tuple2
+import arrow.optics.extensions.eq
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.SetterLaws
@@ -49,7 +47,7 @@ class PrismTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       ),
 
       OptionalLaws.laws(
@@ -139,7 +137,7 @@ class PrismTest : UnitSpec() {
 
       "asFold should behave as valid Fold: getAll" {
         forAll(genSum) { sum: SumType ->
-          getAll(sum) == sumPrism.getOption(sum).toList().k()
+          getAll(sum) == sumPrism.getOption(sum).toList()
         }
       }
 

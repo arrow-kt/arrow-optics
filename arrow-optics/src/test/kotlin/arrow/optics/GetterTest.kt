@@ -4,7 +4,6 @@ import arrow.core.Left
 import arrow.core.Right
 import arrow.core.Some
 import arrow.core.Tuple2
-import arrow.core.k
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.toT
@@ -51,7 +50,7 @@ class GetterTest : UnitSpec() {
 
       "asFold should behave as valid Fold: getAll" {
         forAll(genToken) { token ->
-          getAll(token) == listOf(token.value).k()
+          getAll(token) == listOf(token.value)
         }
       }
 

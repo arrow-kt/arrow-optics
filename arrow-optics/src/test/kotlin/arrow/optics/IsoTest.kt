@@ -1,17 +1,15 @@
 package arrow.optics
 
 import arrow.core.Either
-import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.monoid
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.option.functor.functor
-import arrow.core.k
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.toT
+import arrow.optics.extensions.eq
 import arrow.optics.test.laws.IsoLaws
 import arrow.optics.test.laws.LensLaws
 import arrow.optics.test.laws.OptionalLaws
@@ -58,7 +56,7 @@ class IsoTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       ),
 
       OptionalLaws.laws(
@@ -111,7 +109,7 @@ class IsoTest : UnitSpec() {
 
       "asFold should behave as valid Fold: getAll" {
         forAll(genToken) { token ->
-          getAll(token) == listOf(token.value).k()
+          getAll(token) == listOf(token.value)
         }
       }
 

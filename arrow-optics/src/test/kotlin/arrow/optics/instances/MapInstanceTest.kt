@@ -1,8 +1,6 @@
 package arrow.optics.instances
 
-import arrow.core.ListK
 import arrow.core.Option
-import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.monoid
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.option.monoid.monoid
@@ -13,6 +11,7 @@ import arrow.core.test.generators.intSmall
 import arrow.core.test.generators.option
 import arrow.optics.extensions.at
 import arrow.optics.extensions.each
+import arrow.optics.extensions.eq
 import arrow.optics.extensions.filterIndex
 import arrow.optics.extensions.index
 import arrow.optics.test.generators.char
@@ -34,7 +33,7 @@ class MapInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -46,7 +45,7 @@ class MapInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -58,7 +57,7 @@ class MapInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -70,7 +69,7 @@ class MapInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 

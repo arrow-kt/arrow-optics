@@ -1,22 +1,17 @@
 package arrow.optics.instances
 
-import arrow.core.ListK
 import arrow.core.NonEmptyList
 import arrow.core.Option
 import arrow.core.extensions.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.core.extensions.listk.eq.eq
-import arrow.optics.extensions.ListFilterIndex
-import arrow.optics.extensions.FilterMapIndex
-import arrow.optics.extensions.filterIndex
-import arrow.optics.extensions.nonemptylist.filterIndex.filterIndex
-import arrow.optics.test.generators.char
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.intSmall
 import arrow.core.test.generators.nonEmptyList
-import arrow.core.test.generators.sequenceK
 import arrow.optics.extensions.eq
+import arrow.optics.extensions.filterIndex
+import arrow.optics.extensions.nonemptylist.filterIndex.filterIndex
+import arrow.optics.test.generators.char
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
@@ -38,7 +33,7 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = ListFilterIndex<String>().filter { true },
+        traversal = List::class.filterIndex<String>().filter { true },
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -56,19 +51,19 @@ class FilterIndexInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.string()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
     testLaws(
       TraversalLaws.laws(
         traversal = Sequence::class.filterIndex<Char>().filter { true },
-        aGen = Gen.sequenceK(Gen.char()).map { it.sequence },
+        aGen = Gen.list(Gen.char()).map { it.asSequence() },
         bGen = Gen.char(),
         funcGen = Gen.functionAToB(Gen.char()),
         EQA = Sequence::class.eq(Char.eq()),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -80,7 +75,7 @@ class FilterIndexInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -92,7 +87,7 @@ class FilterIndexInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -104,7 +99,7 @@ class FilterIndexInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.char()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
   }

@@ -1,10 +1,8 @@
 package arrow.optics.instances
 
-import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.core.extensions.eq
-import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.tuple2.eq.eq
 import arrow.core.test.UnitSpec
@@ -12,6 +10,7 @@ import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.tuple2
 import arrow.optics.extensions.cons
 import arrow.optics.extensions.each
+import arrow.optics.extensions.eq
 import arrow.optics.extensions.filterIndex
 import arrow.optics.extensions.index
 import arrow.optics.extensions.snoc
@@ -34,7 +33,7 @@ class StringInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.char()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
@@ -46,7 +45,7 @@ class StringInstanceTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.char()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = ListK.eq(Eq.any())
+        EQListB = List::class.eq(Eq.any())
       )
     )
 
