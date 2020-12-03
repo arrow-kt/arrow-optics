@@ -1,11 +1,19 @@
 package arrow.optics
 
 import arrow.Kind
-import arrow.core.*
+import arrow.core.Const
+import arrow.core.Either
+import arrow.core.Id
+import arrow.core.ListK
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
 import arrow.core.extensions.const.applicative.applicative
 import arrow.core.extensions.id.applicative.applicative
 import arrow.core.extensions.listk.monoid.monoid
 import arrow.core.extensions.monoid
+import arrow.core.identity
+import arrow.core.value
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Monoid
 import arrow.typeclasses.Traverse

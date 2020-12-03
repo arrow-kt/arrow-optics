@@ -1,6 +1,10 @@
 package arrow.optics.instances
 
-import arrow.core.*
+import arrow.core.ListExtensions
+import arrow.core.ListK
+import arrow.core.MapInstances
+import arrow.core.NonEmptyList
+import arrow.core.Option
 import arrow.core.extensions.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.listk.eq.eq

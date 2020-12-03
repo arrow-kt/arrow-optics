@@ -1,6 +1,11 @@
 package arrow.optics
 
-import arrow.core.*
+import arrow.core.Const
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.identity
 
 /**
  * A [Fold] is an optic that allows to focus into structure and get multiple results.

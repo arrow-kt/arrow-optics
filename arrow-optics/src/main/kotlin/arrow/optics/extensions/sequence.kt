@@ -1,10 +1,12 @@
 package arrow.optics.extensions
 
 import arrow.Kind
-import arrow.core.*
-import arrow.core.extensions.SequenceKEq
-import arrow.core.extensions.sequence.foldable.size
 import arrow.core.extensions.sequence.traverse.traverse
+import arrow.core.fix
+import arrow.core.k
+import arrow.core.left
+import arrow.core.right
+import arrow.core.toT
 import arrow.extension
 import arrow.optics.Optional
 import arrow.optics.POptional

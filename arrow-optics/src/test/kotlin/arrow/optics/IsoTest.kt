@@ -1,13 +1,23 @@
 package arrow.optics
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.ListK
+import arrow.core.Option
+import arrow.core.Some
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.monoid
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.option.functor.functor
+import arrow.core.k
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import arrow.optics.test.laws.*
+import arrow.core.toT
+import arrow.optics.test.laws.IsoLaws
+import arrow.optics.test.laws.LensLaws
+import arrow.optics.test.laws.OptionalLaws
+import arrow.optics.test.laws.PrismLaws
+import arrow.optics.test.laws.SetterLaws
+import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll
