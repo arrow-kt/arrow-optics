@@ -1,11 +1,16 @@
 package arrow.optics
 
 import arrow.Kind
-import arrow.core.*
+import arrow.core.ForOption
+import arrow.core.Option
 import arrow.core.extensions.option.functor.functor
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.option
+import arrow.core.toT
 import arrow.mtl.State
 import arrow.mtl.run
 import arrow.optics.mtl.assign_

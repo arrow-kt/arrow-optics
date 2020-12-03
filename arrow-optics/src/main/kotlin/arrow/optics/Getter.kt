@@ -1,6 +1,13 @@
 package arrow.optics
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.Tuple2
+import arrow.core.compose
+import arrow.core.identity
+import arrow.core.toT
 
 /**
  * A [Getter] is an optic that allows to see into a structure and getting a focus.
