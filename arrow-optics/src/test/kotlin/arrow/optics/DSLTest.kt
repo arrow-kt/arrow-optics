@@ -1,6 +1,5 @@
 package arrow.optics
 
-import arrow.core.MapInstances
 import arrow.core.None
 import arrow.core.k
 import arrow.core.test.UnitSpec
@@ -100,15 +99,15 @@ class BoundedTest : UnitSpec() {
     }
 
     "Working with At in Optics should be same as in DSL" {
-      MapInstances.at<Keys, String>().run {
-        Db.content.at(MapInstances.at(), One).set(db, None)
-      } shouldBe (Db.content compose MapInstances.at<Keys, String>().at(One)).set(db, None)
+      Map::class.at<Keys, String>().run {
+        Db.content.at(Map::class.at(), One).set(db, None)
+      } shouldBe (Db.content compose Map::class.at<Keys, String>().at(One)).set(db, None)
     }
 
     "Working with Each in Optics should be same as in DSL" {
-      MapInstances.each<Keys, String>().run {
+      Map::class.each<Keys, String>().run {
         Db.content.every.modify(db, String::toUpperCase)
-      } shouldBe (Db.content compose MapInstances.traversal()).modify(db, String::toUpperCase)
+      } shouldBe (Db.content compose Map::class.traversal()).modify(db, String::toUpperCase)
     }
   }
 }

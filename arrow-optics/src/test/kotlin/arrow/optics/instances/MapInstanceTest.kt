@@ -1,7 +1,6 @@
 package arrow.optics.instances
 
 import arrow.core.ListK
-import arrow.core.MapInstances
 import arrow.core.Option
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.monoid
@@ -29,7 +28,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapInstances.each<Int, String>().each(),
+        traversal = Map::class.each<Int, String>().each(),
         aGen = Gen.map(Gen.int(), Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -41,7 +40,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapInstances.each<Int, String>().each(),
+        traversal = Map::class.each<Int, String>().each(),
         aGen = Gen.map(Gen.int(), Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -53,7 +52,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapInstances.filterIndex<Char, Int>().filter { true },
+        traversal = Map::class.filterIndex<Char, Int>().filter { true },
         aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -65,7 +64,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapInstances.filterIndex<Char, Int>().filter { true },
+        traversal = Map::class.filterIndex<Char, Int>().filter { true },
         aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -77,7 +76,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.string().map { MapInstances.index<String, Int>().index(it) },
+        optionalGen = Gen.string().map { Map::class.index<String, Int>().index(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -88,7 +87,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.string().map { MapInstances.index<String, Int>().index(it) },
+        optionalGen = Gen.string().map { Map::class.index<String, Int>().index(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -99,7 +98,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { MapInstances.at<String, Int>().at(it) },
+        lensGen = Gen.string().map { Map::class.at<String, Int>().at(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.option(Gen.int()),
         funcGen = Gen.functionAToB(Gen.option(Gen.int())),
@@ -111,7 +110,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { MapInstances.at<String, Int>().at(it) },
+        lensGen = Gen.string().map { Map::class.at<String, Int>().at(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.option(Gen.int()),
         funcGen = Gen.functionAToB(Gen.option(Gen.int())),

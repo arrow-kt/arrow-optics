@@ -1,7 +1,6 @@
 package arrow.optics.instances
 
 import arrow.core.ListK
-import arrow.core.MapInstances
 import arrow.core.NonEmptyList
 import arrow.core.Option
 import arrow.core.extensions.eq
@@ -75,7 +74,7 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = MapInstances.filterIndex<Char, Int>().filter { true },
+        traversal = Map::class.filterIndex<Char, Int>().filter { true },
         aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -87,7 +86,7 @@ class FilterIndexInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = FilterMapIndex<Char, Int>().filter { true },
+        traversal = Map::class.filterIndex<Char, Int>().filter { true },
         aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
