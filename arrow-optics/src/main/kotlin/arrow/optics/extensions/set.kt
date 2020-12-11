@@ -1,7 +1,6 @@
 package arrow.optics.extensions
 
 import arrow.core.SetExtensions
-import arrow.optics.Lens
 import arrow.optics.PLens
 import arrow.optics.typeclasses.At
 import arrow.typeclasses.Eq
@@ -12,26 +11,17 @@ import kotlin.reflect.KClass
 /**
  * [At] instance definition for [Set].
  */
-interface SetAt<A> : At<Set<A>, A, Boolean> {
-  override fun at(i: A): Lens<Set<A>, Boolean> = PLens(
+inline fun <A> setAt(): At<Set<A>, A, Boolean> = At { i ->
+  PLens(
     get = { it.contains(i) },
     set = { s, b -> (if (b) s + i else s - i) }
   )
-
-  companion object {
-    /**
-     * Operator overload to instantiate typeclass instance.
-     *
-     * @return [Index] instance for [String]
-     */
-    operator fun <A> invoke() = object : SetAt<A> {}
-  }
 }
 
 @Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.at()"))
-fun <A> SetExtensions.at(): SetAt<A> = SetAt()
+fun <A> SetExtensions.at(): At<Set<A>, A, Boolean> = setAt()
 
-fun <A> KClass<Set<*>>.at(): SetAt<A> = SetAt()
+fun <A> KClass<Set<*>>.at(): At<Set<A>, A, Boolean> = setAt()
 
 // TODO: Move to Arrow Core
 interface SetEq<A> : Eq<Set<A>> {

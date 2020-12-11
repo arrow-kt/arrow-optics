@@ -29,3 +29,5 @@ interface EitherEach<L, R> : Each<Either<L, R>, R> {
   override fun each(): Traversal<Either<L, R>, R> =
     Either.traversal()
 }
+
+inline fun <L, R> Either<L, R>.each(): Each<Either<L, R>, R> = Each { Either.traversal() }

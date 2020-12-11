@@ -3,7 +3,7 @@ package arrow.optics.instances
 import arrow.core.extensions.eq
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import arrow.optics.extensions.SetAt
+import arrow.optics.extensions.setAt
 import arrow.optics.extensions.at
 import arrow.optics.extensions.eq
 import arrow.optics.test.laws.LensLaws
@@ -34,7 +34,7 @@ class SetInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { SetAt<String>().at(it) },
+        lensGen = Gen.string().map { setAt<String>().at(it) },
         aGen = Gen.set(Gen.string()),
         bGen = Gen.bool(),
         funcGen = Gen.functionAToB(Gen.bool()),

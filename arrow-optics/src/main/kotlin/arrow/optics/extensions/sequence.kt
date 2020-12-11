@@ -77,11 +77,11 @@ interface SequenceIndex<A> : Index<Sequence<A>, Int, A> {
   )
 
   companion object {
-    operator fun <A> invoke(): SequenceIndex<A> = object : SequenceIndex<A> {}
+    operator fun <A> invoke(): Index<Sequence<A>, Int, A> = object : SequenceIndex<A> {}
   }
 }
 
-fun <A> KClass<Sequence<*>>.index(): SequenceIndex<A> = SequenceIndex()
+fun <A> KClass<Sequence<*>>.index(): Index<Sequence<A>, Int, A> = SequenceIndex()
 
 interface SequenceEq<A> : Eq<Sequence<A>> {
   fun EQA(): Eq<A>

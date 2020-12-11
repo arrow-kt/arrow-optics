@@ -28,3 +28,5 @@ interface OptionEach<A> : Each<Option<A>, A> {
   override fun each(): Traversal<Option<A>, A> =
     Option.traversal()
 }
+
+inline fun <A> Option<A>.each(): Each<Option<A>, A> = Each { Option.traversal() }
