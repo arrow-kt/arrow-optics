@@ -1,6 +1,7 @@
 package arrow.optics.extensions
 
 import arrow.Kind
+import arrow.core.Predicate
 import arrow.core.extensions.sequence.traverse.traverse
 import arrow.core.fix
 import arrow.core.k
@@ -66,6 +67,9 @@ interface SequenceFilterIndex<A> : FilterIndex<Sequence<A>, Int, A> {
 
 fun <A> KClass<Sequence<*>>.filterIndex(): SequenceFilterIndex<A> = SequenceFilterIndex()
 
+fun <A> KClass<Sequence<*>>.filter(p: Predicate<Int>): Traversal<Sequence<A>, A> =
+  Sequence::class.filterIndex<A>().filter(p)
+
 /**
  * [Index] instance definition for [SequenceK].
  */
@@ -77,11 +81,13 @@ interface SequenceIndex<A> : Index<Sequence<A>, Int, A> {
   )
 
   companion object {
-    operator fun <A> invoke(): SequenceIndex<A> = object : SequenceIndex<A> {}
+    operator fun <A> invoke(): Index<Sequence<A>, Int, A> = object : SequenceIndex<A> {}
   }
 }
 
-fun <A> KClass<Sequence<*>>.index(): SequenceIndex<A> = SequenceIndex()
+fun <A> KClass<Sequence<*>>.index(): Index<Sequence<A>, Int, A> = SequenceIndex()
+
+fun <A> KClass<Sequence<*>>.index(i: Int): Optional<Sequence<A>, A> = Sequence::class.index<A>().index(i)
 
 interface SequenceEq<A> : Eq<Sequence<A>> {
   fun EQA(): Eq<A>

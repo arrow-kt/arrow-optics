@@ -29,10 +29,8 @@ fun interface FilterIndex<S, I, A> {
     /**
      * Lift an instance of [FilterIndex] using an [Iso]
      */
-    fun <S, A, I, B> fromIso(FI: FilterIndex<A, I, B>, iso: Iso<S, A>): FilterIndex<S, I, B> = object : FilterIndex<S, I, B> {
-      override fun filter(p: Predicate<I>): Traversal<S, B> =
-        iso compose FI.filter(p)
-    }
+    fun <S, A, I, B> fromIso(FI: FilterIndex<A, I, B>, iso: Iso<S, A>): FilterIndex<S, I, B> =
+      FilterIndex { p -> iso compose FI.filter(p) }
 
     /**
      * Create an instance of [FilterIndex] from a [Traverse] and a function `Kind<S, A>) -> Kind<S, Tuple2<A, Int>>`

@@ -6,9 +6,12 @@ import arrow.core.right
 import arrow.core.toT
 import arrow.core.NonEmptyList
 import arrow.extension
+import arrow.optics.Lens
 import arrow.optics.Optional
 import arrow.optics.POptional
 import arrow.optics.Traversal
+import arrow.optics.extensions.nonemptylist.filterIndex.filterIndex
+import arrow.optics.extensions.nonemptylist.index.index
 import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
@@ -34,6 +37,8 @@ interface NonEmptyListEach<A> : Each<NonEmptyList<A>, A> {
     NonEmptyList.traversal()
 }
 
+inline fun <A> NonEmptyList<A>.each(): Each<NonEmptyList<A>, A> = Each { NonEmptyList.traversal() }
+
 /**
  * [FilterIndex] instance definition for [NonEmptyList].
  */
@@ -46,6 +51,8 @@ interface NonEmptyListFilterIndex<A> : FilterIndex<NonEmptyList<A>, Int, A> {
         .traverse(FA) { (a, j) -> if (p(j)) f(a) else FA.just(a) }
   }
 }
+
+fun <A> NonEmptyList.Companion.filter(p: Function1<Int, Boolean>): Traversal<NonEmptyList<A>, A> = NonEmptyList.filterIndex<A>().filter(p)
 
 /**
  * [Index] instance definition for [NonEmptyList].
@@ -61,3 +68,8 @@ interface NonEmptyListIndex<A> : Index<NonEmptyList<A>, Int, A> {
     }
   )
 }
+
+fun <A> NonEmptyList.Companion.index(i: Int): Optional<NonEmptyList<A>, A> = NonEmptyList.index<A>().index(i)
+
+operator fun <A, T> Lens<T, NonEmptyList<A>>.get(i: Int): Optional<T, A> =
+  NonEmptyList.index<A>().run { this@get.get<T>(i) }
