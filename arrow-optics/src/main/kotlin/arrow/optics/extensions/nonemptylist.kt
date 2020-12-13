@@ -1,10 +1,9 @@
 package arrow.optics.extensions
 
-import arrow.Kind
+import arrow.core.NonEmptyList
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toT
-import arrow.core.NonEmptyList
 import arrow.extension
 import arrow.optics.Lens
 import arrow.optics.Optional
@@ -15,7 +14,6 @@ import arrow.optics.extensions.nonemptylist.index.index
 import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
-import arrow.typeclasses.Applicative
 
 /**
  * [Traversal] for [NonEmptyList] that has focus in each [A].
@@ -23,10 +21,10 @@ import arrow.typeclasses.Applicative
  * @receiver [NonEmptyList.Companion] to make it statically available.
  * @return [Traversal] with source [NonEmptyList] and focus every [A] of the source.
  */
-fun <A> NonEmptyList.Companion.traversal(): Traversal<NonEmptyList<A>, A> = object : Traversal<NonEmptyList<A>, A> {
-  override fun <F> modifyF(FA: Applicative<F>, s: NonEmptyList<A>, f: (A) -> Kind<F, A>): Kind<F, NonEmptyList<A>> =
-    s.traverse(FA, f)
-}
+fun <A> NonEmptyList.Companion.traversal(): Traversal<NonEmptyList<A>, A> =
+  Traversal { s, f ->
+    s.map(f)
+  }
 
 /**
  * [Each] instance definition for [NonEmptyList].
@@ -44,12 +42,12 @@ inline fun <A> NonEmptyList<A>.each(): Each<NonEmptyList<A>, A> = Each { NonEmpt
  */
 @extension
 interface NonEmptyListFilterIndex<A> : FilterIndex<NonEmptyList<A>, Int, A> {
-  override fun filter(p: (Int) -> Boolean): Traversal<NonEmptyList<A>, A> = object : Traversal<NonEmptyList<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: NonEmptyList<A>, f: (A) -> Kind<F, A>): Kind<F, NonEmptyList<A>> =
+  override fun filter(p: (Int) -> Boolean): Traversal<NonEmptyList<A>, A> =
+    Traversal { s, f ->
       s.all.mapIndexed { index, a -> a toT index }
         .let(NonEmptyList.Companion::fromListUnsafe)
-        .traverse(FA) { (a, j) -> if (p(j)) f(a) else FA.just(a) }
-  }
+        .map { (a, j) -> if (p(j)) f(a) else a }
+    }
 }
 
 fun <A> filter(p: Function1<Int, Boolean>): Traversal<NonEmptyList<A>, A> = NonEmptyList.filterIndex<A>().filter(p)

@@ -1,19 +1,16 @@
 package arrow.optics.extensions
 
-import arrow.Kind
 import arrow.core.Either
 import arrow.core.ListExtensions
 import arrow.core.Option
 import arrow.core.Tuple2
-import arrow.core.extensions.list.traverse.traverse
+import arrow.core.extensions.option.applicative.applicative
+import arrow.core.fix
 import arrow.core.identity
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
 import arrow.core.toT
-import arrow.core.extensions.option.applicative.applicative
-import arrow.core.k
-import arrow.core.fix
 import arrow.optics.POptional
 import arrow.optics.PPrism
 import arrow.optics.Prism
@@ -23,34 +20,16 @@ import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
-import arrow.typeclasses.Applicative
 import arrow.typeclasses.Eq
 import kotlin.reflect.KClass
 
 @Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.traversal()"))
-fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = ListTraversal()
+fun <A> ListExtensions.traversal(): Traversal<List<A>, A> =
+  List::class.traversal()
 
-fun <A> KClass<List<*>>.traversal(): Traversal<List<A>, A> = ListTraversal()
+fun <A> KClass<List<*>>.traversal(): Traversal<List<A>, A> =
+  Traversal { s, f -> s.map(f) }
 
-/**
- * [Traversal] for [List] that focuses in each [A] of the source [List].
- */
-interface ListTraversal<A> : Traversal<List<A>, A> {
-
-  override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
-    FA.run {
-      s.traverse(FA, f).map { it.fix() }
-    }
-
-  companion object {
-    /**
-     * Operator overload to instantiate typeclass instance.
-     *
-     * @return [Index] instance for [String]
-     */
-    operator fun <A> invoke() = object : ListTraversal<A> {}
-  }
-}
 
 @Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.each()"))
 fun <A> ListExtensions.each(): Each<List<A>, A> = listEach()
@@ -60,7 +39,7 @@ fun <A> KClass<List<*>>.each(): Each<List<A>, A> = listEach()
 /**
  * [Each] instance definition for [List] that summons a [Traversal] to focus in each [A] of the source [List].
  */
-inline fun <A> listEach(): Each<List<A>, A> = Each { ListTraversal() }
+inline fun <A> listEach(): Each<List<A>, A> = Each { List::class.traversal() }
 
 @Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.filterIndex()"))
 fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterIndex()
@@ -71,11 +50,10 @@ fun <A> KClass<List<*>>.filterIndex(): FilterIndex<List<A>, Int, A> = listFilter
  * [FilterIndex] instance definition for [List].
  */
 inline fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
-  object : Traversal<List<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
-      s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
-        if (p(j)) f(a) else FA.just(a)
-      }
+  Traversal { s, f ->
+    s.mapIndexed { index, a -> a toT index }.map { (a, j) ->
+      if (p(j)) f(a) else a
+    }
   }
 }
 

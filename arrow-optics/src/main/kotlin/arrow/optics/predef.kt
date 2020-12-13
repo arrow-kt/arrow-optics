@@ -12,22 +12,19 @@ internal object AndMonoid : Monoid<Boolean> {
   override fun empty(): Boolean = true
 }
 
-internal sealed class First
-internal sealed class Last
 
 @PublishedApi
-internal fun <A> firstOptionMonoid(): Monoid<Const<Option<A>, First>> = object : Monoid<Const<Option<A>, First>> {
+internal fun <A> firstOptionMonoid(): Monoid<Option<A>> = object : Monoid<Option<A>> {
+  override fun empty(): Option<A> = None
 
-  override fun empty(): Const<Option<A>, First> = Const(None)
-
-  override fun Const<Option<A>, First>.combine(b: Const<Option<A>, First>): Const<Option<A>, First> =
-    if (value().isDefined()) this else b
+  override fun Option<A>.combine(b: Option<A>): Option<A> =
+    if (isDefined()) this else b
 }
 
-internal fun <A> lastOptionMonoid(): Monoid<Const<Option<A>, Last>> = object : Monoid<Const<Option<A>, Last>> {
+@PublishedApi
+internal fun <A> lastOptionMonoid(): Monoid<Option<A>> = object : Monoid<Option<A>> {
+  override fun empty(): Option<A> = None
 
-  override fun empty(): Const<Option<A>, Last> = Const(None)
-
-  override fun Const<Option<A>, Last>.combine(b: Const<Option<A>, Last>): Const<Option<A>, Last> =
-    if (b.value().isDefined()) b else this
+  override fun Option<A>.combine(b: Option<A>): Option<A> =
+    if (b.isDefined()) b else this
 }

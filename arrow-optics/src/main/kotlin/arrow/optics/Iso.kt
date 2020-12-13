@@ -250,11 +250,8 @@ interface PIso<S, T, A, B> {
   /**
    * View a [PIso] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      f(get(s)).map(this@PIso::reverseGet)
-    }
-  }
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f -> reverseGet(f(get(s))) }
 
   /**
    * Check if the focus satisfies the predicate

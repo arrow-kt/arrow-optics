@@ -197,11 +197,8 @@ interface PLens<S, T, A, B> {
   /**
    * View a [PLens] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      f(get(s)).map { b -> this@PLens.set(s, b) }
-    }
-  }
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f -> set(s, f(get(s))) }
 
   /**
    * Modify the focus of s [PLens] using s function `(A) -> B`

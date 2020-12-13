@@ -1,19 +1,18 @@
 package arrow.optics.extensions
 
-import arrow.Kind
 import arrow.core.Either
+import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Tuple2
+import arrow.core.extensions.option.applicative.applicative
+import arrow.core.fix
 import arrow.core.identity
+import arrow.core.k
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
 import arrow.core.toT
-import arrow.core.ListK
-import arrow.core.k
-import arrow.core.fix
 import arrow.extension
-import arrow.core.extensions.option.applicative.applicative
 import arrow.optics.Optional
 import arrow.optics.POptional
 import arrow.optics.PPrism
@@ -24,7 +23,6 @@ import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
-import arrow.typeclasses.Applicative
 
 /**
  * [Traversal] for [ListK] that has focus in each [A].
@@ -32,10 +30,8 @@ import arrow.typeclasses.Applicative
  * @receiver [ListK.Companion] to make it statically available.
  * @return [Traversal] with source [ListK] and focus every [A] of the source.
  */
-fun <A> ListK.Companion.traversal(): Traversal<ListK<A>, A> = object : Traversal<ListK<A>, A> {
-  override fun <F> modifyF(FA: Applicative<F>, s: ListK<A>, f: (A) -> Kind<F, A>): Kind<F, ListK<A>> =
-    s.traverse(FA, f)
-}
+fun <A> ListK.Companion.traversal(): Traversal<ListK<A>, A> =
+  Traversal { s, f -> s.map(f) }
 
 /**
  * [Each] instance definition for [ListK].
@@ -51,13 +47,12 @@ interface ListKEach<A> : Each<ListK<A>, A> {
  */
 @extension
 interface ListKFilterIndex<A> : FilterIndex<ListK<A>, Int, A> {
-  override fun filter(p: (Int) -> Boolean): Traversal<ListK<A>, A> = object : Traversal<ListK<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: ListK<A>, f: (A) -> Kind<F, A>): Kind<F, ListK<A>> = FA.run {
-      s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
-        if (p(j)) f(a) else just(a)
+  override fun filter(p: (Int) -> Boolean): Traversal<ListK<A>, A> =
+    Traversal { s, f ->
+      s.mapIndexed { index, a -> a toT index }.k().map { (a, j) ->
+        if (p(j)) f(a) else a
       }
     }
-  }
 }
 
 /**

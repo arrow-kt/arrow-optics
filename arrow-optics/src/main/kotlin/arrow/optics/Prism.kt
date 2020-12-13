@@ -2,6 +2,7 @@ package arrow.optics
 
 import arrow.Kind
 import arrow.core.Either
+import arrow.core.Id
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
@@ -11,6 +12,7 @@ import arrow.core.flatMap
 import arrow.core.getOrElse
 import arrow.core.identity
 import arrow.core.toT
+import arrow.core.value
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Eq
 
@@ -49,11 +51,12 @@ interface PPrism<S, T, A, B> {
      * Invoke operator overload to create a [PPrism] of type `S` with focus `A`.
      * Can also be used to construct [Prism]
      */
-    operator fun <S, T, A, B> invoke(getOrModify: (S) -> Either<T, A>, reverseGet: (B) -> T) = object : PPrism<S, T, A, B> {
-      override fun getOrModify(s: S): Either<T, A> = getOrModify(s)
+    operator fun <S, T, A, B> invoke(getOrModify: (S) -> Either<T, A>, reverseGet: (B) -> T) =
+      object : PPrism<S, T, A, B> {
+        override fun getOrModify(s: S): Either<T, A> = getOrModify(s)
 
-      override fun reverseGet(b: B): T = reverseGet(b)
-    }
+        override fun reverseGet(b: B): T = reverseGet(b)
+      }
 
     /**
      * A [PPrism] that checks for equality with a given value [a]
@@ -164,7 +167,11 @@ interface PPrism<S, T, A, B> {
    * Create a sum of the [PPrism] and a type [C]
    */
   fun <C> left(): PPrism<Either<S, C>, Either<T, C>, Either<A, C>, Either<B, C>> = PPrism(
-    { it.fold({ a -> getOrModify(a).bimap({ Either.Left(it) }, { Either.Left(it) }) }, { c -> Either.Right(Either.Right(c)) }) },
+    {
+      it.fold(
+        { a -> getOrModify(a).bimap({ Either.Left(it) }, { Either.Left(it) }) },
+        { c -> Either.Right(Either.Right(c)) })
+    },
     {
       when (it) {
         is Either.Left -> Either.Left(reverseGet(it.a))
@@ -177,7 +184,11 @@ interface PPrism<S, T, A, B> {
    * Create a sum of a type [C] and the [PPrism]
    */
   fun <C> right(): PPrism<Either<C, S>, Either<C, T>, Either<C, A>, Either<C, B>> = PPrism(
-    { it.fold({ c -> Either.Right(Either.Left(c)) }, { s -> getOrModify(s).bimap({ Either.Right(it) }, { Either.Right(it) }) }) },
+    {
+      it.fold(
+        { c -> Either.Right(Either.Left(c)) },
+        { s -> getOrModify(s).bimap({ Either.Right(it) }, { Either.Right(it) }) })
+    },
     { it.map(this::reverseGet) }
   )
 
@@ -259,12 +270,8 @@ interface PPrism<S, T, A, B> {
   /**
    * View a [PPrism] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      getOrModify(s).fold(
-        ::just
-      ) { f(it).map(this@PPrism::reverseGet) }
-    }
+  fun asTraversal(): PTraversal<S, T, A, B> = PTraversal { s, f ->
+    getOrModify(s).fold(::identity) { reverseGet(f(it)) }
   }
 }
 

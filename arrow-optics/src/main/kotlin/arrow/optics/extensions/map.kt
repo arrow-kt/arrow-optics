@@ -4,6 +4,7 @@ import arrow.Kind
 import arrow.core.MapInstances
 import arrow.core.Option
 import arrow.core.Predicate
+import arrow.core.extensions.map.functor.map
 import arrow.core.left
 import arrow.core.right
 import arrow.core.getOption
@@ -15,7 +16,6 @@ import arrow.optics.typeclasses.At
 import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
-import arrow.typeclasses.Applicative
 import kotlin.reflect.KClass
 
 @Deprecated("Obtain instance through Map class", ReplaceWith("Map::class.at()"))
@@ -39,27 +39,12 @@ inline fun <K, V> mapAt(): At<Map<K, V>, K, Option<V>> = At { i ->
 }
 
 @Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.traversal()"))
-fun <K, V> MapInstances.traversal(): Traversal<Map<K, V>, V> = MapTraversal()
+fun <K, V> MapInstances.traversal(): Traversal<Map<K, V>, V> =
+  Map::class.traversal()
 
-fun <K, V> KClass<Map<*, *>>.traversal(): Traversal<Map<K, V>, V> = MapTraversal()
+fun <K, V> KClass<Map<*, *>>.traversal(): Traversal<Map<K, V>, V> =
+  Traversal { s, f -> s.map(f) }
 
-/**
- * [Traversal] for [Map] that focuses in each [V] of the source [Map].
- */
-interface MapTraversal<K, V> : Traversal<Map<K, V>, V> {
-  override fun <F> modifyF(FA: Applicative<F>, s: Map<K, V>, f: (V) -> Kind<F, V>): Kind<F, Map<K, V>> = FA.run {
-    s.k().traverse(FA, f)
-  }
-
-  companion object {
-    /**
-     * Operator overload to instantiate typeclass instance.
-     *
-     * @return [Index] instance for [String]
-     */
-    operator fun <K, V> invoke(): MapTraversal<K, V> = object : MapTraversal<K, V> {}
-  }
-}
 
 @Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.each()"))
 fun <K, V> MapInstances.each(): Each<Map<K, V>, V> = mapEach()
@@ -69,7 +54,7 @@ fun <K, V> KClass<Map<*, *>>.each(): Each<Map<K, V>, V> = mapEach()
 /**
  * [Each] instance definition for [Map].
  */
-inline fun <K, V> mapEach(): Each<Map<K, V>, V> = Each { MapTraversal() }
+inline fun <K, V> mapEach(): Each<Map<K, V>, V> = Each { Map::class.traversal() }
 
 @Deprecated("Instance should be obtained through Map class", ReplaceWith("Map::class.filterIndex()"))
 fun <K, V> MapInstances.filterIndex(): FilterIndex<Map<K, V>, K, V> = FilterMapIndex()
@@ -83,15 +68,12 @@ typealias filterMapIndex<K, V> = FilterMapIndex<K, V>
  * [FilterIndex] instance definition for [Map].
  */
 interface FilterMapIndex<K, V> : FilterIndex<Map<K, V>, K, V> {
-  override fun filter(p: Predicate<K>) = object : Traversal<Map<K, V>, V> {
-    override fun <F> modifyF(FA: Applicative<F>, s: Map<K, V>, f: (V) -> Kind<F, V>): Kind<F, Map<K, V>> = FA.run {
-      s.toList().k().traverse(FA) { (k, v) ->
-        (if (p(k)) f(v) else just(v)).map {
-          k to it
-        }
-      }.map { it.toMap() }
+  override fun filter(p: Predicate<K>) =
+    Traversal<Map<K, V>, V> { s, f ->
+      s.toList().map { (k, v) ->
+        k to (if (p(k)) f(v) else v)
+      }.toMap()
     }
-  }
 
   companion object {
     /**

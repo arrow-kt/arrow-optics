@@ -29,25 +29,32 @@ fun interface FilterIndex<S, I, A> {
     /**
      * Lift an instance of [FilterIndex] using an [Iso]
      */
-    fun <S, A, I, B> fromIso(FI: FilterIndex<A, I, B>, iso: Iso<S, A>): FilterIndex<S, I, B> = object : FilterIndex<S, I, B> {
-      override fun filter(p: Predicate<I>): Traversal<S, B> =
-        iso compose FI.filter(p)
-    }
+    fun <S, A, I, B> fromIso(FI: FilterIndex<A, I, B>, iso: Iso<S, A>): FilterIndex<S, I, B> =
+      object : FilterIndex<S, I, B> {
+        override fun filter(p: Predicate<I>): Traversal<S, B> =
+          iso compose FI.filter(p)
+      }
 
     /**
      * Create an instance of [FilterIndex] from a [Traverse] and a function `Kind<S, A>) -> Kind<S, Tuple2<A, Int>>`
      */
-    fun <S, A> fromTraverse(zipWithIndex: (Kind<S, A>) -> Kind<S, Tuple2<A, Int>>, traverse: Traverse<S>): FilterIndex<Kind<S, A>, Int, A> = object : FilterIndex<Kind<S, A>, Int, A> {
-      override fun filter(p: Predicate<Int>): Traversal<Kind<S, A>, A> = object : Traversal<Kind<S, A>, A> {
-        override fun <F> modifyF(FA: Applicative<F>, s: Kind<S, A>, f: (A) -> Kind<F, A>): Kind<F, Kind<S, A>> =
+    fun <S, A> fromTraverse(
+      zipWithIndex: (Kind<S, A>) -> Kind<S, Tuple2<A, Int>>,
+      traverse: Traverse<S>
+    ): FilterIndex<Kind<S, A>, Int, A> =
+      FilterIndex { p ->
+        Traversal { s, f ->
           traverse.run {
-            FA.run {
-              zipWithIndex(s).traverse(this) { (a, j) ->
-                if (p(j)) f(a) else just(a)
-              }
+            zipWithIndex(s).map { (a, j) ->
+              if (p(j)) f(a) else a
             }
           }
+        }
       }
-    }
   }
 }
+
+
+
+
+

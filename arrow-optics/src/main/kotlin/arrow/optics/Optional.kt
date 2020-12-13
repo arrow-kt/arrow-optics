@@ -2,14 +2,17 @@ package arrow.optics
 
 import arrow.Kind
 import arrow.core.Either
+import arrow.core.Id
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.Tuple2
+import arrow.core.extensions.id.applicative.applicative
 import arrow.core.flatMap
 import arrow.core.getOrElse
 import arrow.core.identity
 import arrow.core.toT
+import arrow.core.value
 import arrow.typeclasses.Applicative
 
 /**
@@ -88,7 +91,10 @@ interface POptional<S, T, A, B> {
      * Invoke operator overload to create a [POptional] of type `S` with focus `A`.
      * Can also be used to construct [Optional]
      */
-    operator fun <S, T, A, B> invoke(getOrModify: (source: S) -> Either<T, A>, set: (source: S, focus: B) -> T): POptional<S, T, A, B> = object : POptional<S, T, A, B> {
+    operator fun <S, T, A, B> invoke(
+      getOrModify: (source: S) -> Either<T, A>,
+      set: (source: S, focus: B) -> T
+    ): POptional<S, T, A, B> = object : POptional<S, T, A, B> {
       override fun getOrModify(source: S): Either<T, A> = getOrModify(source)
 
       override fun set(source: S, focus: B): T = set(source, focus)
@@ -263,10 +269,10 @@ interface POptional<S, T, A, B> {
   /**
    * View a [POptional] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> =
-      this@POptional.modifyF(FA, s, f)
-  }
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f ->
+      this@POptional.modifyF(Id.applicative(), s) { Id(f(it)) }.value()
+    }
 
   /**
    * Modify the focus of a [POptional] with a function [f]

@@ -21,11 +21,10 @@ import arrow.typeclasses.Applicative
  * @receiver [String.Companion] to make it statically available.
  * @return [Traversal] with source [String] and foci every [Char] in the source.
  */
-fun String.Companion.traversal(): Traversal<String, Char> = object : Traversal<String, Char> {
-  override fun <F> modifyF(FA: Applicative<F>, s: String, f: (Char) -> Kind<F, Char>): Kind<F, String> = FA.run {
-    s.toList().k().traverse(FA, f).map { it.joinToString(separator = "") }
+fun String.Companion.traversal(): Traversal<String, Char> =
+  Traversal { s, f ->
+    s.map(f).joinToString("")
   }
-}
 
 /**
  * [String]'s [Each] instance
@@ -53,8 +52,8 @@ fun String.Companion.filterIndex(): FilterIndex<String, Int, Char> = stringFilte
  * [FilterIndex] instance for [String].
  * It allows filtering of every [Char] in a [String] by its index's position.
  */
-inline fun stringFilterIndex(): FilterIndex<String, Int, Char> = FilterIndex {
-  p -> String.toList() compose List::class.filterIndex<Char>().filter(p)
+inline fun stringFilterIndex(): FilterIndex<String, Int, Char> = FilterIndex { p ->
+  String.toList() compose List::class.filterIndex<Char>().filter(p)
 }
 
 /**

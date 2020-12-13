@@ -95,15 +95,5 @@ fun interface Each<S, A> {
     fun <S, A, B> fromIso(EA: Each<A, B>, iso: Iso<S, A>): Each<S, B> = object : Each<S, B> {
       override fun each(): Traversal<S, B> = iso compose EA.each()
     }
-
-    /**
-     * Create an instance of [Each] from a [Traverse]
-     *
-     * @param T [Traverse] to create [Each] instance from
-     * @return [Each] that provides [Traversal] created from [Traverse]
-     */
-    fun <S, A> fromTraverse(T: Traverse<S>): Each<Kind<S, A>, A> = object : Each<Kind<S, A>, A> {
-      override fun each(): Traversal<Kind<S, A>, A> = Traversal.fromTraversable(T)
-    }
   }
 }

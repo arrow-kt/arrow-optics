@@ -1,8 +1,5 @@
 package arrow.optics.extensions
 
-import arrow.Kind
-import arrow.core.extensions.sequence.traverse.traverse
-import arrow.core.fix
 import arrow.core.k
 import arrow.core.left
 import arrow.core.right
@@ -14,7 +11,6 @@ import arrow.optics.Traversal
 import arrow.optics.typeclasses.Each
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
-import arrow.typeclasses.Applicative
 import arrow.typeclasses.Eq
 import kotlin.reflect.KClass
 
@@ -24,11 +20,11 @@ import kotlin.reflect.KClass
  * @receiver [SequenceK.Companion] to make it statically available.
  * @return [Traversal] with source [SequenceK] and focus in every [A] of the source.
  */
-fun <A> KClass<Sequence<*>>.traversal(): Traversal<Sequence<A>, A> = object : Traversal<Sequence<A>, A> {
-  override fun <F> modifyF(FA: Applicative<F>, s: Sequence<A>, f: (A) -> Kind<F, A>): Kind<F, Sequence<A>> =
+fun <A> KClass<Sequence<*>>.traversal(): Traversal<Sequence<A>, A> =
+  Traversal { s, f ->
     // TODO: Revisit when Traversal has been refactored
-    FA.run { s.traverse(FA, f).map { it.fix().sequence } }
-}
+    s.map(f)
+  }
 
 /**
  * [Each] instance definition for [SequenceK].
@@ -51,13 +47,12 @@ fun <A> KClass<Sequence<*>>.each(): SequenceEach<A> = SequenceEach()
  */
 @extension
 interface SequenceFilterIndex<A> : FilterIndex<Sequence<A>, Int, A> {
-  override fun filter(p: (Int) -> Boolean): Traversal<Sequence<A>, A> = object : Traversal<Sequence<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: Sequence<A>, f: (A) -> Kind<F, A>): Kind<F, Sequence<A>> = FA.run {
-      s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
-        if (p(j)) f(a) else just(a)
+  override fun filter(p: (Int) -> Boolean): Traversal<Sequence<A>, A> =
+    Traversal { s, f ->
+      s.mapIndexed { index, a -> a toT index }.k().map { (a, j) ->
+        if (p(j)) f(a) else a
       }
     }
-  }
 
   companion object {
     operator fun <A> invoke(): SequenceFilterIndex<A> = object : SequenceFilterIndex<A> {}
