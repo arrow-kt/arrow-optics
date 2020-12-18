@@ -15,21 +15,20 @@ It is a generalization of an instance of [`Foldable`]({{'/arrow/typeclasses/fold
 Creating a `Fold` can be done by manually defining `foldMap`.
 
 ```kotlin:ank
-import arrow.core.*
-import arrow.optics.*
-import arrow.typeclasses.*
-import arrow.core.extensions.*
+import arrow.optics.Fold
 
 fun <T> nullableFold(): Fold<T?, T> = object : Fold<T?, T> {
-    override fun <R> foldMap(M: Monoid<R>, s: T?, f: (T) -> R): R =
-        s?.let(f) ?: M.empty()
+    override fun <R> foldMap(s: T?, empty: R, combine: (R, R) -> R, map: (T) -> R): R =
+        s?.let(map) ?: empty
 }
 ```
 
 Or you can get a `Fold` from any existing `Foldable`.
 
 ```kotlin:ank:silent
-import arrow.core.extensions.nonemptylist.foldable.*
+import arrow.core.NonEmptyList
+import arrow.core.NonEmptyListOf
+import arrow.core.extensions.nonemptylist.foldable.foldable
 
 val nonEmptyIntFold: Fold<NonEmptyListOf<Int>, Int> = Fold.fromFoldable(NonEmptyList.foldable())
 ```
@@ -40,6 +39,8 @@ val nonEmptyIntFold: Fold<NonEmptyListOf<Int>, Int> = Fold.fromFoldable(NonEmpty
 nullableFold<Int>().isEmpty(null)
 ```
 ```kotlin:ank
+import arrow.core.extensions.monoid
+
 nonEmptyIntFold.combineAll(Int.monoid(), NonEmptyList.of(1, 2, 3))
 ```
 ```kotlin:ank
