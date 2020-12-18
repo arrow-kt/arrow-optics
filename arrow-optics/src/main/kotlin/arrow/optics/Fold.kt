@@ -64,7 +64,7 @@ interface Fold<S, A> {
       override fun <R> foldMap(s: Kind<F, S>, empty: R, combine: (R, R) -> R, map: (S) -> R): R =
         foldable.run { s.foldMap(object : Monoid<R> {
           override fun empty(): R = empty
-          override fun R.combine(b: R): R  = combine(this, b)
+          override fun R.combine(b: R): R = combine(this, b)
         }, map) }
     }
 
