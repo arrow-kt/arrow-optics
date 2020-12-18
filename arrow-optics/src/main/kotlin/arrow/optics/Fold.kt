@@ -1,11 +1,16 @@
 package arrow.optics
 
+import arrow.Kind
 import arrow.core.Const
 import arrow.core.Either
+import arrow.core.ListK
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.extensions.listk.monoid.monoid
 import arrow.core.identity
+import arrow.typeclasses.Foldable
+import arrow.typeclasses.Monoid
 
 /**
  * A [Fold] is an optic that allows to focus into structure and get multiple results.
@@ -16,6 +21,10 @@ import arrow.core.identity
  * @param A the target of a [Fold]
  */
 interface Fold<S, A> {
+
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please provide the empty value and combine method for R instead", replaceWith = ReplaceWith("foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R)"))
+  fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R =
+    foldMap(s, M.empty(), { a, b -> M.run { a.combine(b) } }, f)
 
   /**
    * Map each target to a type R and use a Monoid to fold the results
@@ -30,8 +39,8 @@ interface Fold<S, A> {
      * [Fold] that takes either [S] or [S] and strips the choice of [S].
      */
     fun <S, R> codiagonal() = object : Fold<Either<S, S>, S> {
-      override fun <R> foldMap(s: Either<S, S>, empty: R, combine: (R, R) -> R, map: (S) -> R): R =
-        s.fold(map, map)
+  override fun <R> foldMap(s: Either<S, S>, empty: R, combine: (R, R) -> R, map: (S) -> R): R =
+    s.fold(map, map)
     }
 
     /**
@@ -47,6 +56,21 @@ interface Fold<S, A> {
      */
     fun <A, B> void() = POptional.void<A, B>().asFold()
 
+    /**
+     * Create a [Fold] from a [arrow.typeclasses.Foldable]
+     */
+    @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use the provided method for types that extend Iterable")
+    fun <F, S> fromFoldable(foldable: Foldable<F>) = object : Fold<Kind<F, S>, S> {
+      override fun <R> foldMap(s: Kind<F, S>, empty: R, combine: (R, R) -> R, map: (S) -> R): R =
+        foldable.run { s.foldMap(object : Monoid<R> {
+          override fun empty(): R = empty
+          override fun R.combine(b: R): R  = combine(this, b)
+        }, map) }
+    }
+
+    /**
+     * Create a [Fold] for a type that extends [kotlin.collections.Iterable]
+     */
     operator fun <S : Iterable<A>, A> invoke(): Fold<S, A> = object : Fold<S, A> {
       override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
         s.map(map).fold(empty, combine)
@@ -100,7 +124,19 @@ interface Fold<S, A> {
   /**
    * Fold using the given [Monoid] instance.
    */
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.", replaceWith = ReplaceWith("fun fold(s: S, empty: A, combine: (A, A) -> A): A"))
+  fun fold(M: Monoid<A>, s: S, empty: A): A = foldMap(M, s, ::identity)
+
+  /**
+   * Fold providing empty value and combine method for A.
+   */
   fun fold(s: S, empty: A, combine: (A, A) -> A): A = foldMap(s, empty, combine, ::identity)
+
+  /**
+   * Alias for fold.
+   */
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.", replaceWith = ReplaceWith("fun combineAll(s: S, empty: A, combine: (A, A) -> A): A"))
+  fun combineAll(M: Monoid<A>, s: S): A = foldMap(M, s, ::identity)
 
   /**
    * Alias for fold.
@@ -110,7 +146,8 @@ interface Fold<S, A> {
   /**
    * Get all targets of the [Fold]
    */
-  fun getAll(s: S): List<A> = foldMap(s, emptyList(), { a, b -> a + b }, ::listOf)
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
+  fun getAll(s: S): ListK<A> = foldMap(ListK.monoid(), s) { ListK.just(it) }
 
   /**
    * Join two [Fold] with the same target
