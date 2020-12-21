@@ -208,19 +208,19 @@ interface PTraversal<S, T, A, B> {
   /**
    * Fold using the given [Monoid] instance.
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun fold(M: Monoid<A>, s: S): A = foldMap(M, s, ::identity)
 
   /**
    * Alias for fold.
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun combineAll(M: Monoid<A>, s: S): A = fold(M, s)
 
   /**
    * Get all foci of the [PTraversal]
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun getAll(s: S): ListK<A> = foldMap(ListK.monoid(), s) { ListK(listOf(it)) }
 
   /**
@@ -231,34 +231,34 @@ interface PTraversal<S, T, A, B> {
   /**
    * Calculate the number of targets in the [PTraversal]
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun size(s: S): Int = foldMap(Int.monoid(), s) { 1 }
 
   /**
    * Check if there is no target
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun isEmpty(s: S): Boolean = foldMap(AndMonoid, s) { _ -> false }
 
   /**
    * Check if there is at least one target
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun nonEmpty(s: S): Boolean = !isEmpty(s)
 
   /**
    * Find the first target or [Option.None] if no targets
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun headOption(s: S): Option<A> = foldMap(firstOptionMonoid<A>(), s) { b -> Const(Some(b)) }.value()
 
   /**
    * Find the first target or [Option.None] if no targets
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun lastOption(s: S): Option<A> = foldMap(lastOptionMonoid<A>(), s) { b -> Const(Some(b)) }.value()
 
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun <U, V> choice(other: PTraversal<U, V, A, B>): PTraversal<Either<S, U>, Either<T, V>, A, B> = object : PTraversal<Either<S, U>, Either<T, V>, A, B> {
     override fun <F> modifyF(FA: Applicative<F>, s: Either<S, U>, f: (A) -> Kind<F, B>): Kind<F, Either<T, V>> = FA.run {
       s.fold(
@@ -271,7 +271,7 @@ interface PTraversal<S, T, A, B> {
   /**
    * Compose a [PTraversal] with a [PTraversal]
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = object : PTraversal<S, T, C, D> {
     override fun <F> modifyF(FA: Applicative<F>, s: S, f: (C) -> Kind<F, D>): Kind<F, T> =
       this@PTraversal.modifyF(FA, s) { b -> other.modifyF(FA, b, f) }
@@ -310,7 +310,7 @@ interface PTraversal<S, T, A, B> {
   /**
    * Plus operator overload to compose [PTraversal] with other optics
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   operator fun <C, D> plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
 
   operator fun <C, D> plus(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = compose(other)
@@ -327,7 +327,7 @@ interface PTraversal<S, T, A, B> {
 
   fun asSetter(): PSetter<S, T, A, B> = PSetter { s, f -> modify(s, f) }
 
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun asFold(): Fold<S, A> = object : Fold<S, A> {
     // TODO: Temporary while Traversal is not refactored
     override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
@@ -347,7 +347,7 @@ interface PTraversal<S, T, A, B> {
   /**
    * Find the first target matching the predicate
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun find(s: S, p: (A) -> Boolean): Option<A> = foldMap(firstOptionMonoid<A>(), s) { a ->
     if (p(a)) Const(Some(a))
     else Const(None)
@@ -356,7 +356,7 @@ interface PTraversal<S, T, A, B> {
   /**
    * Map each target to a Monoid and combine the results
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun <R> foldMap(s: S, f: (A) -> R, M: Monoid<R>): R =
     modifyF(Const.applicative(M), s) { b -> Const(f(b)) }.value()
 
@@ -370,12 +370,12 @@ interface PTraversal<S, T, A, B> {
    *
    * If there are no elements, the result is false.
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun exist(s: S, p: (A) -> Boolean): Boolean = find(s, p).fold({ false }, { true })
 
   /**
    * Check if forall targets satisfy the predicate
    */
-  @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
+  @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun forall(s: S, p: (A) -> Boolean): Boolean = foldMap(s, p, AndMonoid)
 }
