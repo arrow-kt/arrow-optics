@@ -37,7 +37,7 @@ interface NonEmptyListEach<A> : Each<NonEmptyList<A>, A> {
     NonEmptyList.traversal()
 }
 
-inline fun <A> NonEmptyList<A>.each(): Each<NonEmptyList<A>, A> = Each { NonEmptyList.traversal() }
+fun <A> NonEmptyList<A>.each(): Each<NonEmptyList<A>, A> = Each { NonEmptyList.traversal() }
 
 /**
  * [FilterIndex] instance definition for [NonEmptyList].

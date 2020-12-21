@@ -29,7 +29,7 @@ import arrow.typeclasses.Applicative
 import arrow.typeclasses.Eq
 import kotlin.reflect.KClass
 
-@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.traversal()"))
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.traversal<A>()"))
 fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = ListTraversal()
 
 fun <A> KClass<List<*>>.traversal(): Traversal<List<A>, A> = ListTraversal()
@@ -54,7 +54,7 @@ interface ListTraversal<A> : Traversal<List<A>, A> {
   }
 }
 
-@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.each()"))
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.each<A>()"))
 fun <A> ListExtensions.each(): Each<List<A>, A> = listEach()
 
 fun <A> KClass<List<*>>.each(): Each<List<A>, A> = listEach()
@@ -62,9 +62,9 @@ fun <A> KClass<List<*>>.each(): Each<List<A>, A> = listEach()
 /**
  * [Each] instance definition for [List] that summons a [Traversal] to focus in each [A] of the source [List].
  */
-inline fun <A> listEach(): Each<List<A>, A> = Each { List::class.traversal() }
+fun <A> listEach(): Each<List<A>, A> = Each { List::class.traversal() }
 
-@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.filterIndex()"))
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.filterIndex<A>()"))
 fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = List::class.filterIndex()
 
 fun <A> KClass<List<*>>.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterIndex()
@@ -72,7 +72,7 @@ fun <A> KClass<List<*>>.filterIndex(): FilterIndex<List<A>, Int, A> = listFilter
 /**
  * [FilterIndex] instance definition for [List].
  */
-inline fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
+fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
   object : Traversal<List<A>, A> {
     override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
       s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
@@ -84,7 +84,7 @@ inline fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p
 fun <A> KClass<List<*>>.filter(p: Predicate<Int>): Traversal<List<A>, A> =
   List::class.filterIndex<A>().filter(p)
 
-@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.index()"))
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.index<A>()"))
 fun <A> ListExtensions.index(): Index<List<A>, Int, A> = listIndex()
 
 fun <A> KClass<List<*>>.index(): Index<List<A>, Int, A> = listIndex()
@@ -94,14 +94,14 @@ fun <A> KClass<List<*>>.index(i: Int): Optional<List<A>, A> = List::class.index<
 /**
  * [Index] instance definition for [List].
  */
-inline fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
+fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
   POptional(
     getOrModify = { it.getOrNull(i)?.right() ?: it.left() },
     set = { l, a -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa } }
   )
 }
 
-@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.cons()"))
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.cons<A>()"))
 fun <A> ListExtensions.cons(): Cons<List<A>, A> = listCons()
 
 fun <A> KClass<List<*>>.cons(): Cons<List<A>, A> = listCons()
@@ -109,7 +109,7 @@ fun <A> KClass<List<*>>.cons(): Cons<List<A>, A> = listCons()
 /**
  * [Cons] instance definition for [List].
  */
-inline fun <A> listCons(): Cons<List<A>, A> = Cons {
+fun <A> listCons(): Cons<List<A>, A> = Cons {
   PPrism(
     getOrModify = { list -> list.firstOrNull()?.let { Tuple2(it, list.drop(1)) }?.right() ?: list.left() },
     reverseGet = { (a, aas) -> listOf(a) + aas }
@@ -124,7 +124,7 @@ fun <A> KClass<List<*>>.tailOption(): POptional<List<A>, List<A>, List<A>, List<
 
 fun <A> List<A>.uncons(): Option<Tuple2<A, List<A>>> = listCons<A>().run { this@uncons.uncons() }
 
-@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.snoc()"))
+@Deprecated("Instance should be obtained through List class", ReplaceWith("List::class.snoc<A>()"))
 fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = listSnoc()
 
 fun <A> KClass<List<*>>.snoc(): Snoc<List<A>, A> = listSnoc()
@@ -132,7 +132,7 @@ fun <A> KClass<List<*>>.snoc(): Snoc<List<A>, A> = listSnoc()
 /**
  * [Snoc] instance definition for [List].
  */
-inline fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
+fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
   object : Prism<List<A>, Tuple2<List<A>, A>> {
     override fun getOrModify(s: List<A>): Either<List<A>, Tuple2<List<A>, A>> =
       Option.applicative().mapN(Option.just(s.dropLast(1)), s.lastOrNull().toOption(), ::identity)

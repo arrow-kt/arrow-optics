@@ -29,4 +29,4 @@ interface OptionEach<A> : Each<Option<A>, A> {
     Option.traversal()
 }
 
-inline fun <A> Option.Companion.each(): Each<Option<A>, A> = Each { Option.traversal() }
+fun <A> Option.Companion.each(): Each<Option<A>, A> = Each { Option.traversal() }

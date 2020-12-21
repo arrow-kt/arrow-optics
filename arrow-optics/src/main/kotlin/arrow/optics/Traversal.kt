@@ -1,5 +1,3 @@
-@file:Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-
 package arrow.optics
 
 import arrow.Kind
@@ -19,10 +17,6 @@ import arrow.core.value
 import arrow.typeclasses.Applicative
 import arrow.typeclasses.Monoid
 import arrow.typeclasses.Traverse
-
-fun interface Iter<out A> {
-  fun iterator(): Iterator<A>
-}
 
 /**
  * [Traversal] is a type alias for [PTraversal] which fixes the type arguments
@@ -45,11 +39,6 @@ interface PTraversal<S, T, A, B> {
 
   @Deprecated("This method is deprecated, and will be removed in 0.13.0.")
   fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T>
-
-  /**
-   * Modify polymorphically the target of a [PTraversal] with a function [f]
-   */
-  fun modify(s: S, f: (A) -> B): T = modifyF(Id.applicative(), s) { b -> Id(f(b)) }.value()
 
   companion object {
     fun <S> id() = PIso.id<S>().asTraversal()
@@ -372,6 +361,11 @@ interface PTraversal<S, T, A, B> {
     modifyF(Const.applicative(M), s) { b -> Const(f(b)) }.value()
 
   /**
+   * Modify polymorphically the target of a [PTraversal] with a function [f]
+   */
+  fun modify(s: S, f: (A) -> B): T = modifyF(Id.applicative(), s) { b -> Id(f(b)) }.value()
+
+  /**
    * Check whether at least one element satisfies the predicate.
    *
    * If there are no elements, the result is false.
@@ -385,211 +379,3 @@ interface PTraversal<S, T, A, B> {
   @Deprecated("This method is deprecated, and will be removed in 0.13.0. Please use one of the methods constrained to types that extend either arrow.core.Iter or kotlin.collections.Iterable.")
   fun forall(s: S, p: (A) -> Boolean): Boolean = foldMap(s, p, AndMonoid)
 }
-/**
- * Map each target to a Monoid and combine the results
- */
-inline fun <S, T, A, B, R> PTraversal<S, T, A, B>.foldMap(empty: R, combine: (R, R) -> R, s: S, f: (A) -> R): R where S : Iter<A> =
-  Iterable { s.iterator() }.fold(empty, {r, a -> combine(r, f(a))})
-
-/**
- * Map each target to a Monoid and combine the results
- */
-inline fun <S, T, A, B, R> PTraversal<S, T, A, B>.foldMap(empty: R, combine: (R, R) -> R, s: S, f: (A) -> R): R where S : Iterable<A> =
-  s.fold(empty, {r, a -> combine(r, f(a))})
-
-/**
- * Fold using the given [Monoid] instance.
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.fold(empty: A, combine: (A, A) -> A, s: S): A where S : Iter<A> =
-  foldMap(empty, combine, s, ::identity)
-
-/**
- * Fold using the given [Monoid] instance.
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.fold(empty: A, combine: (A, A) -> A, s: S): A where S : Iterable<A> =
-  foldMap(empty, combine, s, ::identity)
-
-/**
- * Alias for fold.
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.combineAll(empty: A, combine: (A, A) -> A, s: S): A where S : Iter<A> =
-  fold(empty, combine, s)
-
-/**
- * Alias for fold.
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.combineAll(empty: A, combine: (A, A) -> A, s: S): A where S : Iterable<A> =
-  fold(empty, combine, s)
-
-/**
- * Get all foci of the [PTraversal]
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.getAll(s: S): List<A> where S : Iter<A> =
-  foldMap(emptyList(), { a, b -> a + b }, s, ::listOf)
-
-/**
- * Get all foci of the [PTraversal]
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.getAll(s: S): List<A> where S : Iterable<A> =
-  foldMap(emptyList(), { a, b -> a + b }, s, ::listOf)
-
-/**
- * Calculate the number of targets in the [PTraversal]
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.size(s: S): Int where S : Iter<A> =
-  foldMap(0, Int::plus, s, { 1 })
-
-/**
- * Calculate the number of targets in the [PTraversal]
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.size(s: S): Int where S : Iterable<A> =
-  foldMap(0, Int::plus, s, { 1 })
-
-/**
- * Check if there is no target
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.isEmpty(s: S): Boolean where S : Iter<A> =
-  foldMap(true, Boolean::and, s) { false }
-
-/**
- * Check if there is no target
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.isEmpty(s: S): Boolean where S : Iterable<A> =
-  foldMap(true, Boolean::and, s) { false }
-
-/**
- * Check if there is at least one target
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.nonEmpty(s: S): Boolean where S : Iter<A> = !isEmpty(s)
-
-/**
- * Check if there is at least one target
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.nonEmpty(s: S): Boolean where S : Iterable<A> = !isEmpty(s)
-
-/**
- * Find the first target or [Option.None] if no targets
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.headOption(s: S): Option<A> where S : Iter<A> =
-  foldMap(
-    firstOptionMonoid<A>().empty().value(),
-    { a, b -> firstOptionMonoid<A>().run { Const<Option<A>, First>(a).combine(Const(b)) }.value() }, s)
-  { b -> Some(b) }
-
-/**
- * Find the first target or [Option.None] if no targets
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.headOption(s: S): Option<A> where S : Iterable<A> =
-  foldMap(
-    firstOptionMonoid<A>().empty().value(),
-    { a, b -> firstOptionMonoid<A>().run { Const<Option<A>, First>(a).combine(Const(b)) }.value() }, s)
-  { b -> Some(b) }
-
-/**
- * Find the first target or [Option.None] if no targets
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.lastOption(s: S): Option<A> where S : Iter<A> =
-  foldMap(
-    lastOptionMonoid<A>().empty().value(),
-    { a, b -> lastOptionMonoid<A>().run { Const<Option<A>, Last>(a).combine(Const(b)) }.value() }, s)
-  { b -> Some(b) }
-
-/**
- * Find the first target or [Option.None] if no targets
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.lastOption(s: S): Option<A> where S : Iterable<A> =
-  foldMap(
-    lastOptionMonoid<A>().empty().value(),
-    { a, b -> lastOptionMonoid<A>().run { Const<Option<A>, Last>(a).combine(Const(b)) }.value() }, s)
-  { b -> Some(b) }
-
-/**
- * Find the first target matching the predicate
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.find(s: S, p: (A) -> Boolean): Option<A> where S : Iter<A> =
-  foldMap(
-    firstOptionMonoid<A>().empty().value(),
-    { a, b -> firstOptionMonoid<A>().run { Const<Option<A>, First>(a).combine(Const(b)) }.value() }, s) { a ->
-    if (p(a)) Some(a)
-    else None
-  }
-
-/**
- * Find the first target matching the predicate
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.find(s: S, p: (A) -> Boolean): Option<A> where S : Iterable<A> =
-  foldMap(
-    firstOptionMonoid<A>().empty().value(),
-    { a, b -> firstOptionMonoid<A>().run { Const<Option<A>, First>(a).combine(Const.just(b)) }.value() }, s) { a ->
-    if (p(a)) Some(a)
-    else None
-  }
-
-/**
- * Check whether at least one element satisfies the predicate.
- *
- * If there are no elements, the result is false.
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.exist(s: S, p: (A) -> Boolean): Boolean where S : Iter<A> =
-  find(s, p).fold({ false }, { true })
-
-/**
- * Check whether at least one element satisfies the predicate.
- *
- * If there are no elements, the result is false.
- */
-fun <S, T, A, B> PTraversal<S, T, A, B>.exist(s: S, p: (A) -> Boolean): Boolean where S : Iterable<A> =
-  find(s, p).fold({ false }, { true })
-
-/**
- * Check if forall targets satisfy the predicate
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.forall(s: S, p: (A) -> Boolean): Boolean where S : Iter<A> =
-  foldMap(true, Boolean::and, s, p)
-
-/**
- * Check if forall targets satisfy the predicate
- */
-inline fun <S, T, A, B> PTraversal<S, T, A, B>.forall(s: S, p: (A) -> Boolean): Boolean where S : Iterable<A> =
-  foldMap(true, Boolean::and, s, p)
-
-fun <S, T, A, B> PTraversal<S, T, A, B>.asFold(): Fold<S, A> where S : Iter<A> = object : Fold<S, A> {
-  override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
-    foldMap(
-      empty,
-      combine,
-      s,
-      map
-    )
-}
-
-@JvmName("asFoldForIterable")
-fun <S, T, A, B> PTraversal<S, T, A, B>.asFold(): Fold<S, A> where S : Iterable<A> = object : Fold<S, A> {
-  override fun <R> foldMap(s: S, empty: R, combine: (R, R) -> R, map: (A) -> R): R =
-    foldMap(
-      empty,
-      combine,
-      s,
-      map
-    )
-}
-
-/**
- * Compose a [PTraversal] with a [Fold]
- */
-infix fun <S, T, A, B, C> PTraversal<S, T, A, B>.compose(other: Fold<A, C>): Fold<S, C> where S : Iter<A> =
-  asFold() compose other
-
-/**
- * Compose a [PTraversal] with a [Fold]
- */
-@JvmName("composeFoldForIterable")
-infix fun <S, T, A, B, C> PTraversal<S, T, A, B>.compose(other: Fold<A, C>): Fold<S, C> where S : Iterable<A> =
-  asFold() compose other
-
-operator fun <S, T, A, B, C> PTraversal<S, T, A, B>.plus(other: Fold<A, C>): Fold<S, C> where S : Iter<A> =
-  compose(other)
-
-@JvmName("plusFoldForIterable")
-operator fun <S, T, A, B, C> PTraversal<S, T, A, B>.plus(other: Fold<A, C>): Fold<S, C> where S : Iterable<A> =
-  compose(other)

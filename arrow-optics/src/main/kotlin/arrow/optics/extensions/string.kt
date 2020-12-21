@@ -41,7 +41,7 @@ fun String.Companion.each(): Each<String, Char> = stringEach()
 /**
  * [Each] instance for [String].
  */
-inline fun stringEach(): Each<String, Char> = Each { String.traversal() }
+fun stringEach(): Each<String, Char> = Each { String.traversal() }
 
 /**
  * [String]'s [FilterIndex] instance
@@ -56,7 +56,7 @@ fun String.Companion.filterIndex(): FilterIndex<String, Int, Char> = stringFilte
  * [FilterIndex] instance for [String].
  * It allows filtering of every [Char] in a [String] by its index's position.
  */
-inline fun stringFilterIndex(): FilterIndex<String, Int, Char> = FilterIndex {
+fun stringFilterIndex(): FilterIndex<String, Int, Char> = FilterIndex {
   p -> String.toList() compose List::class.filterIndex<Char>().filter(p)
 }
 
@@ -76,7 +76,7 @@ fun String.Companion.index(): Index<String, Int, Char> = stringIndex()
  * [Index] instance for [String].
  * It allows access to every [Char] in a [String] by its index's position.
  */
-inline fun stringIndex(): Index<String, Int, Char> = Index { i ->
+fun stringIndex(): Index<String, Int, Char> = Index { i ->
   String.toList() compose List::class.index<Char>().index(i)
 }
 
@@ -87,7 +87,7 @@ fun String.Companion.index(i: Int): Optional<String, Char> = stringIndex().index
  */
 fun String.Companion.cons(): Cons<String, Char> = stringCons()
 
-inline fun stringCons(): Cons<String, Char> = Cons {
+fun stringCons(): Cons<String, Char> = Cons {
   Prism(
     getOrModify = { if (it.isNotEmpty()) Tuple2(it.first(), it.drop(1)).right() else it.left() },
     reverseGet = { (h, t) -> h + t }
@@ -107,7 +107,7 @@ fun String.uncons(): Option<Tuple2<Char, String>> = stringCons().run { this@unco
  */
 fun String.Companion.snoc(): Snoc<String, Char> = stringSnoc()
 
-inline fun stringSnoc(): Snoc<String, Char> = Snoc {
+fun stringSnoc(): Snoc<String, Char> = Snoc {
   Prism(
     getOrModify = { if (it.isNotEmpty()) Tuple2(it.dropLast(1), it.last()).right() else it.left() },
     reverseGet = { (i, l) -> i + l }

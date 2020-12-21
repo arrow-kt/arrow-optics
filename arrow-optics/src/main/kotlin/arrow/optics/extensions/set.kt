@@ -12,14 +12,14 @@ import kotlin.reflect.KClass
 /**
  * [At] instance definition for [Set].
  */
-inline fun <A> setAt(): At<Set<A>, A, Boolean> = At { i ->
+fun <A> setAt(): At<Set<A>, A, Boolean> = At { i ->
   PLens(
     get = { it.contains(i) },
     set = { s, b -> (if (b) s + i else s - i) }
   )
 }
 
-@Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.at()"))
+@Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.at<A>()"))
 fun <A> SetExtensions.at(): At<Set<A>, A, Boolean> = Set::class.at()
 
 fun <A> KClass<Set<*>>.at(): At<Set<A>, A, Boolean> = setAt()
@@ -48,7 +48,7 @@ interface SetEq<A> : Eq<Set<A>> {
   }
 }
 
-@Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.eq(eqa)"))
+@Deprecated("Instance should be obtained through Set class", ReplaceWith("Set::class.eq<A>(eqa)"))
 fun <A> SetExtensions.eq(eqa: Eq<A>): SetEq<A> = SetEq(eqa)
 
 fun <A> KClass<Set<*>>.eq(eqa: Eq<A>): SetEq<A> = SetEq(eqa)

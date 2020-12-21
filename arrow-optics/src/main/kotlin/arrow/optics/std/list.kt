@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 /**
  * [Optional] to safely operate on the head of a list
  */
-@Deprecated("Use List instead of ListK", ReplaceWith("List::class.head()"))
+@Deprecated("Use List instead of ListK", ReplaceWith("List::class.head<A>()"))
 fun <A> ListK.Companion.head(): Optional<List<A>, A> = Optional(
   getOption = { Option.fromNullable(it.firstOrNull()) },
   set = { list, newHead -> list.mapIndexed { index, value -> if (index == 0) newHead else value } }
@@ -27,7 +27,7 @@ fun <A> KClass<List<*>>.head(): Optional<List<A>, A> = Optional(
 /**
  * [Optional] to safely operate on the tail of a list
  */
-@Deprecated("Use List instead of ListK", ReplaceWith("List::class.tail()"))
+@Deprecated("Use List instead of ListK", ReplaceWith("List::class.tail<A>()"))
 fun <A> ListK.Companion.tail(): Optional<List<A>, List<A>> = Optional(
   getOption = { if (it.isEmpty()) None else Some(it.drop(1)) },
   set = { list, newTail ->
@@ -52,7 +52,7 @@ fun <A> KClass<List<*>>.tail(): Optional<List<A>, List<A>> = Optional(
 /**
  * [PIso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-@Deprecated("Use List instead of ListK", ReplaceWith("List::class.toPOptionNel()"))
+@Deprecated("Use List instead of ListK", ReplaceWith("List::class.toPOptionNel<A, B>()"))
 fun <A, B> ListK.Companion.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> = PIso(
   get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
   reverseGet = { optNel -> optNel.fold({ emptyList() }, NonEmptyList<B>::all) }
@@ -69,7 +69,7 @@ fun <A, B> KClass<List<*>>.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmpt
 /**
  * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-@Deprecated("Use List instead of ListK", ReplaceWith("List::class.toOptionNel()"))
+@Deprecated("Use List instead of ListK", ReplaceWith("List::class.toOptionNel<A>()"))
 fun <A> ListK.Companion.toOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = toPOptionNel()
 
 /**

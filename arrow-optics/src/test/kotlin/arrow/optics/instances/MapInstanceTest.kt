@@ -12,7 +12,7 @@ import arrow.core.test.generators.option
 import arrow.optics.extensions.at
 import arrow.optics.extensions.each
 import arrow.optics.extensions.eq
-import arrow.optics.extensions.filterIndex
+import arrow.optics.extensions.filter
 import arrow.optics.extensions.index
 import arrow.optics.test.generators.char
 import arrow.optics.test.laws.LensLaws
@@ -51,7 +51,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = Map::class.filterIndex<Char, Int>().filter { true },
+        traversal = Map::class.filter { true },
         aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -63,7 +63,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = Map::class.filterIndex<Char, Int>().filter { true },
+        traversal = Map::class.filter { true },
         aGen = Gen.map(Gen.char(), Gen.intSmall()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -75,7 +75,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.string().map { Map::class.index<String, Int>().index(it) },
+        optionalGen = Gen.string().map { Map::class.index(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -86,7 +86,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.string().map { Map::class.index<String, Int>().index(it) },
+        optionalGen = Gen.string().map { Map::class.index(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
@@ -97,7 +97,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { Map::class.at<String, Int>().at(it) },
+        lensGen = Gen.string().map { Map::class.at(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.option(Gen.int()),
         funcGen = Gen.functionAToB(Gen.option(Gen.int())),
@@ -109,7 +109,7 @@ class MapInstanceTest : UnitSpec() {
 
     testLaws(
       LensLaws.laws(
-        lensGen = Gen.string().map { Map::class.at<String, Int>().at(it) },
+        lensGen = Gen.string().map { Map::class.at(it) },
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.option(Gen.int()),
         funcGen = Gen.functionAToB(Gen.option(Gen.int())),

@@ -30,4 +30,4 @@ interface EitherEach<L, R> : Each<Either<L, R>, R> {
     Either.traversal()
 }
 
-inline fun <L, R> Either.Companion.each(): Each<Either<L, R>, R> = object : EitherEach<L, R>{}
+fun <L, R> Either.Companion.each(): Each<Either<L, R>, R> = object : EitherEach<L, R>{}

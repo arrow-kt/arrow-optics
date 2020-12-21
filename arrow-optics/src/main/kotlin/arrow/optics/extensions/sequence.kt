@@ -8,7 +8,6 @@ import arrow.core.k
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toT
-import arrow.extension
 import arrow.optics.Optional
 import arrow.optics.POptional
 import arrow.optics.Traversal
@@ -20,10 +19,9 @@ import arrow.typeclasses.Eq
 import kotlin.reflect.KClass
 
 /**
- * [Traversal] for [SequenceK] that has focus in each [A].
+ * [Traversal] for [Sequence] that has focus in each [A].
  *
- * @receiver [SequenceK.Companion] to make it statically available.
- * @return [Traversal] with source [SequenceK] and focus in every [A] of the source.
+ * @return [Traversal] with source [Sequence] and focus in every [A] of the source.
  */
 fun <A> KClass<Sequence<*>>.traversal(): Traversal<Sequence<A>, A> = object : Traversal<Sequence<A>, A> {
   override fun <F> modifyF(FA: Applicative<F>, s: Sequence<A>, f: (A) -> Kind<F, A>): Kind<F, Sequence<A>> =
@@ -32,60 +30,41 @@ fun <A> KClass<Sequence<*>>.traversal(): Traversal<Sequence<A>, A> = object : Tr
 }
 
 /**
- * [Each] instance definition for [SequenceK].
+ * [Each] instance definition for [Sequence].
  */
-@extension
-interface SequenceEach<A> : Each<Sequence<A>, A> {
-  @Suppress("UNCHECKED_CAST")
-  override fun each(): Traversal<Sequence<A>, A> =
-    Sequence::class.traversal()
+fun <A> sequenceEach(): Each<Sequence<A>, A> = Each { Sequence::class.traversal() }
 
-  companion object {
-    operator fun <A> invoke(): SequenceEach<A> = object : SequenceEach<A> {}
-  }
-}
-
-fun <A> KClass<Sequence<*>>.each(): SequenceEach<A> = SequenceEach()
+fun <A> KClass<Sequence<*>>.each(): Each<Sequence<A>, A> = sequenceEach<A>()
 
 /**
- * [FilterIndex] instance definition for [SequenceK].
+ * [FilterIndex] instance definition for [Sequence].
  */
-@extension
-interface SequenceFilterIndex<A> : FilterIndex<Sequence<A>, Int, A> {
-  override fun filter(p: (Int) -> Boolean): Traversal<Sequence<A>, A> = object : Traversal<Sequence<A>, A> {
+fun <A> sequenceFilterIndex(): FilterIndex<Sequence<A>, Int, A> = FilterIndex { p ->
+  object : Traversal<Sequence<A>, A> {
     override fun <F> modifyF(FA: Applicative<F>, s: Sequence<A>, f: (A) -> Kind<F, A>): Kind<F, Sequence<A>> = FA.run {
       s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
         if (p(j)) f(a) else just(a)
       }
     }
   }
-
-  companion object {
-    operator fun <A> invoke(): SequenceFilterIndex<A> = object : SequenceFilterIndex<A> {}
-  }
 }
 
-fun <A> KClass<Sequence<*>>.filterIndex(): SequenceFilterIndex<A> = SequenceFilterIndex()
+fun <A> KClass<Sequence<*>>.filterIndex(): FilterIndex<Sequence<A>, Int, A> = sequenceFilterIndex<A>()
 
 fun <A> KClass<Sequence<*>>.filter(p: Predicate<Int>): Traversal<Sequence<A>, A> =
   Sequence::class.filterIndex<A>().filter(p)
 
 /**
- * [Index] instance definition for [SequenceK].
+ * [Index] instance definition for [Sequence].
  */
-@extension
-interface SequenceIndex<A> : Index<Sequence<A>, Int, A> {
-  override fun index(i: Int): Optional<Sequence<A>, A> = POptional(
+fun <A> sequenceIndex(): Index<Sequence<A>, Int, A> = Index { i ->
+  POptional(
     getOrModify = { it.elementAtOrNull(i)?.right() ?: it.left() },
     set = { s, a -> s.mapIndexed { index, aa -> if (index == i) a else aa } }
   )
-
-  companion object {
-    operator fun <A> invoke(): Index<Sequence<A>, Int, A> = object : SequenceIndex<A> {}
-  }
 }
 
-fun <A> KClass<Sequence<*>>.index(): Index<Sequence<A>, Int, A> = SequenceIndex()
+fun <A> KClass<Sequence<*>>.index(): Index<Sequence<A>, Int, A> = sequenceIndex()
 
 fun <A> KClass<Sequence<*>>.index(i: Int): Optional<Sequence<A>, A> = Sequence::class.index<A>().index(i)
 
