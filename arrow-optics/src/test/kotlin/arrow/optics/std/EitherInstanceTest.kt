@@ -1,14 +1,14 @@
-package arrow.optics.instances
+package arrow.optics.std
 
 import arrow.core.Either
 import arrow.core.Option
 import arrow.core.ListK
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.optics.extensions.either.each.each
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.either
 import arrow.core.test.generators.functionAToB
+import arrow.optics.each
 import arrow.optics.test.laws.TraversalLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
