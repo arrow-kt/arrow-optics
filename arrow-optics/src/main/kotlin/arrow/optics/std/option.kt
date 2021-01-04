@@ -1,11 +1,15 @@
 package arrow.optics
 
+import arrow.Kind
 import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Right
 import arrow.core.Some
+import arrow.core.extensions.option.traverse.traverse
 import arrow.core.identity
+import arrow.optics.typeclasses.Each
+import arrow.typeclasses.Applicative
 
 /**
  * [PIso] that defines the equality between [Option] and the nullable platform type.
@@ -53,3 +57,29 @@ fun <A, B> Option.Companion.toPEither(): PIso<Option<A>, Option<B>, Either<Unit,
  * [Iso] that defines the equality between and [arrow.core.Option] and [arrow.core.Either]
  */
 fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> = toPEither()
+
+/**
+ * [Each] instance definition for [Option].
+ */
+@Suppress(
+  "NOTHING_TO_INLINE"
+)
+inline fun <A> Option.Companion.each(): Each<Option<A>, A> = Each { Option.traversal() }
+
+/**
+ * [Traversal] for [Option] that has focus in each [arrow.core.Some].
+ *
+ * @receiver [Option.Companion] to make it statically available.
+ * @return [Traversal] with source [Option] and focus in every [arrow.core.Some] of the source.
+ */
+fun <A> Option.Companion.traversal(): Traversal<Option<A>, A> =
+  object : Traversal<Option<A>, A> {
+    override fun <F> modifyF(FA: Applicative<F>, s: Option<A>, f: (A) -> Kind<F, A>): Kind<F, Option<A>> =
+      with(Option.traverse()) {
+        s.traverse(FA, f)
+      }
+  }
+
+fun <A> optionEach(): PTraversal<Option<A>, Option<A>, A, A> = Option
+  .each<A>()
+  .each()
