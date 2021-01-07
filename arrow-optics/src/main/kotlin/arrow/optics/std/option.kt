@@ -8,7 +8,6 @@ import arrow.core.Right
 import arrow.core.Some
 import arrow.core.extensions.option.traverse.traverse
 import arrow.core.identity
-import arrow.optics.typeclasses.Each
 import arrow.typeclasses.Applicative
 
 /**
@@ -57,14 +56,6 @@ fun <A, B> Option.Companion.toPEither(): PIso<Option<A>, Option<B>, Either<Unit,
  * [Iso] that defines the equality between and [arrow.core.Option] and [arrow.core.Either]
  */
 fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> = toPEither()
-
-/**
- * [Each] instance definition for [Option].
- */
-@Suppress(
-  "NOTHING_TO_INLINE"
-)
-inline fun <A> Option.Companion.each(): Each<Option<A>, A> = Each { Option.traversal() }
 
 /**
  * [Traversal] for [Option] that has focus in each [arrow.core.Some].

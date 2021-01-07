@@ -25,10 +25,10 @@ internal val each_singleton: Each<Option<Any?>, Any?> = optionEach()
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated. Use Option.each().each() instead",
+  "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-  "Option.each<A>().each()",
-    "arrow.core.Option", "arrow.optics.each"
+  "Option.traversal<A>()",
+  "arrow.core.Option", "arrow.optics.traversal"
   ),
   DeprecationLevel.WARNING
 )
@@ -41,10 +41,10 @@ fun <A> each(): PTraversal<Option<A>, Option<A>, A, A> = arrow.core.Option
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated. Use Option.each() instead",
+  "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "Option.each<A>()",
-    "arrow.optics.each"
+    "Option.traversal<A>()",
+    "arrow.core.Option", "arrow.optics.traversal"
   ),
   DeprecationLevel.WARNING
 )
