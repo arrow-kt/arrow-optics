@@ -7,8 +7,6 @@ import arrow.core.Valid
 import arrow.core.Validated
 import arrow.core.extensions.either.traverse.traverse
 import arrow.core.fix
-import arrow.optics.extensions.traversal
-import arrow.optics.typeclasses.Each
 import arrow.typeclasses.Applicative
 
 /**
