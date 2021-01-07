@@ -14,7 +14,7 @@ import arrow.typeclasses.Applicative
  * @return [Traversal] with source [Option] and focus in every [arrow.core.Some] of the source.
  */
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "@extension kinded projected functions are deprecated. Use Option.traversal() instead",
   ReplaceWith(
     "Option.traversal<A>()",
     "arrow.optics.traversal"
@@ -31,10 +31,10 @@ fun <A> Option.Companion.traversal(): Traversal<Option<A>, A> = object : Travers
  * [Each] instance definition for [Option].
  */
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "@extension kinded projected functions are deprecated. Use Option.each() instead",
   ReplaceWith(
     "Option.each<A>()",
-    "arrow.optics.each"
+    "arrow.core.Option", "arrow.optics.each"
   ),
   DeprecationLevel.WARNING
 )

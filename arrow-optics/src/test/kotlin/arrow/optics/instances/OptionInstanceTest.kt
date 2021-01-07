@@ -1,4 +1,4 @@
-package arrow.optics.std
+package arrow.optics.instances
 
 import arrow.core.Option
 import arrow.core.ListK

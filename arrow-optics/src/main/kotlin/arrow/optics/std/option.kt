@@ -79,7 +79,3 @@ fun <A> Option.Companion.traversal(): Traversal<Option<A>, A> =
         s.traverse(FA, f)
       }
   }
-
-fun <A> optionEach(): PTraversal<Option<A>, Option<A>, A, A> = Option
-  .each<A>()
-  .each()
