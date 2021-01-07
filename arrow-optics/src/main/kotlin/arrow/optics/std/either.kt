@@ -25,14 +25,6 @@ fun <A1, A2, B1, B2> Either.Companion.toPValidated(): PIso<Either<A1, B1>, Eithe
 fun <A, B> Either.Companion.toValidated(): Iso<Either<A, B>, Validated<A, B>> = toPValidated()
 
 /**
- * [Each] instance for [Either] that has focus in each [Either.Right].
- */
-@Suppress(
-  "NOTHING_TO_INLINE"
-)
-inline fun <L, R> Either.Companion.each(): Each<Either<L, R>, R> = Each { Either.traversal() }
-
-/**
  * [Traversal] for [Either] that has focus in each [Either.Right].
  *
  * @receiver [Either.Companion] to make it statically available.

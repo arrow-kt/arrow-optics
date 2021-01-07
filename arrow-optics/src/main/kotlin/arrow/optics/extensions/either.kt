@@ -15,8 +15,8 @@ import arrow.typeclasses.Applicative
  * @return [Traversal] with source [Either] and focus every [Either.Right] of the source.
  */
 @Deprecated(
-  "@extension kinded projected functions are deprecated. Use Either.traversal() instead",
-  ReplaceWith("Either.traversal<L, R>()", "arrow.optics.traversal"),
+  "arrow.optics.extension package is being deprecated, function is being moved to arrow.optics.traversal",
+  ReplaceWith("Either.traversal<L, R>()", "arrow.core.Either", "arrow.optics.traversal"),
   DeprecationLevel.WARNING)
 fun <L, R> Either.Companion.traversal(): Traversal<Either<L, R>, R> = object : Traversal<Either<L, R>, R> {
   override fun <F> modifyF(FA: Applicative<F>, s: Either<L, R>, f: (R) -> Kind<F, R>): Kind<F, Either<L, R>> = with(Either.traverse<L>()) {
@@ -28,7 +28,7 @@ fun <L, R> Either.Companion.traversal(): Traversal<Either<L, R>, R> = object : T
  * [Each] instance for [Either] that has focus in each [Either.Right].
  */
 @Deprecated(
-  "@extension kinded projected functions are deprecated. Use Either.each() instead",
-  ReplaceWith("Either.each<L, R>()", "arrow.core.Either", "arrow.optics.each"),
+  "Each is being deprecated. Use Traversal directly instead.",
+  ReplaceWith("Either.traversal<L, R>()", "arrow.core.Either", "arrow.optics.traversal"),
   DeprecationLevel.WARNING)
 fun <L, R> eitherEach(): Each<Either<L, R>, R> = Each { Either.traversal() }
