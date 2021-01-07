@@ -46,7 +46,3 @@ fun <L, R> Either.Companion.traversal(): Traversal<Either<L, R>, R> =
         FA.run { s.traverse(FA, f).map { it.fix() } }
       }
   }
-
-fun <L, R> eitherEach(): PTraversal<Either<L, R>, Either<L, R>, R, R> = Either
-  .each<L, R>()
-  .each()

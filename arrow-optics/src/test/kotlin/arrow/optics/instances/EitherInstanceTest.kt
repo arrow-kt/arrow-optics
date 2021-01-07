@@ -1,4 +1,4 @@
-package arrow.optics.std
+package arrow.optics.instances
 
 import arrow.core.Either
 import arrow.core.Option
