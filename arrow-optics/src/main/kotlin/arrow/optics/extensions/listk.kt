@@ -12,9 +12,7 @@ import arrow.core.toT
 import arrow.core.ListK
 import arrow.core.k
 import arrow.core.fix
-import arrow.extension
 import arrow.core.extensions.option.applicative.applicative
-import arrow.optics.Optional
 import arrow.optics.POptional
 import arrow.optics.PPrism
 import arrow.optics.Prism
@@ -40,18 +38,13 @@ fun <A> ListK.Companion.traversal(): Traversal<ListK<A>, A> = object : Traversal
 /**
  * [Each] instance definition for [ListK].
  */
-@extension
-interface ListKEach<A> : Each<ListK<A>, A> {
-  override fun each(): Traversal<ListK<A>, A> =
-    ListK.traversal()
-}
+fun <A> listKEach(): Each<ListK<A>, A> = Each { ListK.traversal() }
 
 /**
  * [FilterIndex] instance definition for [ListK].
  */
-@extension
-interface ListKFilterIndex<A> : FilterIndex<ListK<A>, Int, A> {
-  override fun filter(p: (Int) -> Boolean): Traversal<ListK<A>, A> = object : Traversal<ListK<A>, A> {
+fun <A> listKFilterIndex(): FilterIndex<ListK<A>, Int, A> = FilterIndex { p ->
+  object : Traversal<ListK<A>, A> {
     override fun <F> modifyF(FA: Applicative<F>, s: ListK<A>, f: (A) -> Kind<F, A>): Kind<F, ListK<A>> = FA.run {
       s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
         if (p(j)) f(a) else just(a)
@@ -63,9 +56,8 @@ interface ListKFilterIndex<A> : FilterIndex<ListK<A>, Int, A> {
 /**
  * [Index] instance definition for [ListK].
  */
-@extension
-interface ListKIndex<A> : Index<ListK<A>, Int, A> {
-  override fun index(i: Int): Optional<ListK<A>, A> = POptional(
+fun <A> listKIndex(): Index<ListK<A>, Int, A> = Index { i ->
+  POptional(
     getOrModify = { it.getOrNull(i)?.right() ?: it.left() },
     set = { l, a -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa }.k() }
   )
@@ -74,9 +66,8 @@ interface ListKIndex<A> : Index<ListK<A>, Int, A> {
 /**
  * [Cons] instance definition for [ListK].
  */
-@extension
-interface ListKCons<A> : Cons<ListK<A>, A> {
-  override fun cons(): Prism<ListK<A>, Tuple2<A, ListK<A>>> = PPrism(
+fun <A> listKCons(): Cons<ListK<A>, A> = Cons {
+  PPrism(
     getOrModify = { list -> list.firstOrNull()?.let { Tuple2(it, list.drop(1).k()) }?.right() ?: list.left() },
     reverseGet = { (a, aas) -> ListK(listOf(a) + aas) }
   )
@@ -85,10 +76,8 @@ interface ListKCons<A> : Cons<ListK<A>, A> {
 /**
  * [Snoc] instance definition for [ListK].
  */
-@extension
-interface ListKSnoc<A> : Snoc<ListK<A>, A> {
-
-  override fun snoc() = object : Prism<ListK<A>, Tuple2<ListK<A>, A>> {
+fun <A> listKSnoc(): Snoc<ListK<A>, A> = Snoc {
+  object : Prism<ListK<A>, Tuple2<ListK<A>, A>> {
     override fun getOrModify(s: ListK<A>): Either<ListK<A>, Tuple2<ListK<A>, A>> =
       Option.applicative().mapN(Option.just(s.dropLast(1).k()), s.lastOrNull().toOption(), ::identity)
         .fix()
