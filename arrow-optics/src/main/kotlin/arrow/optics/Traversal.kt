@@ -401,7 +401,6 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
    * @receiver [Optional] with a focus in [S]
    * @return [Traversal] with a focus in [A]
    */
-  @Suppress("UNCHECKED_CAST")
   val <U, V> POptional<U, V, S, T>.every: PTraversal<U, V, A, B> get() =
     this.compose(this@PTraversal)
 
@@ -411,7 +410,6 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
    * @receiver [Setter] with a focus in [S]
    * @return [Setter] with a focus in [A]
    */
-  @Suppress("UNCHECKED_CAST")
   val <U, V> PSetter<U, V, S, T>.every: PSetter<U, V, A, B> get() =
     this.compose(this@PTraversal)
 
@@ -421,7 +419,6 @@ interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
    * @receiver [Traversal] with a focus in [S]
    * @return [Traversal] with a focus in [A]
    */
-  @Suppress("UNCHECKED_CAST")
   val <U, V> PTraversal<U, V, S, T>.every: PTraversal<U, V, A, B> get() =
     this.compose(this@PTraversal)
 
