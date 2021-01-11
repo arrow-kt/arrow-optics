@@ -100,8 +100,8 @@ fun <A> List<A>.uncons(): Option<Tuple2<A, ListK<A>>> =
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
-    "List::class.cons<A>().cons()",
-    "kotlin.collections.List", "arrow.optics.cons"
+    "Cons.list<A>().cons()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"
   ),
   DeprecationLevel.WARNING
 )
@@ -126,8 +126,8 @@ object List {
   @Deprecated(
     "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
     ReplaceWith(
-      "List::class.cons<A>()",
-      "kotlin.collections.List", "arrow.optics.cons"
+      "Cons.list<A>()",
+      "arrow.optics.list", "arrow.optics.typeclasses.Cons"
     ),
     DeprecationLevel.WARNING
   )

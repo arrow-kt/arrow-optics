@@ -22,9 +22,10 @@ import arrow.optics.extensions.listk.filterIndex.filterIndex
 import arrow.optics.extensions.mapk.filterIndex.filterIndex
 import arrow.optics.extensions.nonemptylist.filterIndex.filterIndex
 import arrow.optics.extensions.sequencek.filterIndex.filterIndex
-import arrow.optics.filterIndex
+import arrow.optics.list
 import arrow.optics.test.generators.char
 import arrow.optics.test.laws.TraversalLaws
+import arrow.optics.typeclasses.FilterIndex
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 
@@ -42,7 +43,7 @@ class FilterIndexInstanceTest : UnitSpec() {
     ))
 
     testLaws(TraversalLaws.laws(
-      traversal = List::class.filterIndex<String>().filter { true },
+      traversal = FilterIndex.list<String>().filter { true },
       aGen = Gen.list(Gen.string()),
       bGen = Gen.string(),
       funcGen = Gen.functionAToB(Gen.string()),

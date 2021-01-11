@@ -39,8 +39,8 @@ object List {
   @Deprecated(
     "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
     ReplaceWith(
-      "List::class.index<A>()",
-      "kotlin.collections.List", "arrow.optics.index"
+      "Index.list<A>()",
+      "arrow.optics.list", "arrow.optics.typeclasses.Index"
     ),
     DeprecationLevel.WARNING
   )

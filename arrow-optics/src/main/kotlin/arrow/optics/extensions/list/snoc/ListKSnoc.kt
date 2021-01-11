@@ -104,8 +104,8 @@ object List {
   @Deprecated(
     "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
     ReplaceWith(
-      "List::class.snoc<A>()",
-      "kotlin.collections.List", "arrow.optics.snoc"
+      "Snoc.list<A>()",
+      "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
     ),
     DeprecationLevel.WARNING
   )

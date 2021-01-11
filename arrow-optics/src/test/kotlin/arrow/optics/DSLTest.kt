@@ -8,6 +8,7 @@ import arrow.optics.extensions.mapk.at.at
 import arrow.optics.extensions.mapk.each.each
 import arrow.optics.extensions.traversal
 import arrow.core.test.UnitSpec
+import arrow.optics.typeclasses.Index
 import io.kotlintest.shouldBe
 
 @optics
@@ -81,13 +82,13 @@ class BoundedTest : UnitSpec() {
     }
 
     "Index enables special Index syntax" {
-      List::class.index<Employee>().run {
+      Index.list<Employee>().run {
         CompanyEmployees.employees[1].company.address.street.name.modify(
           employees,
           String::toUpperCase
         )
       } shouldBe (CompanyEmployees.employees compose
-          List::class.index<Employee>().index(1) compose
+          Index.list<Employee>().index(1) compose
           Employee.company compose
           Company.address compose
           Address.street compose

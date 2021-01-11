@@ -12,19 +12,20 @@ import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.listK
 import arrow.core.test.generators.tuple2
-import arrow.optics.cons
+import arrow.optics.Traversal
 import arrow.optics.extensions.listk.cons.cons
 import arrow.optics.extensions.listk.each.each
 import arrow.optics.extensions.listk.filterIndex.filterIndex
 import arrow.optics.extensions.listk.index.index
 import arrow.optics.extensions.listk.snoc.snoc
-import arrow.optics.filterIndex
-import arrow.optics.index
-import arrow.optics.snoc
+import arrow.optics.list
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.TraversalLaws
-import arrow.optics.traversal
+import arrow.optics.typeclasses.Cons
+import arrow.optics.typeclasses.FilterIndex
+import arrow.optics.typeclasses.Index
+import arrow.optics.typeclasses.Snoc
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
 
@@ -46,7 +47,7 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = List::class.traversal(),
+        traversal = Traversal.list(),
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -70,7 +71,7 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = List::class.filterIndex<String>().filter { true },
+        traversal = FilterIndex.list<String>().filter { true },
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -93,7 +94,7 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       OptionalLaws.laws(
-        optionalGen = Gen.int().map { List::class.index<String>().index(it) },
+        optionalGen = Gen.int().map { Index.list<String>().index(it) },
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -115,7 +116,7 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       PrismLaws.laws(
-        prism = List::class.cons<Int>().cons(),
+        prism = Cons.list<Int>().cons(),
         aGen = Gen.list(Gen.int()),
         bGen = Gen.tuple2(Gen.int(), Gen.list(Gen.int())),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.list(Gen.int()))),
@@ -137,7 +138,7 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       PrismLaws.laws(
-        prism = List::class.snoc<Int>().snoc(),
+        prism = Snoc.list<Int>().snoc(),
         aGen = Gen.list(Gen.int()),
         bGen = Gen.tuple2(Gen.list(Gen.int()), Gen.int()),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.list(Gen.int()), Gen.int())),

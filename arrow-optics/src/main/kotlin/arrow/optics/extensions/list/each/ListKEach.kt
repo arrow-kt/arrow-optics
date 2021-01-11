@@ -15,8 +15,8 @@ import arrow.optics.typeclasses.Each
 @Deprecated(
   "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "kotlin.collections.List", "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
 fun <A> each(): PTraversal<ListK<A>, ListK<A>, A, A> = arrow.optics.extensions.list.each.List
@@ -38,8 +38,8 @@ object List {
   @Deprecated(
     "Each is being deprecated. Use Traversal directly instead.",
     ReplaceWith(
-      "List::class.traversal<A>()",
-      "kotlin.collections.List", "arrow.optics.traversal"),
+      "Traversal.list<A>()",
+      "arrow.optics.Traversal", "arrow.optics.list"),
     DeprecationLevel.WARNING
   )
   inline fun <A> each(): Each<ListK<A>, A> = each_singleton as arrow.optics.typeclasses.Each<ListK<A>, A>

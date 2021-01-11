@@ -125,8 +125,6 @@ fun <A, B> ListExtensions.toPListK(): PIso<List<A>, List<B>, ListK<A>, ListK<B>>
   level = DeprecationLevel.WARNING)
 fun <A> ListExtensions.toListK(): Iso<List<A>, ListK<A>> = toPListK()
 
-fun <A> KClass<List<*>>.traversal(): Traversal<List<A>, A> = listTraversal()
-
 /**
  * [Traversal] for [List] that focuses in each [A] of the source [List].
  */
@@ -134,6 +132,8 @@ fun <A> listTraversal(): Traversal<List<A>, A> = object : Traversal<List<A>, A> 
   override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
     s.k().traverse(FA, f)
 }
+
+fun <A> PTraversal.Companion.list(): Traversal<List<A>, A> = listTraversal()
 
 /**
  * [FilterIndex] instance definition for [List].
@@ -147,10 +147,10 @@ fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
   }
 }
 
-fun <A> KClass<List<*>>.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterIndex()
+fun <A> FilterIndex.Companion.list(): FilterIndex<List<A>, Int, A> = listFilterIndex()
 
 fun <A> KClass<List<*>>.filter(p: Function1<Int, Boolean>): PTraversal<List<A>, List<A>, A, A> =
-  List::class.filterIndex<A>().filter(p)
+  FilterIndex.list<A>().filter(p)
 
 /**
  * [Index] instance definition for [List].
@@ -162,13 +162,13 @@ fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
   )
 }
 
-fun <A> KClass<List<*>>.index(): Index<List<A>, Int, A> = listIndex()
+fun <A> Index.Companion.list(): Index<List<A>, Int, A> = listIndex()
 
 fun <A> KClass<List<*>>.index(i: Int): POptional<List<A>, List<A>, A, A> =
-  List::class.index<A>().index(i)
+  Index.list<A>().index(i)
 
 operator fun <A, T> PLens<T, T, List<A>, List<A>>.get(i: Int): POptional<T, T, A, A> =
-  List::class.index<A>().run { this@get.get(i) }
+  Index.list<A>().run { this@get.get(i) }
 
 /**
  * [Cons] instance definition for [List].
@@ -180,19 +180,19 @@ fun <A> listCons(): Cons<List<A>, A> = Cons {
   )
 }
 
-fun <A> KClass<List<*>>.cons(): Cons<List<A>, A> = listCons()
+fun <A> Cons.Companion.list(): Cons<List<A>, A> = listCons()
 
 fun <A> KClass<List<*>>.firstOption(): POptional<List<A>, List<A>, A, A> =
-  List::class.cons<A>().firstOption()
+  Cons.list<A>().firstOption()
 
 fun <A> KClass<List<*>>.tailOption(): POptional<List<A>, List<A>, List<A>, List<A>> =
-  List::class.cons<A>().tailOption()
+  Cons.list<A>().tailOption()
 
 infix fun <A> A.cons(tail: List<A>): List<A> =
-  List::class.cons<A>().run { this@cons.cons(tail) }
+  Cons.list<A>().run { this@cons.cons(tail) }
 
 fun <A> List<A>.uncons(): Option<Tuple2<A, List<A>>> =
-  List::class.cons<A>().run { this@uncons.uncons() }
+  Cons.list<A>().run { this@uncons.uncons() }
 
 /**
  * [Snoc] instance definition for [List].
@@ -209,16 +209,16 @@ fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
   }
 }
 
-fun <A> KClass<List<*>>.snoc(): Snoc<List<A>, A> = listSnoc()
+fun <A> Snoc.Companion.list(): Snoc<List<A>, A> = listSnoc()
 
 fun <A> KClass<List<*>>.initOption(): POptional<List<A>, List<A>, List<A>, List<A>> =
-  List::class.snoc<A>().initOption()
+  Snoc.list<A>().initOption()
 
 fun <A> KClass<List<*>>.lastOption(): POptional<List<A>, List<A>, A, A> =
-  List::class.snoc<A>().lastOption()
+  Snoc.list<A>().lastOption()
 
 infix fun <A> List<A>.snoc(last: A): List<A> =
-  List::class.snoc<A>().run { this@snoc.snoc(last) }
+  Snoc.list<A>().run { this@snoc.snoc(last) }
 
 fun <A> List<A>.unsnoc(): Option<Tuple2<List<A>, A>> =
-  List::class.snoc<A>().run { this@unsnoc.unsnoc() }
+  Snoc.list<A>().run { this@unsnoc.unsnoc() }
