@@ -27,10 +27,10 @@ internal val index_singleton: Index<ListK<Any?>, Int, Any?> = listKIndex()
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
   ReplaceWith(
     "List::class.index<A>(i)",
-    "arrow.optics.index"
+    "kotlin.collections.List", "arrow.optics.index"
   ),
   DeprecationLevel.WARNING
 )
@@ -63,10 +63,10 @@ operator fun <A, T> PLens<T, T, ListK<A>, ListK<A>>.get(i: Int): POptional<T, T,
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
     "List::class.index<A>()",
-    "arrow.optics.index"
+    "kotlin.collections.List", "arrow.optics.index"
   ),
   DeprecationLevel.WARNING
 )

@@ -17,10 +17,10 @@ import kotlin.collections.List
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.firstOption",
   ReplaceWith(
     "List::class.firstOption<A>()",
-    "arrow.optics.firstOption"
+    "kotlin.collections.List", "arrow.optics.firstOption"
   ),
   DeprecationLevel.WARNING
 )
@@ -36,10 +36,10 @@ fun <A> firstOption(): POptional<ListK<A>, ListK<A>, A, A> = arrow.optics.extens
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.tailOption",
   ReplaceWith(
     "List::class.tailOption<A>()",
-    "arrow.optics.tailOption"
+    "kotlin.collections.List", "arrow.optics.tailOption"
   ),
   DeprecationLevel.WARNING
 )
@@ -57,7 +57,7 @@ fun <A> tailOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> =
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
     "cons(tail)",
     "arrow.optics.cons"
@@ -77,7 +77,7 @@ infix fun <A> A.cons(tail: List<A>): List<A> =
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.uncons",
   ReplaceWith(
     "uncons()",
     "arrow.optics.uncons"
@@ -98,10 +98,10 @@ fun <A> List<A>.uncons(): Option<Tuple2<A, ListK<A>>> =
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
     "List::class.cons<A>().cons()",
-    "arrow.optics.cons"
+    "kotlin.collections.List", "arrow.optics.cons"
   ),
   DeprecationLevel.WARNING
 )
@@ -117,16 +117,17 @@ fun <A> cons(): PPrism<ListK<A>, ListK<A>, Tuple2<A, ListK<A>>, Tuple2<A, ListK<
 @PublishedApi()
 internal val cons_singleton: Cons<ListK<Any?>, Any?> = listKCons()
 
+@Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
 object List {
   @Suppress(
     "UNCHECKED_CAST",
     "NOTHING_TO_INLINE"
   )
   @Deprecated(
-    "@extension kinded projected functions are deprecated",
+    "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
     ReplaceWith(
       "List::class.cons<A>()",
-      "arrow.optics.cons"
+      "kotlin.collections.List", "arrow.optics.cons"
     ),
     DeprecationLevel.WARNING
   )

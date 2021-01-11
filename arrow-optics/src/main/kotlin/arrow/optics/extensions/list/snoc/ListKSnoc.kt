@@ -16,10 +16,10 @@ import kotlin.collections.List
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.initOption",
   ReplaceWith(
     "List::class.initOption<A>()",
-    "arrow.optics.initOption"
+    "kotlin.collections.List", "arrow.optics.initOption"
   ),
   DeprecationLevel.WARNING
 )
@@ -37,10 +37,10 @@ fun <A> initOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> =
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.lastOption",
   ReplaceWith(
     "List::class.lastOption<A>()",
-    "arrow.optics.lastOption"
+    "kotlin.collections.List", "arrow.optics.lastOption"
   ),
   DeprecationLevel.WARNING
 )
@@ -56,7 +56,7 @@ fun <A> lastOption(): POptional<ListK<A>, ListK<A>, A, A> = arrow.optics.extensi
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
   ReplaceWith(
     "snoc(last)",
     "arrow.optics.snoc"
@@ -76,7 +76,7 @@ infix fun <A> List<A>.snoc(last: A): List<A> =
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.unsnoc",
   ReplaceWith(
     "unsnoc()",
     "arrow.optics.unsnoc"
@@ -95,16 +95,17 @@ fun <A> List<A>.unsnoc(): Option<Tuple2<ListK<A>, A>> =
 @PublishedApi()
 internal val snoc_singleton: Snoc<ListK<Any?>, Any?> = listKSnoc()
 
+@Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
 object List {
   @Suppress(
     "UNCHECKED_CAST",
     "NOTHING_TO_INLINE"
   )
   @Deprecated(
-    "@extension kinded projected functions are deprecated",
+    "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
     ReplaceWith(
       "List::class.snoc<A>()",
-      "arrow.optics.snoc"
+      "kotlin.collections.List", "arrow.optics.snoc"
     ),
     DeprecationLevel.WARNING
   )

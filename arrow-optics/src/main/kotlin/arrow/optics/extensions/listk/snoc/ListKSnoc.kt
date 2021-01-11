@@ -27,10 +27,10 @@ internal val snoc_singleton: Snoc<ListK<Any?>, Any?> = listKSnoc()
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.initOption",
   ReplaceWith(
     "List::class.initOption<A>()",
-    "arrow.optics.initOption"
+    "kotlin.collections.List", "arrow.optics.initOption"
   ),
   DeprecationLevel.WARNING
 )
@@ -47,10 +47,10 @@ fun <A> initOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> = arrow.
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.lastOption",
   ReplaceWith(
     "List::class.lastOption<A>()",
-    "arrow.optics.lastOption"
+    "kotlin.collections.List", "arrow.optics.lastOption"
   ),
   DeprecationLevel.WARNING
 )
@@ -66,7 +66,7 @@ fun <A> lastOption(): POptional<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "ListK is being deprecated, use the snoc method define for List instead.",
   ReplaceWith(
     "snoc(last)",
     "arrow.optics.snoc"
@@ -85,7 +85,7 @@ infix fun <A> ListK<A>.snoc(last: A): ListK<A> = arrow.core.ListK.snoc<A>().run 
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "ListK is being deprecated, use the unsnoc method define for List instead.",
   ReplaceWith(
     "unsnoc()",
     "arrow.optics.unsnoc"
@@ -101,10 +101,10 @@ fun <A> ListK<A>.unsnoc(): Option<Tuple2<ListK<A>, A>> = arrow.core.ListK.snoc<A
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
     "List::class.snoc<A>()",
-    "arrow.optics.snoc"
+    "kotlin.collections.List", "arrow.optics.snoc"
   ),
   DeprecationLevel.WARNING
 )
