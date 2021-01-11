@@ -1,11 +1,9 @@
 package arrow.optics
 
 import arrow.core.None
-import arrow.core.ListK
 import arrow.core.MapK
 import arrow.core.k
 import arrow.optics.dsl.at
-import arrow.optics.extensions.listk.index.index
 import arrow.optics.extensions.mapk.at.at
 import arrow.optics.extensions.mapk.each.each
 import arrow.optics.extensions.traversal
@@ -33,7 +31,7 @@ data class Employee(val name: String, val company: Company?) {
 }
 
 @optics
-data class CompanyEmployees(val employees: ListK<Employee>) {
+data class CompanyEmployees(val employees: List<Employee>) {
   companion object
 }
 
@@ -83,13 +81,13 @@ class BoundedTest : UnitSpec() {
     }
 
     "Index enables special Index syntax" {
-      ListK.index<Employee>().run {
+      List::class.index<Employee>().run {
         CompanyEmployees.employees[1].company.address.street.name.modify(
           employees,
           String::toUpperCase
         )
       } shouldBe (CompanyEmployees.employees compose
-          ListK.index<Employee>().index(1) compose
+          List::class.index<Employee>().index(1) compose
           Employee.company compose
           Company.address compose
           Address.street compose

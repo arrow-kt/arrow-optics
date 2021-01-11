@@ -26,7 +26,7 @@ class ListTest : UnitSpec() {
   init {
 
     testLaws(OptionalLaws.laws(
-      optional = ListK.head(),
+      optional = List::class.head(),
       aGen = Gen.list(Gen.int()),
       bGen = Gen.int(),
       funcGen = Gen.functionAToB(Gen.int()),
@@ -35,7 +35,7 @@ class ListTest : UnitSpec() {
     ))
 
     testLaws(OptionalLaws.laws(
-      optional = ListK.tail(),
+      optional = List::class.tail(),
       aGen = Gen.list(Gen.int()),
       bGen = Gen.list(Gen.int()),
       funcGen = Gen.functionAToB(Gen.list(Gen.int())),
@@ -44,7 +44,7 @@ class ListTest : UnitSpec() {
     ))
 
     testLaws(IsoLaws.laws(
-      iso = ListK.toOptionNel(),
+      iso = List::class.toOptionNel(),
       aGen = Gen.list(Gen.int()),
       bGen = Gen.option(Gen.nonEmptyList(Gen.int())),
       funcGen = Gen.functionAToB(Gen.option(Gen.nonEmptyList(Gen.int()))),

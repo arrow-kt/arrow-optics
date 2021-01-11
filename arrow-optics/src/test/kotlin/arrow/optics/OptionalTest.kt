@@ -43,7 +43,7 @@ class OptionalTest : UnitSpec() {
   init {
 
     testLaws(OptionalLaws.laws(
-      optional = ListK.head(),
+      optional = List::class.head(),
       aGen = Gen.list(Gen.int()),
       bGen = Gen.int(),
       funcGen = Gen.functionAToB(Gen.int()),
@@ -61,7 +61,7 @@ class OptionalTest : UnitSpec() {
     ))
 
     testLaws(OptionalLaws.laws(
-      optional = ListK.head<Int>().first(),
+      optional = List::class.head<Int>().first(),
       aGen = Gen.tuple2(Gen.list(Gen.int()), Gen.bool()),
       bGen = Gen.tuple2(Gen.int(), Gen.bool()),
       funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.bool())),
@@ -70,7 +70,7 @@ class OptionalTest : UnitSpec() {
     ))
 
     testLaws(OptionalLaws.laws(
-      optional = ListK.head<Int>().first(),
+      optional = List::class.head<Int>().first(),
       aGen = Gen.tuple2(Gen.list(Gen.int()), Gen.bool()),
       bGen = Gen.tuple2(Gen.int(), Gen.bool()),
       funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.bool())),
@@ -79,7 +79,7 @@ class OptionalTest : UnitSpec() {
     ))
 
     testLaws(OptionalLaws.laws(
-      optional = ListK.head<Int>().second(),
+      optional = List::class.head<Int>().second(),
       aGen = Gen.tuple2(Gen.bool(), Gen.list(Gen.int())),
       bGen = Gen.tuple2(Gen.bool(), Gen.int()),
       funcGen = Gen.functionAToB(Gen.tuple2(Gen.bool(), Gen.int())),
@@ -88,7 +88,7 @@ class OptionalTest : UnitSpec() {
     ))
 
     testLaws(TraversalLaws.laws(
-      traversal = ListK.head<Int>().asTraversal(),
+      traversal = List::class.head<Int>().asTraversal(),
       aGen = Gen.list(Gen.int()),
       bGen = Gen.int(),
       funcGen = Gen.functionAToB(Gen.int()),
@@ -98,7 +98,7 @@ class OptionalTest : UnitSpec() {
     ))
 
     testLaws(SetterLaws.laws(
-      setter = ListK.head<Int>().asSetter(),
+      setter = List::class.head<Int>().asSetter(),
       aGen = Gen.list(Gen.int()),
       bGen = Gen.int(),
       funcGen = Gen.functionAToB(Gen.int()),
@@ -112,7 +112,7 @@ class OptionalTest : UnitSpec() {
       }
     }
 
-    with(ListK.head<Int>().asFold()) {
+    with(List::class.head<Int>().asFold()) {
 
       "asFold should behave as valid Fold: size" {
         forAll { ints: List<Int> ->
@@ -179,50 +179,50 @@ class OptionalTest : UnitSpec() {
 
     "Checking if there is no target" {
       forAll(Gen.list(Gen.int())) { list ->
-        ListK.head<Int>().nonEmpty(list) == list.isNotEmpty()
+        List::class.head<Int>().nonEmpty(list) == list.isNotEmpty()
       }
     }
 
     "Lift should be consistent with modify" {
       forAll(Gen.list(Gen.int())) { list ->
         val f = { i: Int -> i + 5 }
-        ListK.head<Int>().lift(f)(list) == ListK.head<Int>().modify(list, f)
+        List::class.head<Int>().lift(f)(list) == List::class.head<Int>().modify(list, f)
       }
     }
 
     "LiftF should be consistent with modifyF" {
       forAll(Gen.list(Gen.int()), Gen.option(Gen.int())) { list, tryInt ->
         val f = { _: Int -> tryInt }
-        ListK.head<Int>().liftF(Option.applicative(), f)(list) == ListK.head<Int>().modifyF(Option.applicative(), list, f)
+        List::class.head<Int>().liftF(Option.applicative(), f)(list) == List::class.head<Int>().modifyF(Option.applicative(), list, f)
       }
     }
 
     "Checking if a target exists" {
       forAll(Gen.list(Gen.int())) { list ->
-        ListK.head<Int>().isEmpty(list) == list.isEmpty()
+        List::class.head<Int>().isEmpty(list) == list.isEmpty()
       }
     }
 
     "Finding a target using a predicate should be wrapped in the correct option result" {
       forAll(Gen.list(Gen.int()), Gen.bool()) { list, predicate ->
-        ListK.head<Int>().find(list) { predicate }.fold({ false }, { true }) == (predicate && list.nonEmpty())
+        List::class.head<Int>().find(list) { predicate }.fold({ false }, { true }) == (predicate && list.nonEmpty())
       }
     }
 
     "Checking existence predicate over the target should result in same result as predicate" {
       forAll(Gen.list(Gen.int()), Gen.bool()) { list, predicate ->
-        ListK.head<Int>().exists(list) { predicate } == (predicate && list.nonEmpty())
+        List::class.head<Int>().exists(list) { predicate } == (predicate && list.nonEmpty())
       }
     }
 
     "Checking satisfaction of predicate over the target should result in opposite result as predicate" {
       forAll(Gen.list(Gen.int()), Gen.bool()) { list, predicate ->
-        ListK.head<Int>().all(list) { predicate } == if (list.isEmpty()) true else predicate
+        List::class.head<Int>().all(list) { predicate } == if (list.isEmpty()) true else predicate
       }
     }
 
     "Joining two optionals together with same target should yield same result" {
-      val joinedOptional = ListK.head<Int>().choice(defaultHead)
+      val joinedOptional = List::class.head<Int>().choice(defaultHead)
 
       forAll(Gen.int()) { int ->
         joinedOptional.getOption(Left(listOf(int))) == joinedOptional.getOption(Right(int))
