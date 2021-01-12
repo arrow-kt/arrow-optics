@@ -6,8 +6,7 @@ import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.optics.POptional
 import arrow.optics.PPrism
-import arrow.optics.extensions.listKCons
-import arrow.optics.typeclasses.Cons
+import arrow.optics.extensions.ListKCons
 import kotlin.Any
 import kotlin.Deprecated
 import kotlin.PublishedApi
@@ -18,7 +17,7 @@ import kotlin.jvm.JvmName
  * cached extension
  */
 @PublishedApi()
-internal val cons_singleton: Cons<ListK<Any?>, Any?> = listKCons()
+internal val cons_singleton: ListKCons<Any?> = object : ListKCons<Any?> {}
 
 @JvmName("firstOption")
 @Suppress(
@@ -130,5 +129,5 @@ fun <A> cons(): PPrism<ListK<A>, ListK<A>, Tuple2<A, ListK<A>>, Tuple2<A, ListK<
   ),
   DeprecationLevel.WARNING
 )
-inline fun <A> Companion.cons(): Cons<ListK<A>, A> = cons_singleton as
-    arrow.optics.typeclasses.Cons<ListK<A>, A>
+inline fun <A> Companion.cons(): ListKCons<A> = cons_singleton as
+    arrow.optics.extensions.ListKCons<A>

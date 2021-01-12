@@ -5,8 +5,7 @@ import arrow.core.ListK.Companion
 import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.optics.POptional
-import arrow.optics.extensions.listKSnoc
-import arrow.optics.typeclasses.Snoc
+import arrow.optics.extensions.ListKSnoc
 import kotlin.Any
 import kotlin.Deprecated
 import kotlin.PublishedApi
@@ -17,7 +16,7 @@ import kotlin.jvm.JvmName
  * cached extension
  */
 @PublishedApi()
-internal val snoc_singleton: Snoc<ListK<Any?>, Any?> = listKSnoc()
+internal val snoc_singleton: ListKSnoc<Any?> = object : ListKSnoc<Any?> {}
 
 @JvmName("initOption")
 @Suppress(
@@ -108,5 +107,5 @@ fun <A> ListK<A>.unsnoc(): Option<Tuple2<ListK<A>, A>> = arrow.core.ListK.snoc<A
   ),
   DeprecationLevel.WARNING
 )
-inline fun <A> Companion.snoc(): Snoc<ListK<A>, A> = snoc_singleton as
-    arrow.optics.typeclasses.Snoc<ListK<A>, A>
+inline fun <A> Companion.snoc(): ListKSnoc<A> = snoc_singleton as
+    arrow.optics.extensions.ListKSnoc<A>

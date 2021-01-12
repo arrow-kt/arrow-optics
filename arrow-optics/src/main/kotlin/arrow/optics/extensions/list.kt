@@ -13,6 +13,7 @@ import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
 import arrow.core.toT
+import arrow.optics.Optional
 import arrow.optics.POptional
 import arrow.optics.PPrism
 import arrow.optics.Prism
@@ -30,7 +31,7 @@ import arrow.typeclasses.Applicative
     "Traversal.list<A>()",
     "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING)
-fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = listTraversal()
+fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = ListTraversal()
 
 /**
  * [Traversal] for [List] that focuses in each [A] of the source [List].
@@ -42,9 +43,19 @@ fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = listTraversal()
     "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
-fun <A> listTraversal(): Traversal<List<A>, A> = object : Traversal<List<A>, A> {
+interface ListTraversal<A> : Traversal<List<A>, A> {
+
   override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
     s.k().traverse(FA, f)
+
+  companion object {
+    /**
+     * Operator overload to instantiate typeclass instance.
+     *
+     * @return [Index] instance for [String]
+     */
+    operator fun <A> invoke() = object : ListTraversal<A> {}
+  }
 }
 
 @Deprecated(
@@ -54,7 +65,7 @@ fun <A> listTraversal(): Traversal<List<A>, A> = object : Traversal<List<A>, A> 
     "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
-fun <A> ListExtensions.each(): Each<List<A>, A> = listEach()
+fun <A> ListExtensions.each(): Each<List<A>, A> = ListEach()
 
 /**
  * [Each] instance definition for [List] that summons a [Traversal] to focus in each [A] of the source [List].
@@ -66,8 +77,18 @@ fun <A> ListExtensions.each(): Each<List<A>, A> = listEach()
     "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
-fun <A> listEach(): Each<List<A>, A> = Each { listTraversal() }
+interface ListEach<A> : Each<List<A>, A> {
+  override fun each() = ListTraversal<A>()
 
+  companion object {
+    /**
+     * Operator overload to instantiate typeclass instance.
+     *
+     * @return [Index] instance for [String]
+     */
+    operator fun <A> invoke() = object : ListEach<A> {}
+  }
+}
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filterIndex",
   ReplaceWith(
@@ -75,7 +96,7 @@ fun <A> listEach(): Each<List<A>, A> = Each { listTraversal() }
   "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"),
   DeprecationLevel.WARNING
 )
-fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterIndex()
+fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = ListFilterIndex()
 
 /**
  * [FilterIndex] instance definition for [List].
@@ -87,12 +108,21 @@ fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterI
     "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"),
   DeprecationLevel.WARNING
 )
-fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
-  object : Traversal<List<A>, A> {
+interface ListFilterIndex<A> : FilterIndex<List<A>, Int, A> {
+  override fun filter(p: (Int) -> Boolean): Traversal<List<A>, A> = object : Traversal<List<A>, A> {
     override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
       s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
         if (p(j)) f(a) else FA.just(a)
       }
+  }
+
+  companion object {
+    /**
+     * Operator overload to instantiate typeclass instance.
+     *
+     * @return [Index] instance for [String]
+     */
+    operator fun <A> invoke() = object : ListFilterIndex<A> {}
   }
 }
 
@@ -103,7 +133,7 @@ fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
     "arrow.optics.list", "arrow.optics.typeclasses.Index"),
   DeprecationLevel.WARNING
 )
-fun <A> ListExtensions.index(): Index<List<A>, Int, A> = listIndex()
+fun <A> ListExtensions.index(): Index<List<A>, Int, A> = ListIndex()
 
 /**
  * [Index] instance definition for [List].
@@ -115,11 +145,16 @@ fun <A> ListExtensions.index(): Index<List<A>, Int, A> = listIndex()
     "arrow.optics.list", "arrow.optics.typeclasses.Index"),
   DeprecationLevel.WARNING
 )
-fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
-  POptional(
+interface ListIndex<A> : Index<List<A>, Int, A> {
+  override fun index(i: Int): Optional<List<A>, A> = POptional(
     getOrModify = { it.getOrNull(i)?.right() ?: it.left() },
     set = { l, a -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa } }
   )
+
+  companion object {
+
+    operator fun <A> invoke() = object : ListIndex<A> {}
+  }
 }
 
 @Deprecated(
@@ -129,7 +164,7 @@ fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"),
   DeprecationLevel.WARNING
 )
-fun <A> ListExtensions.cons(): Cons<List<A>, A> = listCons()
+fun <A> ListExtensions.cons(): Cons<List<A>, A> = ListCons()
 
 /**
  * [Cons] instance definition for [List].
@@ -141,11 +176,16 @@ fun <A> ListExtensions.cons(): Cons<List<A>, A> = listCons()
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"),
   DeprecationLevel.WARNING
 )
-fun <A> listCons(): Cons<List<A>, A> = Cons {
-  PPrism(
+interface ListCons<A> : Cons<List<A>, A> {
+  override fun cons(): Prism<List<A>, Tuple2<A, List<A>>> = PPrism(
     getOrModify = { list -> list.firstOrNull()?.let { Tuple2(it, list.drop(1)) }?.right() ?: list.left() },
     reverseGet = { (a, aas) -> listOf(a) + aas }
   )
+
+  companion object {
+
+    operator fun <A> invoke() = object : ListCons<A> {}
+  }
 }
 
 @Deprecated(
@@ -155,7 +195,7 @@ fun <A> listCons(): Cons<List<A>, A> = Cons {
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"),
   DeprecationLevel.WARNING
 )
-fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = listSnoc()
+fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = ListSnoc()
 
 /**
  * [Snoc] instance definition for [List].
@@ -167,8 +207,9 @@ fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = listSnoc()
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"),
   DeprecationLevel.WARNING
 )
-fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
-  object : Prism<List<A>, Tuple2<List<A>, A>> {
+interface ListSnoc<A> : Snoc<List<A>, A> {
+
+  override fun snoc() = object : Prism<List<A>, Tuple2<List<A>, A>> {
     override fun getOrModify(s: List<A>): Either<List<A>, Tuple2<List<A>, A>> =
       Option.applicative().mapN(Option.just(s.dropLast(1)), s.lastOrNull().toOption(), ::identity)
         .fix()
@@ -176,5 +217,10 @@ fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
 
     override fun reverseGet(b: Tuple2<List<A>, A>): List<A> =
       b.a + b.b
+  }
+
+  companion object {
+
+    operator fun <A> invoke() = object : ListSnoc<A> {}
   }
 }

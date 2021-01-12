@@ -2,8 +2,7 @@ package arrow.optics.extensions.list.index
 
 import arrow.core.ListK
 import arrow.optics.POptional
-import arrow.optics.extensions.listKIndex
-import arrow.optics.typeclasses.Index
+import arrow.optics.extensions.ListKIndex
 
 @JvmName("index")
 @Suppress(
@@ -28,7 +27,7 @@ fun <A> index(i: Int): POptional<ListK<A>, ListK<A>, A, A> = arrow.optics.extens
  * cached extension
  */
 @PublishedApi()
-internal val index_singleton: Index<ListK<Any?>, Int, Any?> = listKIndex()
+internal val index_singleton: ListKIndex<Any?> = object : ListKIndex<Any?> {}
 
 @Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
 object List {
@@ -44,5 +43,5 @@ object List {
     ),
     DeprecationLevel.WARNING
   )
-  inline fun <A> index(): Index<ListK<A>, Int, A> = index_singleton as arrow.optics.typeclasses.Index<ListK<A>, Int, A>
+  inline fun <A> index(): ListKIndex<A> = index_singleton as arrow.optics.extensions.ListKIndex<A>
 }

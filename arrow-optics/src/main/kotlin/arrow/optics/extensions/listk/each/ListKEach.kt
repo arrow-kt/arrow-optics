@@ -3,14 +3,13 @@ package arrow.optics.extensions.listk.each
 import arrow.core.ListK
 import arrow.core.ListK.Companion
 import arrow.optics.PTraversal
-import arrow.optics.extensions.listKEach
-import arrow.optics.typeclasses.Each
+import arrow.optics.extensions.ListKEach
 
 /**
  * cached extension
  */
 @PublishedApi()
-internal val each_singleton: Each<ListK<Any?>, Any?> = listKEach()
+internal val each_singleton: ListKEach<Any?> = object : ListKEach<Any?> {}
 
 @JvmName("each")
 @Suppress(
@@ -41,5 +40,5 @@ fun <A> each(): PTraversal<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
     "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
-inline fun <A> Companion.each(): Each<ListK<A>, A> = each_singleton as
-    arrow.optics.typeclasses.Each<ListK<A>, A>
+inline fun <A> Companion.each(): ListKEach<A> = each_singleton as
+    arrow.optics.extensions.ListKEach<A>

@@ -5,8 +5,7 @@ import arrow.core.Option
 import arrow.core.Tuple2
 import arrow.optics.POptional
 import arrow.optics.PPrism
-import arrow.optics.extensions.listKCons
-import arrow.optics.typeclasses.Cons
+import arrow.optics.extensions.ListKCons
 import kotlin.collections.List
 
 @JvmName("firstOption")
@@ -115,7 +114,7 @@ fun <A> cons(): PPrism<ListK<A>, ListK<A>, Tuple2<A, ListK<A>>, Tuple2<A, ListK<
  * cached extension
  */
 @PublishedApi()
-internal val cons_singleton: Cons<ListK<Any?>, Any?> = listKCons()
+internal val cons_singleton: ListKCons<Any?> = object : ListKCons<Any?> {}
 
 @Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
 object List {
@@ -131,5 +130,5 @@ object List {
     ),
     DeprecationLevel.WARNING
   )
-  inline fun <A> cons(): Cons<ListK<A>, A> = cons_singleton as arrow.optics.typeclasses.Cons<ListK<A>, A>
+  inline fun <A> cons(): ListKCons<A> = cons_singleton as arrow.optics.extensions.ListKCons<A>
 }

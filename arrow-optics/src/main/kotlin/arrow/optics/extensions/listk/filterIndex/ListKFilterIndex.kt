@@ -3,8 +3,7 @@ package arrow.optics.extensions.listk.filterIndex
 import arrow.core.ListK
 import arrow.core.ListK.Companion
 import arrow.optics.PTraversal
-import arrow.optics.extensions.listKFilterIndex
-import arrow.optics.typeclasses.FilterIndex
+import arrow.optics.extensions.ListKFilterIndex
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -18,7 +17,7 @@ import kotlin.jvm.JvmName
  * cached extension
  */
 @PublishedApi()
-internal val filterIndex_singleton: FilterIndex<ListK<Any?>, Int, Any?> = listKFilterIndex()
+internal val filterIndex_singleton: ListKFilterIndex<Any?> = object : ListKFilterIndex<Any?> {}
 
 @JvmName("filter")
 @Suppress(
@@ -51,5 +50,5 @@ fun <A> filter(p: Function1<Int, Boolean>): PTraversal<ListK<A>, ListK<A>, A, A>
   ),
   DeprecationLevel.WARNING
 )
-inline fun <A> Companion.filterIndex(): FilterIndex<ListK<A>, Int, A> =
-  filterIndex_singleton as arrow.optics.typeclasses.FilterIndex<ListK<A>, Int, A>
+inline fun <A> Companion.filterIndex(): ListKFilterIndex<A> =
+  filterIndex_singleton as arrow.optics.extensions.ListKFilterIndex<A>

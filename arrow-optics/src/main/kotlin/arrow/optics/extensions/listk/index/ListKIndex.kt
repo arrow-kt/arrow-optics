@@ -4,8 +4,7 @@ import arrow.core.ListK
 import arrow.core.ListK.Companion
 import arrow.optics.PLens
 import arrow.optics.POptional
-import arrow.optics.extensions.listKIndex
-import arrow.optics.typeclasses.Index
+import arrow.optics.extensions.ListKIndex
 import kotlin.Any
 import kotlin.Deprecated
 import kotlin.Int
@@ -17,7 +16,7 @@ import kotlin.jvm.JvmName
  * cached extension
  */
 @PublishedApi()
-internal val index_singleton: Index<ListK<Any?>, Int, Any?> = listKIndex()
+internal val index_singleton: ListKIndex<Any?> = object : ListKIndex<Any?> {}
 
 @JvmName("index")
 @Suppress(
@@ -70,5 +69,5 @@ operator fun <A, T> PLens<T, T, ListK<A>, ListK<A>>.get(i: Int): POptional<T, T,
   ),
   DeprecationLevel.WARNING
 )
-inline fun <A> Companion.index(): Index<ListK<A>, Int, A> = index_singleton as
-    arrow.optics.typeclasses.Index<ListK<A>, Int, A>
+inline fun <A> Companion.index(): ListKIndex<A> = index_singleton as
+    arrow.optics.extensions.ListKIndex<A>
