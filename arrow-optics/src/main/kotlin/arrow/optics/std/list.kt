@@ -29,7 +29,10 @@ import kotlin.reflect.KClass
  */
 @Deprecated(
   "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith("List::class.head<A>()"),
+  ReplaceWith(
+    "Optional.listHead<A>()",
+    "arrow.optics.Optional", "arrow.optics.listHead"
+  ),
   DeprecationLevel.WARNING)
 fun <A> ListK.Companion.head(): Optional<List<A>, A> = Optional(
   getOption = { Option.fromNullable(it.firstOrNull()) },
@@ -39,7 +42,7 @@ fun <A> ListK.Companion.head(): Optional<List<A>, A> = Optional(
 /**
  * [Optional] to safely operate on the head of a list
  */
-fun <A> KClass<List<*>>.head(): Optional<List<A>, A> = Optional(
+fun <A> POptional.Companion.listHead(): Optional<List<A>, A> = Optional(
   getOption = { Option.fromNullable(it.firstOrNull()) },
   set = { list, newHead -> list.mapIndexed { index, value -> if (index == 0) newHead else value } }
 )
@@ -49,7 +52,10 @@ fun <A> KClass<List<*>>.head(): Optional<List<A>, A> = Optional(
  */
 @Deprecated(
   "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith("List::class.tail<A>()"),
+  ReplaceWith(
+    "Optional.listTail<A>()",
+    "arrow.optics.Optional", "arrow.optics.listTail"
+  ),
   DeprecationLevel.WARNING)
 fun <A> ListK.Companion.tail(): Optional<List<A>, List<A>> = Optional(
   getOption = { if (it.isEmpty()) None else Some(it.drop(1)) },
@@ -63,7 +69,7 @@ fun <A> ListK.Companion.tail(): Optional<List<A>, List<A>> = Optional(
 /**
  * [Optional] to safely operate on the tail of a list
  */
-fun <A> KClass<List<*>>.tail(): Optional<List<A>, List<A>> = Optional(
+fun <A> POptional.Companion.listTail(): Optional<List<A>, List<A>> = Optional(
   getOption = { if (it.isEmpty()) None else Some(it.drop(1)) },
   set = { list, newTail ->
     list.firstOrNull()?.let {
@@ -77,7 +83,10 @@ fun <A> KClass<List<*>>.tail(): Optional<List<A>, List<A>> = Optional(
  */
 @Deprecated(
   "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith("List::class.toPOptionNel<A, B>()"),
+  ReplaceWith(
+    "Iso.listToPOptionNel<A, B>()",
+    "arrow.optics.Iso", "arrow.optics.listToPOptionNel"
+  ),
   DeprecationLevel.WARNING)
 fun <A, B> ListK.Companion.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> = PIso(
   get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
@@ -87,7 +96,7 @@ fun <A, B> ListK.Companion.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmpt
 /**
  * [PIso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-fun <A, B> KClass<List<*>>.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> =
+fun <A, B> PIso.Companion.listToPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> =
   PIso(
     get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
     reverseGet = { optNel -> optNel.fold({ emptyList() }, NonEmptyList<B>::all) }
@@ -98,14 +107,17 @@ fun <A, B> KClass<List<*>>.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmpt
  */
 @Deprecated(
   "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith("List::class.toPOptionNel<A>()"),
+  ReplaceWith(
+    "Iso.listToOptionNel<A>()",
+    "arrow.optics.Iso", "arrow.optics.listToOptionNel"
+  ),
   DeprecationLevel.WARNING)
 fun <A> ListK.Companion.toOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = toPOptionNel()
 
 /**
  * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-fun <A> KClass<List<*>>.toOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = toPOptionNel()
+fun <A> PIso.Companion.listToOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = listToPOptionNel()
 
 /**
  * [PIso] that defines the equality between a [List] and a [ListK]
