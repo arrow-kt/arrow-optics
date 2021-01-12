@@ -7,8 +7,6 @@ import arrow.core.Tuple2
 import arrow.core.k
 import arrow.core.left
 import arrow.core.right
-import arrow.optics.extensions.listk.filterIndex.filterIndex
-import arrow.optics.extensions.listk.index.index
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
@@ -23,12 +21,34 @@ private val stringToList: Iso<String, List<Char>> = Iso(
 /**
  * [Iso] that defines equality between String and [List] of [Char]
  */
+@Deprecated(
+  "The function has been moved to Iso's companion object.",
+  ReplaceWith(
+    "Iso.stringToList()",
+    "arrow.optics.Iso", "arrow.optics.stringToList"
+  ),
+  DeprecationLevel.WARNING
+)
 fun String.Companion.toList(): Iso<String, List<Char>> =
+  stringToList
+
+/**
+ * [Iso] that defines equality between String and [List] of [Char]
+ */
+fun PIso.Companion.stringToList(): Iso<String, List<Char>> =
   stringToList
 
 /**
  * [Iso] that defines equality between String and [ListK] of [Char]
  */
+@Deprecated(
+  "ListK is being deprecated. Use the function defined for List from Iso's companion object.",
+  ReplaceWith(
+    "Iso.stringToList()",
+    "arrow.optics.Iso", "arrow.optics.stringToList"
+  ),
+  DeprecationLevel.WARNING
+)
 fun String.Companion.toListK(): Iso<String, ListK<Char>> =
   stringToList compose ListExtensions.toListK()
 
@@ -52,7 +72,7 @@ fun PTraversal.Companion.string(): Traversal<String, Char> = object : Traversal<
  * @return [FilterIndex] instance
  */
 fun FilterIndex.Companion.string(): FilterIndex<String, Int, Char> = FilterIndex { p ->
-  String.toListK() compose ListK.filterIndex<Char>().filter(p) }
+  Iso.stringToList() compose FilterIndex.list<Char>().filter(p) }
 
 /**
  * [Index] instance for [String].
@@ -62,10 +82,10 @@ fun FilterIndex.Companion.string(): FilterIndex<String, Int, Char> = FilterIndex
  * @return [Index] instance
  */
 fun Index.Companion.string(): Index<String, Int, Char> = Index { i ->
-  String.toListK() compose ListK.index<Char>().index(i) }
+  Iso.stringToList() compose Index.list<Char>().index(i) }
 
 /**
- * [String]'s [Cons] instance
+ * [Cons] instance for [String].
  */
 fun Cons.Companion.string(): Cons<String, Char> = Cons {
   Prism(
@@ -75,7 +95,7 @@ fun Cons.Companion.string(): Cons<String, Char> = Cons {
 }
 
 /**
- * [String]'s [Snoc] instance
+ * [Snoc] instance for [String].
  */
 fun Snoc.Companion.string(): Snoc<String, Char> = Snoc {
   Prism(
