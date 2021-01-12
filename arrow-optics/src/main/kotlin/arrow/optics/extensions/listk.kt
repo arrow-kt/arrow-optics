@@ -33,8 +33,8 @@ import arrow.typeclasses.Applicative
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.traversal",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING)
 fun <A> ListK.Companion.traversal(): Traversal<ListK<A>, A> = object : Traversal<ListK<A>, A> {
   override fun <F> modifyF(FA: Applicative<F>, s: ListK<A>, f: (A) -> Kind<F, A>): Kind<F, ListK<A>> =
@@ -47,8 +47,8 @@ fun <A> ListK.Companion.traversal(): Traversal<ListK<A>, A> = object : Traversal
 @Deprecated(
   "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING)
 fun <A> listKEach(): Each<ListK<A>, A> = Each { ListK.traversal() }
 
@@ -58,8 +58,8 @@ fun <A> listKEach(): Each<ListK<A>, A> = Each { ListK.traversal() }
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filterIndex",
   ReplaceWith(
-    "List::class.filterIndex<A>()",
-    "arrow.optics.filterIndex"),
+    "FilterIndex.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"),
   DeprecationLevel.WARNING)
 fun <A> listKFilterIndex(): FilterIndex<ListK<A>, Int, A> = FilterIndex { p ->
   object : Traversal<ListK<A>, A> {
@@ -77,8 +77,8 @@ fun <A> listKFilterIndex(): FilterIndex<ListK<A>, Int, A> = FilterIndex { p ->
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
   ReplaceWith(
-    "List::class.index<A>()",
-    "arrow.optics.index"),
+    "Index.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Index"),
   DeprecationLevel.WARNING)
 fun <A> listKIndex(): Index<ListK<A>, Int, A> = Index { i ->
   POptional(
@@ -93,8 +93,8 @@ fun <A> listKIndex(): Index<ListK<A>, Int, A> = Index { i ->
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
-    "List::class.cons<A>()",
-    "arrow.optics.cons"),
+    "Cons.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"),
   DeprecationLevel.WARNING)
 fun <A> listKCons(): Cons<ListK<A>, A> = Cons {
   PPrism(
@@ -109,8 +109,8 @@ fun <A> listKCons(): Cons<ListK<A>, A> = Cons {
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
   ReplaceWith(
-    "List::class.snoc<A>()",
-    "arrow.optics.snoc"),
+    "Snoc.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"),
   DeprecationLevel.WARNING)
 fun <A> listKSnoc(): Snoc<ListK<A>, A> = Snoc {
   object : Prism<ListK<A>, Tuple2<ListK<A>, A>> {

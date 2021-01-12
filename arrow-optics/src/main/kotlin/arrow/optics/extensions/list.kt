@@ -27,8 +27,8 @@ import arrow.typeclasses.Applicative
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.traversal",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING)
 fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = listTraversal()
 
@@ -38,8 +38,8 @@ fun <A> ListExtensions.traversal(): Traversal<List<A>, A> = listTraversal()
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.traversal",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
 fun <A> listTraversal(): Traversal<List<A>, A> = object : Traversal<List<A>, A> {
@@ -50,8 +50,8 @@ fun <A> listTraversal(): Traversal<List<A>, A> = object : Traversal<List<A>, A> 
 @Deprecated(
   "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
 fun <A> ListExtensions.each(): Each<List<A>, A> = listEach()
@@ -62,8 +62,8 @@ fun <A> ListExtensions.each(): Each<List<A>, A> = listEach()
 @Deprecated(
   "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
 fun <A> listEach(): Each<List<A>, A> = Each { listTraversal() }
@@ -71,8 +71,8 @@ fun <A> listEach(): Each<List<A>, A> = Each { listTraversal() }
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filterIndex",
   ReplaceWith(
-    "List::class.filterIndex<A>()",
-    "arrow.optics.filterIndex"),
+  "FilterIndex.list<A>()",
+  "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"),
   DeprecationLevel.WARNING
 )
 fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterIndex()
@@ -82,7 +82,9 @@ fun <A> ListExtensions.filterIndex(): FilterIndex<List<A>, Int, A> = listFilterI
  */
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filterIndex",
-  ReplaceWith("List::class.filterIndex<A>()", "arrow.optics.filterIndex"),
+  ReplaceWith(
+    "FilterIndex.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"),
   DeprecationLevel.WARNING
 )
 fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
@@ -97,8 +99,8 @@ fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
   ReplaceWith(
-    "List::class.index<A>()",
-    "arrow.optics.index"),
+    "Index.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Index"),
   DeprecationLevel.WARNING
 )
 fun <A> ListExtensions.index(): Index<List<A>, Int, A> = listIndex()
@@ -109,8 +111,8 @@ fun <A> ListExtensions.index(): Index<List<A>, Int, A> = listIndex()
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
   ReplaceWith(
-    "List::class.index<A>()",
-    "arrow.optics.index"),
+    "Index.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Index"),
   DeprecationLevel.WARNING
 )
 fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
@@ -123,8 +125,8 @@ fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
-    "List::class.cons<A>()",
-    "arrow.optics.cons"),
+    "Cons.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"),
   DeprecationLevel.WARNING
 )
 fun <A> ListExtensions.cons(): Cons<List<A>, A> = listCons()
@@ -135,8 +137,8 @@ fun <A> ListExtensions.cons(): Cons<List<A>, A> = listCons()
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
-    "List::class.cons<A>()",
-    "arrow.optics.cons"),
+    "Cons.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"),
   DeprecationLevel.WARNING
 )
 fun <A> listCons(): Cons<List<A>, A> = Cons {
@@ -149,8 +151,8 @@ fun <A> listCons(): Cons<List<A>, A> = Cons {
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
   ReplaceWith(
-    "List::class.snoc<A>()",
-    "arrow.optics.snoc"),
+    "Snoc.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"),
   DeprecationLevel.WARNING
 )
 fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = listSnoc()
@@ -161,8 +163,8 @@ fun <A> ListExtensions.snoc(): Snoc<List<A>, A> = listSnoc()
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
   ReplaceWith(
-    "List::class.snoc<A>()",
-    "arrow.optics.snoc"),
+    "Snoc.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"),
   DeprecationLevel.WARNING
 )
 fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
