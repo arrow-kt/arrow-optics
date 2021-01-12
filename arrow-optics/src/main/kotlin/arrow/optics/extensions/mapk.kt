@@ -8,7 +8,6 @@ import arrow.core.MapK
 import arrow.core.k
 import arrow.core.fix
 import arrow.core.getOption
-import arrow.extension
 import arrow.optics.Lens
 import arrow.optics.Optional
 import arrow.optics.PLens
@@ -23,7 +22,6 @@ import arrow.typeclasses.Applicative
 /**
  * [At] instance definition for [MapK].
  */
-@extension
 interface MapKAt<K, V> : At<MapK<K, V>, K, Option<V>> {
   override fun at(i: K): Lens<MapK<K, V>, Option<V>> = PLens(
     get = { it.fix().getOption(i) },
@@ -51,7 +49,6 @@ fun <K, V> MapK.Companion.traversal(): Traversal<MapK<K, V>, V> = object : Trave
 /**
  * [Each] instance definition for [Map].
  */
-@extension
 interface MapKEach<K, V> : Each<MapK<K, V>, V> {
   override fun each(): Traversal<MapK<K, V>, V> =
     MapK.traversal()
@@ -60,7 +57,6 @@ interface MapKEach<K, V> : Each<MapK<K, V>, V> {
 /**
  * [FilterIndex] instance definition for [Map].
  */
-@extension
 interface MapKFilterIndex<K, V> : FilterIndex<MapK<K, V>, K, V> {
   override fun filter(p: (K) -> Boolean): Traversal<MapK<K, V>, V> = object : Traversal<MapK<K, V>, V> {
     override fun <F> modifyF(FA: Applicative<F>, s: MapK<K, V>, f: (V) -> Kind<F, V>): Kind<F, MapK<K, V>> = FA.run {
@@ -76,7 +72,6 @@ interface MapKFilterIndex<K, V> : FilterIndex<MapK<K, V>, K, V> {
 /**
  * [Index] instance definition for [Map].
  */
-@extension
 interface MapKIndex<K, V> : Index<MapK<K, V>, K, V> {
   override fun index(i: K): Optional<MapK<K, V>, V> = POptional(
     getOrModify = { it[i]?.right() ?: it.left() },
