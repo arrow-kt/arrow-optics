@@ -12,7 +12,7 @@ import arrow.optics.extensions.ListKIndex
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Index.list<A>().index(i)",
     "arrow.optics.list", "arrow.optics.typeclasses.Index"
@@ -29,14 +29,14 @@ fun <A> index(i: Int): POptional<ListK<A>, ListK<A>, A, A> = arrow.optics.extens
 @PublishedApi()
 internal val index_singleton: ListKIndex<Any?> = object : ListKIndex<Any?> {}
 
-@Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
+@Deprecated("Receiver List object is deprecated, and it will be removed in 0.13.")
 object List {
   @Suppress(
     "UNCHECKED_CAST",
     "NOTHING_TO_INLINE"
   )
   @Deprecated(
-    "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
+    "Typeclass instance have been moved to the companion object of the typeclass.",
     ReplaceWith(
       "Index.list<A>()",
       "arrow.optics.list", "arrow.optics.typeclasses.Index"

@@ -15,7 +15,7 @@ import kotlin.collections.List
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.initOption",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Snoc.list<A>().initOption()",
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
@@ -36,7 +36,7 @@ fun <A> initOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> =
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.lastOption",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Snoc.list<A>().lastOption()",
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
@@ -94,14 +94,14 @@ fun <A> List<A>.unsnoc(): Option<Tuple2<ListK<A>, A>> =
 @PublishedApi()
 internal val snoc_singleton: ListKSnoc<Any?> = object : ListKSnoc<Any?> {}
 
-@Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
+@Deprecated("Receiver List object is deprecated, and it will be removed in 0.13.")
 object List {
   @Suppress(
     "UNCHECKED_CAST",
     "NOTHING_TO_INLINE"
   )
   @Deprecated(
-    "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
+    "Typeclass instance have been moved to the companion object of the typeclass.",
     ReplaceWith(
       "Snoc.list<A>()",
       "arrow.optics.list", "arrow.optics.typeclasses.Snoc"

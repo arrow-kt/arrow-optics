@@ -12,7 +12,7 @@ import arrow.optics.extensions.ListKEach
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "Each is being deprecated. Use Traversal directly instead.",
+  "Each is being deprecated. Use the instance for List from Traversal's companion object instead.",
   ReplaceWith(
     "Traversal.list<A>()",
     "arrow.optics.Traversal", "arrow.optics.list"),
@@ -28,14 +28,14 @@ fun <A> each(): PTraversal<ListK<A>, ListK<A>, A, A> = arrow.optics.extensions.l
 @PublishedApi()
 internal val each_singleton: ListKEach<Any?> = object : ListKEach<Any?> {}
 
-@Deprecated("Receiver List object is deprecated, prefer to turn List functions into top-level functions")
+@Deprecated("Receiver List object is deprecated, and it will be removed in 0.13.")
 object List {
   @Suppress(
     "UNCHECKED_CAST",
     "NOTHING_TO_INLINE"
   )
   @Deprecated(
-    "Each is being deprecated. Use Traversal directly instead.",
+    "Each is being deprecated. Use the instance for List from Traversal's companion object instead.",
     ReplaceWith(
       "Traversal.list<A>()",
       "arrow.optics.Traversal", "arrow.optics.list"),

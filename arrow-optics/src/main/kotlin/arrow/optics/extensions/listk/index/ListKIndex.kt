@@ -26,7 +26,7 @@ internal val index_singleton: ListKIndex<Any?> = object : ListKIndex<Any?> {}
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Index.list<A>().index(i)",
     "arrow.optics.list", "arrow.optics.typeclasses.Index"
@@ -62,7 +62,7 @@ operator fun <A, T> PLens<T, T, ListK<A>, ListK<A>>.get(i: Int): POptional<T, T,
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "ListK is being deprecated, use List top-level functions instead.",
+  "ListK is being deprecated. Use the instance for List from the companion object of the typeclass.",
   ReplaceWith(
     "Index.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.Index"

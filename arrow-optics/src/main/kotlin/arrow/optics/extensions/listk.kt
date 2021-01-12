@@ -32,7 +32,7 @@ import arrow.typeclasses.Applicative
  * @return [Traversal] with source [ListK] and focus every [A] of the source.
  */
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.traversal",
+  "ListK is being deprecated. Use the instance for List from the companion object of the typeclass.",
   ReplaceWith(
     "Traversal.list<A>()",
     "arrow.optics.Traversal", "arrow.optics.list"),
@@ -46,7 +46,7 @@ fun <A> ListK.Companion.traversal(): Traversal<ListK<A>, A> = object : Traversal
  * [Each] instance definition for [ListK].
  */
 @Deprecated(
-  "Each is being deprecated. Use Traversal directly instead.",
+  "Each is being deprecated. Use the instance for List from Traversal's companion object instead.",
   ReplaceWith(
     "Traversal.list<A>()",
     "arrow.optics.Traversal", "arrow.optics.list"),
@@ -59,7 +59,7 @@ interface ListKEach<A> : Each<ListK<A>, A> {
  * [FilterIndex] instance definition for [ListK].
  */
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filterIndex",
+  "Typeclass interface implementation will not be exposed directly anymore",
   ReplaceWith(
     "FilterIndex.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"),
@@ -78,7 +78,7 @@ interface ListKFilterIndex<A> : FilterIndex<ListK<A>, Int, A> {
  * [Index] instance definition for [ListK].
  */
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
+  "Typeclass interface implementation will not be exposed directly anymore",
   ReplaceWith(
     "Index.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.Index"),
@@ -94,7 +94,7 @@ interface ListKIndex<A> : Index<ListK<A>, Int, A> {
  * [Cons] instance definition for [ListK].
  */
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
+  "Typeclass interface implementation will not be exposed directly anymore",
   ReplaceWith(
     "Cons.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"),
@@ -110,7 +110,7 @@ interface ListKCons<A> : Cons<ListK<A>, A> {
  * [Snoc] instance definition for [ListK].
  */
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.snoc",
+  "Typeclass interface implementation will not be exposed directly anymore",
   ReplaceWith(
     "Snoc.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"),

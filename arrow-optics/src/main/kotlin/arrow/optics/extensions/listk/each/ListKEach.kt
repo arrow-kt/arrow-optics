@@ -19,7 +19,7 @@ internal val each_singleton: ListKEach<Any?> = object : ListKEach<Any?> {}
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "Each is being deprecated. Use Traversal directly instead.",
+  "Each is being deprecated. Use the instance for List from Traversal's companion object instead.",
   ReplaceWith(
     "Traversal.list<A>()",
     "arrow.optics.Traversal", "arrow.optics.list"),
@@ -34,7 +34,7 @@ fun <A> each(): PTraversal<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "Each is being deprecated. Use Traversal directly instead.",
+  "Each is being deprecated. Use the instance for List from Traversal's companion object instead.",
   ReplaceWith(
     "Traversal.list<A>()",
     "arrow.optics.Traversal", "arrow.optics.list"),

@@ -26,7 +26,7 @@ internal val snoc_singleton: ListKSnoc<Any?> = object : ListKSnoc<Any?> {}
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.initOption",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Snoc.list<A>().initOption()",
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
@@ -46,7 +46,7 @@ fun <A> initOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> = arrow.
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.lastOption",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Snoc.list<A>().lastOption()",
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
@@ -65,7 +65,7 @@ fun <A> lastOption(): POptional<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "ListK is being deprecated, use the snoc method define for List instead.",
+  "ListK is being deprecated, use the snoc function defined for List instead.",
   ReplaceWith(
     "snoc(last)",
     "arrow.optics.snoc"
@@ -84,7 +84,7 @@ infix fun <A> ListK<A>.snoc(last: A): ListK<A> = arrow.core.ListK.snoc<A>().run 
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "ListK is being deprecated, use the unsnoc method define for List instead.",
+  "ListK is being deprecated. Use the unsnoc function defined for List instead.",
   ReplaceWith(
     "unsnoc()",
     "arrow.optics.unsnoc"
@@ -100,7 +100,7 @@ fun <A> ListK<A>.unsnoc(): Option<Tuple2<ListK<A>, A>> = arrow.core.ListK.snoc<A
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "ListK is being deprecated, use List top-level functions instead.",
+  "ListK is being deprecated. Use the instance for List from the companion object of the typeclass.",
   ReplaceWith(
     "Snoc.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.Snoc"

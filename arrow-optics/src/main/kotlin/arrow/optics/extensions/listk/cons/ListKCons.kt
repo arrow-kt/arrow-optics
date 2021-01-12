@@ -27,7 +27,7 @@ internal val cons_singleton: ListKCons<Any?> = object : ListKCons<Any?> {}
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "ListK is being deprecated, use List top-level functions instead.",
+  "ListK is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Cons.list<A>().firstOption()",
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"
@@ -46,7 +46,7 @@ fun <A> firstOption(): POptional<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "ListK is being deprecated, use List top-level functions instead.",
+  "ListK is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Cons.list<A>().tailOption()",
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"
@@ -85,7 +85,7 @@ infix fun <A> A.cons(tail: ListK<A>): ListK<A> = arrow.core.ListK.cons<A>().run 
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "ListK is being deprecated, use the uncons method define for List instead.",
+  "ListK is being deprecated, use the uncons function defined for List instead.",
   ReplaceWith(
     "uncons()",
     "arrow.optics.uncons"
@@ -104,7 +104,7 @@ fun <A> ListK<A>.uncons(): Option<Tuple2<A, ListK<A>>> = arrow.core.ListK.cons<A
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for List from the companion object of the typeclass instead.",
   ReplaceWith(
     "Cons.list<A>().cons()",
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"
@@ -122,7 +122,7 @@ fun <A> cons(): PPrism<ListK<A>, ListK<A>, Tuple2<A, ListK<A>>, Tuple2<A, ListK<
   "NOTHING_TO_INLINE"
 )
 @Deprecated(
-  "ListK is being deprecated, use List top-level functions instead.",
+  "ListK is being deprecated. Use the instance for List from the companion object of the typeclass.",
   ReplaceWith(
     "Cons.list<A>()",
     "arrow.optics.list", "arrow.optics.typeclasses.Cons"
