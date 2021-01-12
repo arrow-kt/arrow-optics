@@ -22,7 +22,6 @@ import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
 import arrow.typeclasses.Applicative
-import kotlin.reflect.KClass
 
 /**
  * [Optional] to safely operate on the head of a list
