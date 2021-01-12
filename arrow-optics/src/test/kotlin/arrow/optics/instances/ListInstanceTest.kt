@@ -7,7 +7,7 @@ import arrow.core.extensions.eq
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
 import arrow.core.extensions.tuple2.eq.eq
-import arrow.core.listEq
+import arrow.core.list
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.listK
@@ -120,8 +120,8 @@ class ListInstanceTest : UnitSpec() {
         aGen = Gen.list(Gen.int()),
         bGen = Gen.tuple2(Gen.int(), Gen.list(Gen.int())),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.list(Gen.int()))),
-        EQA = listEq(Int.eq()),
-        EQOptionB = Option.eq(Tuple2.eq(Int.eq(), listEq(Int.eq())))
+        EQA = Eq.list(Int.eq()),
+        EQOptionB = Option.eq(Tuple2.eq(Int.eq(), Eq.list(Int.eq())))
       )
     )
 
@@ -142,8 +142,8 @@ class ListInstanceTest : UnitSpec() {
         aGen = Gen.list(Gen.int()),
         bGen = Gen.tuple2(Gen.list(Gen.int()), Gen.int()),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.list(Gen.int()), Gen.int())),
-        EQA = listEq(Int.eq()),
-        EQOptionB = Option.eq(Tuple2.eq(listEq(Int.eq()), Int.eq()))
+        EQA = Eq.list(Int.eq()),
+        EQOptionB = Option.eq(Tuple2.eq(Eq.list(Int.eq()), Int.eq()))
       )
     )
   }
