@@ -15,8 +15,8 @@ import arrow.optics.typeclasses.Index
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.index",
   ReplaceWith(
-    "List::class.index<A>(i)",
-    "kotlin.collections.List", "arrow.optics.index"
+    "Index.list<A>().index(i)",
+    "arrow.optics.list", "arrow.optics.typeclasses.Index"
   ),
   DeprecationLevel.WARNING
 )

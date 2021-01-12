@@ -30,8 +30,8 @@ internal val filterIndex_singleton: FilterIndex<ListK<Any?>, Int, Any?> = listKF
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filter",
   ReplaceWith(
-    "List::class.filter<A>(p)",
-    "kotlin.collections.List", "arrow.optics.filter"
+    "FilterIndex.list<A>().filter(p)",
+    "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"
   ),
   DeprecationLevel.WARNING
 )
@@ -46,8 +46,8 @@ fun <A> filter(p: Function1<Int, Boolean>): PTraversal<ListK<A>, ListK<A>, A, A>
 @Deprecated(
   "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
-    "List::class.filterIndex<A>()",
-    "kotlin.collections.List", "arrow.optics.filterIndex"
+    "FilterIndex.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"
   ),
   DeprecationLevel.WARNING
 )

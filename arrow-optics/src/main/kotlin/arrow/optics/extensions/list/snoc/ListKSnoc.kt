@@ -18,8 +18,8 @@ import kotlin.collections.List
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.initOption",
   ReplaceWith(
-    "List::class.initOption<A>()",
-    "kotlin.collections.List", "arrow.optics.initOption"
+    "Snoc.list<A>().initOption()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
   ),
   DeprecationLevel.WARNING
 )
@@ -39,8 +39,8 @@ fun <A> initOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> =
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.lastOption",
   ReplaceWith(
-    "List::class.lastOption<A>()",
-    "kotlin.collections.List", "arrow.optics.lastOption"
+    "Snoc.list<A>().lastOption()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
   ),
   DeprecationLevel.WARNING
 )

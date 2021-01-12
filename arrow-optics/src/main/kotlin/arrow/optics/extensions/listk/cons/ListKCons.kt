@@ -30,8 +30,8 @@ internal val cons_singleton: Cons<ListK<Any?>, Any?> = listKCons()
 @Deprecated(
   "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
-    "List::class.firstOption<A>()",
-    "kotlin.collections.List", "arrow.optics.firstOption"
+    "Cons.list<A>().firstOption()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"
   ),
   DeprecationLevel.WARNING
 )
@@ -49,8 +49,8 @@ fun <A> firstOption(): POptional<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
 @Deprecated(
   "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
-    "List::class.tailOption<A>()",
-    "kotlin.collections.List", "arrow.optics.tailOption"
+    "Cons.list<A>().tailOption()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"
   ),
   DeprecationLevel.WARNING
 )
@@ -107,8 +107,8 @@ fun <A> ListK<A>.uncons(): Option<Tuple2<A, ListK<A>>> = arrow.core.ListK.cons<A
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.cons",
   ReplaceWith(
-    "List::class.cons<A>().cons()",
-    "kotlin.collections.List", "arrow.optics.cons"
+    "Cons.list<A>().cons()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"
   ),
   DeprecationLevel.WARNING
 )
@@ -125,8 +125,8 @@ fun <A> cons(): PPrism<ListK<A>, ListK<A>, Tuple2<A, ListK<A>>, Tuple2<A, ListK<
 @Deprecated(
   "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
-    "List::class.cons<A>()",
-    "kotlin.collections.List", "arrow.optics.cons"
+    "Cons.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Cons"
   ),
   DeprecationLevel.WARNING
 )

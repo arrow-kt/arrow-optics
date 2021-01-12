@@ -22,8 +22,8 @@ internal val each_singleton: Each<ListK<Any?>, Any?> = listKEach()
 @Deprecated(
   "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "kotlin.collections.List", "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
 fun <A> each(): PTraversal<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
@@ -37,8 +37,8 @@ fun <A> each(): PTraversal<ListK<A>, ListK<A>, A, A> = arrow.core.ListK
 @Deprecated(
   "Each is being deprecated. Use Traversal directly instead.",
   ReplaceWith(
-    "List::class.traversal<A>()",
-    "kotlin.collections.List", "arrow.optics.traversal"),
+    "Traversal.list<A>()",
+    "arrow.optics.Traversal", "arrow.optics.list"),
   DeprecationLevel.WARNING
 )
 inline fun <A> Companion.each(): Each<ListK<A>, A> = each_singleton as

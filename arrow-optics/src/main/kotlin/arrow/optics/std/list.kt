@@ -87,10 +87,11 @@ fun <A, B> ListK.Companion.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmpt
 /**
  * [PIso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-fun <A, B> KClass<List<*>>.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> = PIso(
-  get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
-  reverseGet = { optNel -> optNel.fold({ emptyList() }, NonEmptyList<B>::all) }
-)
+fun <A, B> KClass<List<*>>.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> =
+  PIso(
+    get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
+    reverseGet = { optNel -> optNel.fold({ emptyList() }, NonEmptyList<B>::all) }
+  )
 
 /**
  * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
@@ -149,9 +150,6 @@ fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
 
 fun <A> FilterIndex.Companion.list(): FilterIndex<List<A>, Int, A> = listFilterIndex()
 
-fun <A> KClass<List<*>>.filter(p: Function1<Int, Boolean>): PTraversal<List<A>, List<A>, A, A> =
-  FilterIndex.list<A>().filter(p)
-
 /**
  * [Index] instance definition for [List].
  */
@@ -163,9 +161,6 @@ fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
 }
 
 fun <A> Index.Companion.list(): Index<List<A>, Int, A> = listIndex()
-
-fun <A> KClass<List<*>>.index(i: Int): POptional<List<A>, List<A>, A, A> =
-  Index.list<A>().index(i)
 
 operator fun <A, T> PLens<T, T, List<A>, List<A>>.get(i: Int): POptional<T, T, A, A> =
   Index.list<A>().run { this@get.get(i) }
@@ -181,12 +176,6 @@ fun <A> listCons(): Cons<List<A>, A> = Cons {
 }
 
 fun <A> Cons.Companion.list(): Cons<List<A>, A> = listCons()
-
-fun <A> KClass<List<*>>.firstOption(): POptional<List<A>, List<A>, A, A> =
-  Cons.list<A>().firstOption()
-
-fun <A> KClass<List<*>>.tailOption(): POptional<List<A>, List<A>, List<A>, List<A>> =
-  Cons.list<A>().tailOption()
 
 infix fun <A> A.cons(tail: List<A>): List<A> =
   Cons.list<A>().run { this@cons.cons(tail) }
@@ -210,12 +199,6 @@ fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
 }
 
 fun <A> Snoc.Companion.list(): Snoc<List<A>, A> = listSnoc()
-
-fun <A> KClass<List<*>>.initOption(): POptional<List<A>, List<A>, List<A>, List<A>> =
-  Snoc.list<A>().initOption()
-
-fun <A> KClass<List<*>>.lastOption(): POptional<List<A>, List<A>, A, A> =
-  Snoc.list<A>().lastOption()
 
 infix fun <A> List<A>.snoc(last: A): List<A> =
   Snoc.list<A>().run { this@snoc.snoc(last) }

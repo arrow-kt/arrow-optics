@@ -15,8 +15,8 @@ import arrow.optics.typeclasses.FilterIndex
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.filter",
   ReplaceWith(
-    "List::class.filter<A>(p)",
-    "kotlin.collections.List", "arrow.optics.filter"
+    "FilterIndex.list<A>().filter(p)",
+    "arrow.optics.list", "arrow.optics.typeclasses.FilterIndex"
   ),
   DeprecationLevel.WARNING
 )

@@ -29,8 +29,8 @@ internal val snoc_singleton: Snoc<ListK<Any?>, Any?> = listKSnoc()
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.initOption",
   ReplaceWith(
-    "List::class.initOption<A>()",
-    "kotlin.collections.List", "arrow.optics.initOption"
+    "Snoc.list<A>().initOption()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
   ),
   DeprecationLevel.WARNING
 )
@@ -49,8 +49,8 @@ fun <A> initOption(): POptional<ListK<A>, ListK<A>, ListK<A>, ListK<A>> = arrow.
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, function is being moved to arrow.optics.lastOption",
   ReplaceWith(
-    "List::class.lastOption<A>()",
-    "kotlin.collections.List", "arrow.optics.lastOption"
+    "Snoc.list<A>().lastOption()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
   ),
   DeprecationLevel.WARNING
 )
@@ -103,8 +103,8 @@ fun <A> ListK<A>.unsnoc(): Option<Tuple2<ListK<A>, A>> = arrow.core.ListK.snoc<A
 @Deprecated(
   "ListK is being deprecated, use List top-level functions instead.",
   ReplaceWith(
-    "List::class.snoc<A>()",
-    "kotlin.collections.List", "arrow.optics.snoc"
+    "Snoc.list<A>()",
+    "arrow.optics.list", "arrow.optics.typeclasses.Snoc"
   ),
   DeprecationLevel.WARNING
 )
