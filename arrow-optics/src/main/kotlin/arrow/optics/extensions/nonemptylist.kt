@@ -52,7 +52,7 @@ interface NonEmptyListEach<A> : Each<NonEmptyList<A>, A> {
  * [FilterIndex] instance definition for [NonEmptyList].
  */
 @Deprecated(
-  "Typeclass implementation will not be exposed directly anymore",
+  "Typeclass interface implementation will not be exposed directly anymore",
   ReplaceWith(
     "FilterIndex.nonEmptyList<A>()",
     "arrow.optics.nonEmptyList", "arrow.optics.typeclasses.FilterIndex"
@@ -72,7 +72,7 @@ interface NonEmptyListFilterIndex<A> : FilterIndex<NonEmptyList<A>, Int, A> {
  * [Index] instance definition for [NonEmptyList].
  */
 @Deprecated(
-  "Typeclass implementation will not be exposed directly anymore",
+  "Typeclass interface implementation will not be exposed directly anymore",
   ReplaceWith(
     "Index.nonEmptyList<A>()",
     "arrow.optics.nonEmptyList", "arrow.optics.typeclasses.Index"
