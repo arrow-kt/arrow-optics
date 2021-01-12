@@ -14,10 +14,10 @@ import arrow.core.test.generators.listK
 import arrow.core.test.generators.tuple2
 import arrow.optics.Traversal
 import arrow.optics.extensions.listk.cons.cons
-import arrow.optics.extensions.listk.each.each
 import arrow.optics.extensions.listk.filterIndex.filterIndex
 import arrow.optics.extensions.listk.index.index
 import arrow.optics.extensions.listk.snoc.snoc
+import arrow.optics.extensions.traversal
 import arrow.optics.list
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
@@ -35,7 +35,7 @@ class ListInstanceTest : UnitSpec() {
 
     testLaws(
       TraversalLaws.laws(
-        traversal = ListK.each<String>().each(),
+        traversal = ListK.traversal(),
         aGen = Gen.listK(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
