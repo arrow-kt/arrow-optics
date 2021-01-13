@@ -4,11 +4,6 @@ import arrow.core.SequenceK
 import arrow.core.SequenceK.Companion
 import arrow.optics.PTraversal
 import arrow.optics.extensions.SequenceKEach
-import kotlin.Any
-import kotlin.Deprecated
-import kotlin.PublishedApi
-import kotlin.Suppress
-import kotlin.jvm.JvmName
 
 /**
  * cached extension
@@ -24,11 +19,10 @@ internal val each_singleton: SequenceKEach<Any?> = object : SequenceKEach<Any?> 
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "Each is being deprecated. Use the instance for Sequence from Traversal's companion object instead.",
   ReplaceWith(
-  "each()",
-  "arrow.core.SequenceK.each"
-  ),
+    "Traversal.sequence<A>()",
+    "arrow.optics.Traversal", "arrow.optics.sequence"),
   DeprecationLevel.WARNING
 )
 fun <A> each(): PTraversal<SequenceK<A>, SequenceK<A>, A, A> = arrow.core.SequenceK
@@ -38,6 +32,13 @@ fun <A> each(): PTraversal<SequenceK<A>, SequenceK<A>, A, A> = arrow.core.Sequen
 @Suppress(
   "UNCHECKED_CAST",
   "NOTHING_TO_INLINE"
+)
+@Deprecated(
+  "Each is being deprecated. Use the instance for Sequence from Traversal's companion object instead.",
+  ReplaceWith(
+    "Traversal.sequence<A>()",
+    "arrow.optics.Traversal", "arrow.optics.sequence"),
+  DeprecationLevel.WARNING
 )
 inline fun <A> Companion.each(): SequenceKEach<A> = each_singleton as
     arrow.optics.extensions.SequenceKEach<A>

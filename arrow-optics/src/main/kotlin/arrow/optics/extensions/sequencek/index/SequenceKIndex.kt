@@ -5,12 +5,6 @@ import arrow.core.SequenceK.Companion
 import arrow.optics.PLens
 import arrow.optics.POptional
 import arrow.optics.extensions.SequenceKIndex
-import kotlin.Any
-import kotlin.Deprecated
-import kotlin.Int
-import kotlin.PublishedApi
-import kotlin.Suppress
-import kotlin.jvm.JvmName
 
 /**
  * cached extension
@@ -26,10 +20,10 @@ internal val index_singleton: SequenceKIndex<Any?> = object : SequenceKIndex<Any
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for Sequence from the companion object of the typeclass instead.",
   ReplaceWith(
-  "index(i)",
-  "arrow.core.SequenceK.index"
+    "Index.sequence<A>().index(i)",
+    "arrow.optics.sequence", "arrow.optics.typeclasses.Index"
   ),
   DeprecationLevel.WARNING
 )
@@ -45,12 +39,8 @@ fun <A> index(i: Int): POptional<SequenceK<A>, SequenceK<A>, A, A> = arrow.core.
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
-  ReplaceWith(
-  "get(i)",
-  "arrow.core.get"
-  ),
-  DeprecationLevel.WARNING
+  "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  level = DeprecationLevel.WARNING
 )
 operator fun <A, T> PLens<T, T, SequenceK<A>, SequenceK<A>>.get(i: Int): POptional<T, T, A, A> =
     arrow.core.SequenceK.index<A>().run {
@@ -60,6 +50,14 @@ operator fun <A, T> PLens<T, T, SequenceK<A>, SequenceK<A>>.get(i: Int): POption
 @Suppress(
   "UNCHECKED_CAST",
   "NOTHING_TO_INLINE"
+)
+@Deprecated(
+  "SequenceK is being deprecated. Use the instance for Sequence from the companion object of the typeclass.",
+  ReplaceWith(
+    "Index.sequence<A>()",
+    "arrow.optics.sequence", "arrow.optics.typeclasses.Index"
+  ),
+  DeprecationLevel.WARNING
 )
 inline fun <A> Companion.index(): SequenceKIndex<A> = index_singleton as
     arrow.optics.extensions.SequenceKIndex<A>

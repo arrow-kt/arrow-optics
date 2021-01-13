@@ -4,14 +4,6 @@ import arrow.core.SequenceK
 import arrow.core.SequenceK.Companion
 import arrow.optics.PTraversal
 import arrow.optics.extensions.SequenceKFilterIndex
-import kotlin.Any
-import kotlin.Boolean
-import kotlin.Deprecated
-import kotlin.Function1
-import kotlin.Int
-import kotlin.PublishedApi
-import kotlin.Suppress
-import kotlin.jvm.JvmName
 
 /**
  * cached extension
@@ -28,10 +20,10 @@ internal val filterIndex_singleton: SequenceKFilterIndex<Any?> = object : Sequen
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
+  "arrow.optics.extensions package is being deprecated. Use the exposed function in the instance for Sequence from the companion object of the typeclass instead.",
   ReplaceWith(
-  "filter(p)",
-  "arrow.core.SequenceK.filter"
+    "FilterIndex.sequence<A>().filter(p)",
+    "arrow.optics.sequence", "arrow.optics.typeclasses.FilterIndex"
   ),
   DeprecationLevel.WARNING
 )
@@ -43,6 +35,14 @@ fun <A> filter(p: Function1<Int, Boolean>): PTraversal<SequenceK<A>, SequenceK<A
 @Suppress(
   "UNCHECKED_CAST",
   "NOTHING_TO_INLINE"
+)
+@Deprecated(
+  "SequenceK is being deprecated. Use the instance for Sequence from the companion object of the typeclass.",
+  ReplaceWith(
+    "FilterIndex.sequence<A>()",
+    "arrow.optics.sequence", "arrow.optics.typeclasses.FilterIndex"
+  ),
+  DeprecationLevel.WARNING
 )
 inline fun <A> Companion.filterIndex(): SequenceKFilterIndex<A> = filterIndex_singleton as
     arrow.optics.extensions.SequenceKFilterIndex<A>
