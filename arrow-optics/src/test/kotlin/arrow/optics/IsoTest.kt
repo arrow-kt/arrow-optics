@@ -6,7 +6,6 @@ import arrow.core.Some
 import arrow.core.extensions.monoid
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.core.extensions.option.functor.functor
 import arrow.core.toT
 import arrow.core.ListK
 import arrow.core.k
@@ -164,14 +163,6 @@ class IsoTest : UnitSpec() {
     "Lifting a function should yield the same result as not yielding" {
       forAll(genToken, Gen.string()) { token, value ->
         tokenIso.modify(token) { value } == tokenIso.lift { value }(token)
-      }
-    }
-
-    "Lifting a function as a functor should yield the same result as not yielding" {
-      forAll(genToken, Gen.string()) { token, value ->
-        tokenIso.modifyF(Option.functor(), token) { Some(value) } == tokenIso.liftF(Option.functor()) { Some(value) }(
-          token
-        )
       }
     }
 

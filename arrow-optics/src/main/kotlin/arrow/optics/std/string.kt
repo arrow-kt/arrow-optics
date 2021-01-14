@@ -1,17 +1,15 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.ListExtensions
 import arrow.core.ListK
 import arrow.core.Tuple2
-import arrow.core.k
 import arrow.core.left
 import arrow.core.right
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
-import arrow.typeclasses.Applicative
+import arrow.typeclasses.Monoid
 
 private val stringToList: Iso<String, List<Char>> = Iso(
   get = CharSequence::toList,
@@ -58,10 +56,20 @@ fun String.Companion.toListK(): Iso<String, ListK<Char>> =
  * @receiver [PTraversal.Companion] to make it statically available.
  * @return [Traversal] with source [String] and foci every [Char] in the source.
  */
-fun PTraversal.Companion.string(): Traversal<String, Char> = object : Traversal<String, Char> {
-  override fun <F> modifyF(FA: Applicative<F>, s: String, f: (Char) -> Kind<F, Char>): Kind<F, String> = FA.run {
-    s.toList().k().traverse(FA, f).map { it.joinToString(separator = "") }
-  }
+fun PTraversal.Companion.string(): Traversal<String, Char> =
+  Traversal { s, f -> s.map(f).joinToString(separator = "") }
+
+fun Fold.Companion.string(): Fold<String, Char> = object : Fold<String, Char> {
+  override fun <R> foldMap(M: Monoid<R>, s: String, f: (Char) -> R): R =
+    M.run { s.map(f).fold(empty()) { acc, r -> acc.combine(r) } }
+}
+
+fun PEvery.Companion.string(): Every<String, Char> = object : Every<String, Char> {
+  override fun <R> foldMap(M: Monoid<R>, s: String, f: (Char) -> R): R =
+    M.run { s.fold(empty()) { acc, r -> acc.combine(f(r)) } }
+
+  override fun map(s: String, f: (Char) -> Char): String =
+    s.map(f).joinToString(separator = "")
 }
 
 /**

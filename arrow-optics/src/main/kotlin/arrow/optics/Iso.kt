@@ -9,18 +9,19 @@ import arrow.core.Tuple2
 import arrow.core.compose
 import arrow.core.identity
 import arrow.core.toT
-import arrow.typeclasses.Applicative
-import arrow.typeclasses.Functor
 import arrow.typeclasses.Monoid
 
 @Deprecated(KindDeprecation)
-class ForPIso private constructor() { companion object }
+class ForPIso private constructor() {
+  companion object
+}
 @Deprecated(KindDeprecation)
 typealias PIsoOf<S, T, A, B> = arrow.Kind4<ForPIso, S, T, A, B>
 @Deprecated(KindDeprecation)
 typealias PIsoPartialOf<S, T, A> = arrow.Kind3<ForPIso, S, T, A>
 @Deprecated(KindDeprecation)
 typealias PIsoKindedJ<S, T, A, B> = arrow.HkJ4<ForPIso, S, T, A, B>
+
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 @Deprecated(KindDeprecation)
 inline fun <S, T, A, B> PIsoOf<S, T, A, B>.fix(): PIso<S, T, A, B> =
@@ -82,30 +83,6 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
 
       override fun reverseGet(b: B): T = reverseGet(b)
     }
-  }
-
-  /**
-   * Lift a [PIso] to a Functor level
-   */
-  fun <F> mapping(FF: Functor<F>): PIso<Kind<F, S>, Kind<F, T>, Kind<F, A>, Kind<F, B>> = FF.run {
-    PIso(
-      { fa -> fa.map(::get) },
-      { fb -> fb.map(::reverseGet) }
-    )
-  }
-
-  /**
-   * Modify polymorphically the target of a [PIso] with a Functor function
-   */
-  fun <F> modifyF(FF: Functor<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FF.run {
-    f(get(s)).map(::reverseGet)
-  }
-
-  /**
-   * Lift a function [f] with a functor: `(A) -> Kind<F, B> to the context of `S`: `(S) -> Kind<F, T>`
-   */
-  fun <F> liftF(FF: Functor<F>, f: (A) -> Kind<F, B>): (S) -> Kind<F, T> = FF.run {
-    { s -> f(get(s)).map(::reverseGet) }
   }
 
   /**
@@ -209,6 +186,11 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
   infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
 
   /**
+   * Compose a [PIso] with a [PTraversal]
+   */
+  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> = asEvery() compose other
+
+  /**
    * Plus operator overload to compose lenses
    */
   operator fun <C, D> plus(other: PIso<A, B, C, D>): PIso<S, T, C, D> = compose(other)
@@ -268,10 +250,12 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
   /**
    * View a [PIso] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      f(get(s)).map(this@PIso::reverseGet)
-    }
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f -> reverseGet(f(get(s))) }
+
+  fun asEvery(): PEvery<S, T, A, B> = object : PEvery<S, T, A, B> {
+    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = f(get(s))
+    override fun map(s: S, f: (A) -> B): T = reverseGet(f(get(s)))
   }
 
   /**
@@ -288,10 +272,4 @@ interface PIso<S, T, A, B> : PIsoOf<S, T, A, B> {
    * Modify polymorphically the focus of a [PIso] with a function
    */
   fun lift(f: (A) -> B): (S) -> T = { s -> reverseGet(f(get(s))) }
-
-  /**
-   * Lift a function [f] with a functor: `(A) -> Kind<F, B> to the context of `S`: `(S) -> Kind<F, T>`
-   */
-  fun <F> liftF(FF: Functor<F>, dummy: Unit = Unit, f: (A) -> Kind<F, B>): (S) -> Kind<F, T> =
-    liftF(FF) { a -> f(a) }
 }

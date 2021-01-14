@@ -1,14 +1,12 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Right
 import arrow.core.Some
-import arrow.core.extensions.option.traverse.traverse
 import arrow.core.identity
-import arrow.typeclasses.Applicative
+import arrow.typeclasses.Monoid
 
 /**
  * [PIso] that defines the equality between [Option] and the nullable platform type.
@@ -64,9 +62,16 @@ fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> = toPEither
  * @return [Traversal] with source [Option] and focus in every [arrow.core.Some] of the source.
  */
 fun <A> PTraversal.Companion.option(): Traversal<Option<A>, A> =
-  object : Traversal<Option<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: Option<A>, f: (A) -> Kind<F, A>): Kind<F, Option<A>> =
-      with(Option.traverse()) {
-        s.traverse(FA, f)
-      }
-  }
+  Traversal { s, f -> s.map(f) }
+
+fun <A> Fold.Companion.option(): Fold<Option<A>, A> = object : Fold<Option<A>, A> {
+  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, f: (A) -> R): R =
+    M.run { s.foldLeft(empty()) { b, a -> b.combine(f(a)) } }
+}
+
+fun <A> PEvery.Companion.option(): Every<Option<A>, A> = object : Every<Option<A>, A> {
+  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, f: (A) -> R): R =
+    M.run { s.foldLeft(empty()) { b, a -> b.combine(f(a)) } }
+
+  override fun map(s: Option<A>, f: (A) -> A): Option<A> = s.map(f)
+}

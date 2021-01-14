@@ -8,8 +8,6 @@ import arrow.core.Some
 import arrow.core.Tuple2
 import arrow.core.identity
 import arrow.core.toT
-import arrow.typeclasses.Applicative
-import arrow.typeclasses.Functor
 import arrow.typeclasses.Monoid
 
 @Deprecated(KindDeprecation)
@@ -79,18 +77,6 @@ interface PLens<S, T, A, B> : PLensOf<S, T, A, B> {
       override fun set(s: S, b: B): T = set(s, b)
     }
   }
-
-  /**
-   * Modify the focus of a [PLens] using Functor function
-   */
-  fun <F> modifyF(FF: Functor<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FF.run {
-    f(get(s)).map { b -> set(s, b) }
-  }
-
-  /**
-   * Lift a function [f]: `(A) -> Kind<F, B> to the context of `S`: `(S) -> Kind<F, T>`
-   */
-  fun <F> liftF(FF: Functor<F>, f: (A) -> Kind<F, B>): (S) -> Kind<F, T> = { s -> modifyF(FF, s, f) }
 
   /**
    * Join two [PLens] with the same focus in [A]
@@ -169,6 +155,11 @@ interface PLens<S, T, A, B> : PLensOf<S, T, A, B> {
   infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
 
   /**
+   * Compose an [PLens] with a [PEvery]
+   */
+  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> = asEvery() compose other
+
+  /**
    * Plus operator overload to compose lenses
    */
   operator fun <C, D> plus(other: PLens<A, B, C, D>): PLens<S, T, C, D> = compose(other)
@@ -215,10 +206,12 @@ interface PLens<S, T, A, B> : PLensOf<S, T, A, B> {
   /**
    * View a [PLens] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      f(get(s)).map { b -> this@PLens.set(s, b) }
-    }
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f -> set(s, f(get(s))) }
+
+  fun asEvery(): PEvery<S, T, A, B> = object : PEvery<S, T, A, B> {
+    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = f(this@PLens.get(s))
+    override fun map(s: S, f: (A) -> B): T = this@PLens.set(s, f(this@PLens.get(s)))
   }
 
   /**

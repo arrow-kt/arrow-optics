@@ -1,14 +1,11 @@
 package arrow.optics.typeclasses
 
-import arrow.Kind
-import arrow.optics.Fold
 import arrow.optics.Iso
 import arrow.optics.Lens
 import arrow.optics.Optional
 import arrow.optics.Prism
 import arrow.optics.Setter
 import arrow.optics.Traversal
-import arrow.typeclasses.Traverse
 
 /**
  * ank_macro_hierarchy(arrow.optics.typeclasses.Each)
@@ -82,15 +79,6 @@ fun interface Each<S, A> {
   @Deprecated("Each is being deprecated. Use Traversal directly instead.")
   val <T> Traversal<T, S>.every: Traversal<T, A> get() = this.compose(each())
 
-  /**
-   * DSL to compose [Each] with a [Fold] for a structure [S] to see all its foci [A]
-   *
-   * @receiver [Fold] with a focus in [S]
-   * @return [Fold] with a focus in [A]
-   */
-  @Deprecated("Each is being deprecated. Use Traversal directly instead.")
-  val <T> Fold<T, S>.every: Fold<T, A> get() = this.compose(each())
-
   companion object {
 
     /**
@@ -102,14 +90,5 @@ fun interface Each<S, A> {
      */
     fun <S, A, B> fromIso(EA: Each<A, B>, iso: Iso<S, A>): Each<S, B> =
       Each { iso compose EA.each() }
-
-    /**
-     * Create an instance of [Each] from a [Traverse]
-     *
-     * @param T [Traverse] to create [Each] instance from
-     * @return [Each] that provides [Traversal] created from [Traverse]
-     */
-    fun <S, A> fromTraverse(T: Traverse<S>): Each<Kind<S, A>, A> =
-      Each { Traversal.fromTraversable(T) }
   }
 }

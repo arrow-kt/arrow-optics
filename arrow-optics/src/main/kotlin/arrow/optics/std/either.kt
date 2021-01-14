@@ -1,13 +1,10 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.Either
 import arrow.core.Invalid
 import arrow.core.Valid
 import arrow.core.Validated
-import arrow.core.extensions.either.traverse.traverse
-import arrow.core.fix
-import arrow.typeclasses.Applicative
+import arrow.typeclasses.Monoid
 
 /**
  * [PIso] that defines the equality between [Either] and [Validated]
@@ -29,9 +26,17 @@ fun <A, B> Either.Companion.toValidated(): Iso<Either<A, B>, Validated<A, B>> = 
  * @return [Traversal] with source [Either] and focus every [Either.Right] of the source.
  */
 fun <L, R> PTraversal.Companion.either(): Traversal<Either<L, R>, R> =
-  object : Traversal<Either<L, R>, R> {
-    override fun <F> modifyF(FA: Applicative<F>, s: Either<L, R>, f: (R) -> Kind<F, R>): Kind<F, Either<L, R>> =
-      with(Either.traverse<L>()) {
-        FA.run { s.traverse(FA, f).map { it.fix() } }
-      }
-  }
+  PTraversal { s, f -> s.map(f) }
+
+fun <L, R> Fold.Companion.either(): Fold<Either<L, R>, R> = object : Fold<Either<L, R>, R> {
+  override fun <A> foldMap(M: Monoid<A>, s: Either<L, R>, f: (R) -> A): A =
+    s.foldMap(M, f)
+}
+
+fun <L, R> PEvery.Companion.either(): Every<Either<L, R>, R> = object : Every<Either<L, R>, R> {
+  override fun <A> foldMap(M: Monoid<A>, s: Either<L, R>, f: (R) -> A): A =
+    s.foldMap(M, f)
+
+  override fun map(s: Either<L, R>, f: (R) -> R): Either<L, R> =
+    s.map(f)
+}

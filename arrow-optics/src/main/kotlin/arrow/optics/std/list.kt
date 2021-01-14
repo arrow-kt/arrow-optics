@@ -1,6 +1,5 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.Either
 import arrow.core.ListExtensions
 import arrow.core.ListK
@@ -16,12 +15,11 @@ import arrow.core.k
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
-import arrow.core.toT
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
-import arrow.typeclasses.Applicative
+import arrow.typeclasses.Monoid
 
 /**
  * [Optional] to safely operate on the head of a list
@@ -140,23 +138,29 @@ fun <A> ListExtensions.toListK(): Iso<List<A>, ListK<A>> = toPListK()
 /**
  * [Traversal] for [List] that focuses in each [A] of the source [List].
  */
-fun <A> listTraversal(): Traversal<List<A>, A> = object : Traversal<List<A>, A> {
-  override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
-    s.k().traverse(FA, f)
-}
+fun <A> listTraversal(): Traversal<List<A>, A> =
+  Traversal { s, f -> s.map(f) }
 
 fun <A> PTraversal.Companion.list(): Traversal<List<A>, A> = listTraversal()
+
+fun <A> Fold.Companion.list(): Fold<List<A>, A> = object : Fold<List<A>, A> {
+  override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R =
+    M.run { s.fold(empty()) { acc, a -> acc.combine(f(a)) } }
+}
+
+fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> {
+  override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R =
+    M.run { s.fold(empty()) { acc, a -> acc.combine(f(a)) } }
+
+  override fun map(s: List<A>, f: (A) -> A): List<A> =
+    s.map(f)
+}
 
 /**
  * [FilterIndex] instance definition for [List].
  */
 fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
-  object : Traversal<List<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: List<A>, f: (A) -> Kind<F, A>): Kind<F, List<A>> =
-      s.mapIndexed { index, a -> a toT index }.k().traverse(FA) { (a, j) ->
-        if (p(j)) f(a) else FA.just(a)
-      }
-  }
+  Traversal { s, f -> s.mapIndexed { index, a -> if (p(index)) f(a) else a } }
 }
 
 fun <A> FilterIndex.Companion.list(): FilterIndex<List<A>, Int, A> = listFilterIndex()

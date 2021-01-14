@@ -235,6 +235,11 @@ interface POptional<S, T, A, B> : POptionalOf<S, T, A, B> {
   infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
 
   /**
+   * Compose a [POptional] with a [PEvery]
+   */
+  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> = asEvery() compose other
+
+  /**
    * Plus operator overload to compose optionals
    */
   operator fun <C, D> plus(other: POptional<A, B, C, D>): POptional<S, T, C, D> = compose(other)
@@ -272,9 +277,12 @@ interface POptional<S, T, A, B> : POptionalOf<S, T, A, B> {
   /**
    * View a [POptional] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> =
-      this@POptional.modifyF(FA, s, f)
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f -> modify(s, f) }
+
+  fun asEvery(): PEvery<S, T, A, B> = object : PEvery<S, T, A, B> {
+    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = getOption(s).map(f).getOrElse(M::empty)
+    override fun map(s: S, f: (A) -> B): T = modify(s, f)
   }
 
   /**

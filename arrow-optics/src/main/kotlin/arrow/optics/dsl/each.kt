@@ -1,6 +1,5 @@
 package arrow.optics.dsl
 
-import arrow.optics.Fold
 import arrow.optics.Iso
 import arrow.optics.Lens
 import arrow.optics.Optional
@@ -92,17 +91,3 @@ fun <T, S, A> Setter<T, S>.every(EA: Each<S, A>): Setter<T, A> = this.compose(EA
   DeprecationLevel.WARNING
 )
 fun <T, S, A> Traversal<T, S>.every(EA: Each<S, A>): Traversal<T, A> = this.compose(EA.each())
-
-/**
- * DSL to compose [Each] with a [Fold] for a structure [S] to see all its foci [A]
- *
- * @receiver [Fold] with a focus in [S]
- * @param EA [Each] to provide [Traversal] that can focus into a structure [S] to see all its foci [A]
- * @return [Fold] with a focus in [A]
- */
-@Deprecated(
-  "Each is being deprecated. Use Traversal directly instead.",
-  ReplaceWith("every(TR: Traversal<S, A>)", "arrow.optics.Traversal"),
-  DeprecationLevel.WARNING
-)
-fun <T, S, A> Fold<T, S>.every(EA: Each<S, A>): Fold<T, A> = this.compose(EA.each())

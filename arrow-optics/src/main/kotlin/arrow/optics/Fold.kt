@@ -152,6 +152,11 @@ interface Fold<S, A> : FoldOf<S, A> {
   /**
    * Compose a [Fold] with a [Getter]
    */
+  infix fun <C> compose(other: Every<A, C>): Fold<S, C> = compose(other.asFold())
+
+  /**
+   * Compose a [Fold] with a [Getter]
+   */
   infix fun <C> compose(other: Getter<A, C>): Fold<S, C> = compose(other.asFold())
 
   /**
@@ -175,11 +180,6 @@ interface Fold<S, A> : FoldOf<S, A> {
   infix fun <C> compose(other: Iso<A, C>): Fold<S, C> = compose(other.asFold())
 
   /**
-   * Compose a [Fold] with a [Traversal]
-   */
-  infix fun <C> compose(other: Traversal<A, C>): Fold<S, C> = compose(other.asFold())
-
-  /**
    * Plus operator  overload to compose lenses
    */
   operator fun <C> plus(other: Fold<A, C>): Fold<S, C> = compose(other)
@@ -193,8 +193,6 @@ interface Fold<S, A> : FoldOf<S, A> {
   operator fun <C> plus(other: Lens<A, C>): Fold<S, C> = compose(other)
 
   operator fun <C> plus(other: Iso<A, C>): Fold<S, C> = compose(other)
-
-  operator fun <C> plus(other: Traversal<A, C>): Fold<S, C> = compose(other)
 
   /**
    * Find the first element matching the predicate, if one exists.

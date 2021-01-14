@@ -117,6 +117,11 @@ fun interface PSetter<S, T, A, B> : PSetterOf<S, T, A, B> {
   infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PSetter<S, T, C, D> = compose(other.asSetter())
 
   /**
+   * Compose a [PSetter] with a [PEvery]
+   */
+  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PSetter<S, T, C, D> = compose(other.asSetter())
+
+  /**
    * Plus operator overload to compose optionals
    */
   operator fun <C, D> plus(o: PSetter<A, B, C, D>): PSetter<S, T, C, D> = compose(o)

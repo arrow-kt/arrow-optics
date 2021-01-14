@@ -8,7 +8,6 @@ import arrow.core.Tuple2
 import arrow.core.extensions.monoid
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.core.extensions.option.functor.functor
 import arrow.core.toT
 import arrow.core.ListK
 import arrow.mtl.State
@@ -161,14 +160,6 @@ class LensTest : UnitSpec() {
     "Lifting a function should yield the same result as not yielding" {
       forAll(genToken, Gen.string()) { token, value ->
         tokenLens.set(token, value) == tokenLens.lift { value }(token)
-      }
-    }
-
-    "Lifting a function as a functor should yield the same result as not yielding" {
-      forAll(genToken, Gen.string()) { token, value ->
-        tokenLens.modifyF(Option.functor(), token) { Some(value) } == tokenLens.liftF(Option.functor()) { Some(value) }(
-          token
-        )
       }
     }
 

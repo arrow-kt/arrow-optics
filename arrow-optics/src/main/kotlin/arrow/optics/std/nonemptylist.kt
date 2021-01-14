@@ -1,13 +1,11 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.NonEmptyList
 import arrow.core.left
 import arrow.core.right
-import arrow.core.toT
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
-import arrow.typeclasses.Applicative
+import arrow.typeclasses.Monoid
 
 /**
  * [Lens] to operate on the head of a [NonEmptyList]
@@ -64,21 +62,26 @@ fun <A> PLens.Companion.nonEmptyListTail(): Lens<NonEmptyList<A>, List<A>> = Len
  * @return [Traversal] with source [NonEmptyList] and focus every [A] of the source.
  */
 fun <A> PTraversal.Companion.nonEmptyList(): Traversal<NonEmptyList<A>, A> =
-  object : Traversal<NonEmptyList<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: NonEmptyList<A>, f: (A) -> Kind<F, A>): Kind<F, NonEmptyList<A>> =
-      s.traverse(FA, f)
-  }
+  Traversal { s, f -> s.map(f) }
+
+fun <A> Fold.Companion.nonEmptyList(): Fold<NonEmptyList<A>, A> = object : Fold<NonEmptyList<A>, A> {
+  override fun <R> foldMap(M: Monoid<R>, s: NonEmptyList<A>, f: (A) -> R): R =
+    M.run { s.fold(empty()) { acc, r -> acc.combine(f(r)) } }
+}
+
+fun <A> PEvery.Companion.nonEmptyList(): Every<NonEmptyList<A>, A> = object : Every<NonEmptyList<A>, A> {
+  override fun <R> foldMap(M: Monoid<R>, s: NonEmptyList<A>, f: (A) -> R): R =
+    M.run { s.fold(empty()) { acc, r -> acc.combine(f(r)) } }
+
+  override fun map(s: NonEmptyList<A>, f: (A) -> A): NonEmptyList<A> =
+    s.map(f)
+}
 
 /**
  * [FilterIndex] instance definition for [NonEmptyList].
  */
 fun <A> FilterIndex.Companion.nonEmptyList(): FilterIndex<NonEmptyList<A>, Int, A> = FilterIndex { p ->
-  object : Traversal<NonEmptyList<A>, A> {
-    override fun <F> modifyF(FA: Applicative<F>, s: NonEmptyList<A>, f: (A) -> Kind<F, A>): Kind<F, NonEmptyList<A>> =
-      s.all.mapIndexed { index, a -> a toT index }
-        .let(NonEmptyList.Companion::fromListUnsafe)
-        .traverse(FA) { (a, j) -> if (p(j)) f(a) else FA.just(a) }
-  }
+  Traversal { s, f -> NonEmptyList.fromListUnsafe(s.mapIndexed { index, a -> if (p(index)) f(a) else a }) }
 }
 
 /**

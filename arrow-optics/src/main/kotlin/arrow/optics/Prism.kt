@@ -239,6 +239,11 @@ interface PPrism<S, T, A, B> : PPrismOf<S, T, A, B> {
   infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
 
   /**
+   * Compose a [PPrism] with a [PTraversal]
+   */
+  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> = asEvery() compose other
+
+  /**
    * Plus operator overload to compose lenses
    */
   operator fun <C, D> plus(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> = compose(other)
@@ -277,12 +282,12 @@ interface PPrism<S, T, A, B> : PPrismOf<S, T, A, B> {
   /**
    * View a [PPrism] as a [PTraversal]
    */
-  fun asTraversal(): PTraversal<S, T, A, B> = object : PTraversal<S, T, A, B> {
-    override fun <F> modifyF(FA: Applicative<F>, s: S, f: (A) -> Kind<F, B>): Kind<F, T> = FA.run {
-      getOrModify(s).fold(
-        ::just
-      ) { f(it).map(this@PPrism::reverseGet) }
-    }
+  fun asTraversal(): PTraversal<S, T, A, B> =
+    PTraversal { s, f -> getOrModify(s).fold(::identity) { reverseGet(f(it)) } }
+
+  fun asEvery(): PEvery<S, T, A, B> = object : PEvery<S, T, A, B> {
+    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = getOption(s).map(f).getOrElse(M::empty)
+    override fun map(s: S, f: (A) -> B): T = getOrModify(s).fold(::identity) { reverseGet(f(it)) }
   }
 }
 
