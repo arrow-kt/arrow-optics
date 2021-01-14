@@ -3,15 +3,10 @@ package arrow.optics
 import arrow.Kind
 import arrow.core.ForOption
 import arrow.core.Option
-import arrow.core.left
-import arrow.core.right
-import arrow.core.toT
 import arrow.core.extensions.option.functor.functor
 import arrow.core.getOrElse
-import arrow.mtl.State
-import arrow.mtl.run
-import arrow.optics.mtl.assign_
-import arrow.optics.mtl.update_
+import arrow.core.left
+import arrow.core.right
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.option
@@ -67,22 +62,22 @@ class SetterTest : UnitSpec() {
       }
     }
 
-    "update_ f should be as modify f within State and returning Unit" {
-      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
-        tokenSetter.update_(f).run(generatedToken) ==
-          State { token: Token ->
-            tokenSetter.modify(token, f) toT Unit
-          }.run(generatedToken)
-      }
-    }
-
-    "assign_ f should be as modify f within State and returning Unit" {
-      forAll(genToken, Gen.string()) { generatedToken, string ->
-        tokenSetter.assign_(string).run(generatedToken) ==
-          State { token: Token ->
-            tokenSetter.set(token, string) toT Unit
-          }.run(generatedToken)
-      }
-    }
+//    "update_ f should be as modify f within State and returning Unit" {
+//      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
+//        tokenSetter.update_(f).run(generatedToken) ==
+//          State { token: Token ->
+//            tokenSetter.modify(token, f) toT Unit
+//          }.run(generatedToken)
+//      }
+//    }
+//
+//    "assign_ f should be as modify f within State and returning Unit" {
+//      forAll(genToken, Gen.string()) { generatedToken, string ->
+//        tokenSetter.assign_(string).run(generatedToken) ==
+//          State { token: Token ->
+//            tokenSetter.set(token, string) toT Unit
+//          }.run(generatedToken)
+//      }
+//    }
   }
 }
