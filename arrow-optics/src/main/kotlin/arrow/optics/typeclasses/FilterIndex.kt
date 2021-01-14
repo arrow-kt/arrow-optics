@@ -1,24 +1,24 @@
 package arrow.optics.typeclasses
 
 import arrow.core.Predicate
+import arrow.optics.Every
 import arrow.optics.Iso
-import arrow.optics.Traversal
 
 /**
  * ank_macro_hierarchy(arrow.optics.typeclasses.FilterIndex)
  *
- * [FilterIndex] provides a [Traversal] for a structure [S] with all its foci [A] whose index [I] satisfies a predicate.
+ * [FilterIndex] provides a [Every] for a structure [S] with all its foci [A] whose index [I] satisfies a predicate.
  *
- * @param S source of [Traversal]
- * @param I index that uniquely identifies every focus of the [Traversal]
+ * @param S source of [Every]
+ * @param I index that uniquely identifies every focus of the [Every]
  * @param A focus that is supposed to be unique for a given pair [S] and [I]
  */
 fun interface FilterIndex<S, I, A> {
 
   /**
-   * Filter the foci [A] of a [Traversal] with the predicate [p].
+   * Filter the foci [A] of a [Every] with the predicate [p].
    */
-  fun filter(p: Predicate<I>): Traversal<S, A>
+  fun filter(p: Predicate<I>): Every<S, A>
 
   companion object {
 

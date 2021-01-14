@@ -1,6 +1,7 @@
 package arrow.optics
 
 import arrow.core.NonEmptyList
+import arrow.core.Predicate
 import arrow.core.left
 import arrow.core.right
 import arrow.optics.typeclasses.FilterIndex
@@ -80,8 +81,17 @@ fun <A> PEvery.Companion.nonEmptyList(): Every<NonEmptyList<A>, A> = object : Ev
 /**
  * [FilterIndex] instance definition for [NonEmptyList].
  */
-fun <A> FilterIndex.Companion.nonEmptyList(): FilterIndex<NonEmptyList<A>, Int, A> = FilterIndex { p ->
-  Traversal { s, f -> NonEmptyList.fromListUnsafe(s.mapIndexed { index, a -> if (p(index)) f(a) else a }) }
+fun <A> FilterIndex.Companion.nonEmptyList(): FilterIndex<NonEmptyList<A>, Int, A> = FilterIndex<NonEmptyList<A>, Int, A> { p ->
+  object : Every<NonEmptyList<A>, A> {
+    override fun <R> foldMap(M: Monoid<R>, s: NonEmptyList<A>, f: (A) -> R): R = M.run {
+      s.foldIndexed(empty()) { index, acc, r ->
+        if (p(index)) acc.combine(f(r)) else acc
+      }
+    }
+
+    override fun map(s: NonEmptyList<A>, f: (A) -> A): NonEmptyList<A> =
+      NonEmptyList.fromListUnsafe(s.mapIndexed { index, a -> if (p(index)) f(a) else a })
+  }
 }
 
 /**

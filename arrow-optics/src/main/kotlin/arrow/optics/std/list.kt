@@ -160,7 +160,14 @@ fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> 
  * [FilterIndex] instance definition for [List].
  */
 fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
-  Traversal { s, f -> s.mapIndexed { index, a -> if (p(index)) f(a) else a } }
+  object : Every<List<A>, A> {
+    override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R = M.run {
+      s.foldIndexed(empty()) { index, acc, a -> if (p(index)) acc.combine(f(a)) else acc }
+    }
+
+    override fun map(s: List<A>, f: (A) -> A): List<A> =
+      s.mapIndexed { index, a -> if (p(index)) f(a) else a }
+  }
 }
 
 fun <A> FilterIndex.Companion.list(): FilterIndex<List<A>, Int, A> = listFilterIndex()
