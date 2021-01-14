@@ -25,12 +25,8 @@ internal val at_singleton: SetKAt<Any?> = object : SetKAt<Any?> {}
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
-  ReplaceWith(
-  "at(i)",
-  "arrow.core.at"
-  ),
-  DeprecationLevel.WARNING
+  message = "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  level = DeprecationLevel.WARNING
 )
 fun <A, T> PLens<T, T, SetK<A>, SetK<A>>.at(i: A): PLens<T, T, Boolean, Boolean> =
     arrow.core.SetK.at<A>().run {
@@ -40,5 +36,13 @@ fun <A, T> PLens<T, T, SetK<A>, SetK<A>>.at(i: A): PLens<T, T, Boolean, Boolean>
 @Suppress(
   "UNCHECKED_CAST",
   "NOTHING_TO_INLINE"
+)
+@Deprecated(
+  "SetK is being deprecated. Use the instance for Set from the companion object of the typeclass.",
+  ReplaceWith(
+    "At.set<A>()",
+    "arrow.optics.set", "arrow.optics.typeclasses.At"
+  ),
+  DeprecationLevel.WARNING
 )
 inline fun <A> Companion.at(): SetKAt<A> = at_singleton as arrow.optics.extensions.SetKAt<A>

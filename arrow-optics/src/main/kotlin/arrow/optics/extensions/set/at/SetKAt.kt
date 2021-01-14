@@ -18,12 +18,8 @@ import kotlin.jvm.JvmName
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  "@extension kinded projected functions are deprecated",
-  ReplaceWith(
-  "at(i)",
-  "arrow.core.at"
-  ),
-  DeprecationLevel.WARNING
+  message = "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  level = DeprecationLevel.WARNING
 )
 fun <A, T> PLens<T, T, SetK<A>, SetK<A>>.at(i: A): PLens<T, T, Boolean, Boolean> =
     arrow.optics.extensions.set.at.Set.at<A>().run {
@@ -41,4 +37,13 @@ object Set {
     "UNCHECKED_CAST",
     "NOTHING_TO_INLINE"
   )
+  @Deprecated(
+    "Typeclass instance have been moved to the companion object of the typeclass.",
+    ReplaceWith(
+      "At.set<A>()",
+      "arrow.optics.set", "arrow.optics.typeclasses.At"
+    ),
+    DeprecationLevel.WARNING
+  )
   inline fun <A> at(): SetKAt<A> = at_singleton as arrow.optics.extensions.SetKAt<A>}
+
