@@ -1,7 +1,6 @@
 package arrow.optics
 
 import arrow.core.NonEmptyList
-import arrow.core.Predicate
 import arrow.core.left
 import arrow.core.right
 import arrow.optics.typeclasses.FilterIndex
