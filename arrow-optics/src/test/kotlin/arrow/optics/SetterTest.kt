@@ -61,23 +61,5 @@ class SetterTest : UnitSpec() {
         tokenSetter.modify(token) { value } == tokenSetter.lift { value }(token)
       }
     }
-
-//    "update_ f should be as modify f within State and returning Unit" {
-//      forAll(genToken, Gen.functionAToB<String, String>(Gen.string())) { generatedToken, f ->
-//        tokenSetter.update_(f).run(generatedToken) ==
-//          State { token: Token ->
-//            tokenSetter.modify(token, f) toT Unit
-//          }.run(generatedToken)
-//      }
-//    }
-//
-//    "assign_ f should be as modify f within State and returning Unit" {
-//      forAll(genToken, Gen.string()) { generatedToken, string ->
-//        tokenSetter.assign_(string).run(generatedToken) ==
-//          State { token: Token ->
-//            tokenSetter.set(token, string) toT Unit
-//          }.run(generatedToken)
-//      }
-//    }
   }
 }
