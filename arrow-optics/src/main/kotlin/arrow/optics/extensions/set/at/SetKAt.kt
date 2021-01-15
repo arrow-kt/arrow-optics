@@ -18,8 +18,12 @@ import kotlin.jvm.JvmName
   "UNUSED_PARAMETER"
 )
 @Deprecated(
-  message = "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
-  level = DeprecationLevel.WARNING
+  "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  ReplaceWith(
+    "this compose At.set<A>().at(i)",
+    "arrow.optics.set", "arrow.optics.typeclasses.At", "arrow.optics.compose"
+  ),
+  DeprecationLevel.WARNING
 )
 fun <A, T> PLens<T, T, SetK<A>, SetK<A>>.at(i: A): PLens<T, T, Boolean, Boolean> =
     arrow.optics.extensions.set.at.Set.at<A>().run {
