@@ -39,43 +39,43 @@ interface PEvery<S, T, A, B> : PTraversal<S, T, A, B>, Fold<S, A>, PSetter<S, T,
   }
 
   /**
-   * DSL to compose [Traversal] with a [Lens] for a structure [S] to see all its foci [A]
+   * DSL to compose [Every] with a [Lens] for a structure [S] to see all its foci [A]
    *
    * @receiver [Lens] with a focus in [S]
-   * @return [Traversal] with a focus in [A]
+   * @return [Every] with a focus in [A]
    */
   val <U, V> PLens<U, V, S, T>.every: PEvery<U, V, A, B>
     get() = this@every.compose(this@PEvery)
 
   /**
-   * DSL to compose [Traversal] with a [Iso] for a structure [S] to see all its foci [A]
+   * DSL to compose [Every] with a [Iso] for a structure [S] to see all its foci [A]
    *
    * @receiver [Iso] with a focus in [S]
-   * @return [Traversal] with a focus in [A]
+   * @return [Every] with a focus in [A]
    */
   val <U, V> PIso<U, V, S, T>.every: PEvery<U, V, A, B>
     get() = this@every.compose(this@PEvery)
 
   /**
-   * DSL to compose [Traversal] with a [Prism] for a structure [S] to see all its foci [A]
+   * DSL to compose [Every] with a [Prism] for a structure [S] to see all its foci [A]
    *
    * @receiver [Prism] with a focus in [S]
-   * @return [Traversal] with a focus in [A]
+   * @return [Every] with a focus in [A]
    */
   val <U, V> PPrism<U, V, S, T>.every: PEvery<U, V, A, B>
     get() = this.compose(this@PEvery)
 
   /**
-   * DSL to compose [Traversal] with a [Optional] for a structure [S] to see all its foci [A]
+   * DSL to compose [Every] with a [Optional] for a structure [S] to see all its foci [A]
    *
    * @receiver [Optional] with a focus in [S]
-   * @return [Traversal] with a focus in [A]
+   * @return [Every] with a focus in [A]
    */
   val <U, V> POptional<U, V, S, T>.every: PEvery<U, V, A, B>
     get() = this.compose(this@PEvery)
 
   /**
-   * DSL to compose [Traversal] with a [Setter] for a structure [S] to see all its foci [A]
+   * DSL to compose [Every] with a [Setter] for a structure [S] to see all its foci [A]
    *
    * @receiver [Setter] with a focus in [S]
    * @return [Setter] with a focus in [A]
@@ -84,7 +84,7 @@ interface PEvery<S, T, A, B> : PTraversal<S, T, A, B>, Fold<S, A>, PSetter<S, T,
     get() = this.compose(this@PEvery)
 
   /**
-   * DSL to compose [Traversal] with a [Traversal] for a structure [S] to see all its foci [A]
+   * DSL to compose [Every] with a [Traversal] for a structure [S] to see all its foci [A]
    *
    * @receiver [Traversal] with a focus in [S]
    * @return [Traversal] with a focus in [A]
