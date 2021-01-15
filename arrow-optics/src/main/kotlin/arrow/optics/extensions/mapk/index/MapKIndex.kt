@@ -21,6 +21,10 @@ internal val index_singleton: MapKIndex<Any?, Any?> = object : MapKIndex<Any?, A
 )
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  ReplaceWith(
+    "this compose Index.map<K, V>().index(i)",
+    "arrow.optics.map", "arrow.optics.typeclasses.Index", "arrow.optics.compose"
+  ),
   level = DeprecationLevel.WARNING
 )
 fun <K, V, T> PLens<T, T, MapK<K, V>, MapK<K, V>>.index(i: K): POptional<T, T, V, V> =
@@ -37,6 +41,10 @@ fun <K, V, T> PLens<T, T, MapK<K, V>, MapK<K, V>>.index(i: K): POptional<T, T, V
 )
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  ReplaceWith(
+    "this compose Index.map<K, V>().get(i)",
+    "arrow.optics.map", "arrow.optics.typeclasses.Index", "arrow.optics.compose"
+  ),
   level = DeprecationLevel.WARNING
 )
 operator fun <K, V, T> PLens<T, T, MapK<K, V>, MapK<K, V>>.get(i: K): POptional<T, T, V, V> =
