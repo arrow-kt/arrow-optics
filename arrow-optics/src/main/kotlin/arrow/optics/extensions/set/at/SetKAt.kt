@@ -50,4 +50,3 @@ object Set {
     DeprecationLevel.WARNING
   )
   inline fun <A> at(): SetKAt<A> = at_singleton as arrow.optics.extensions.SetKAt<A>}
-
