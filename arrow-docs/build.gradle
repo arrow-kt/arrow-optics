@@ -17,7 +17,6 @@ apply from: "$SUB_PROJECT"
 apply from: "$DOC_VALIDATION"
 
 dependencies {
-    compile project(":arrow-optics-mtl")
     compile "io.arrow-kt:arrow-generic:$VERSION_NAME"
     compile "io.arrow-kt:arrow-aql:$VERSION_NAME"
     compile "io.arrow-kt:arrow-syntax:$VERSION_NAME"
