@@ -68,7 +68,7 @@ fun PEvery.Companion.string(): Every<String, Char> = object : Every<String, Char
   override fun <R> foldMap(M: Monoid<R>, s: String, f: (Char) -> R): R =
     M.run { s.fold(empty()) { acc, r -> acc.combine(f(r)) } }
 
-  override fun map(s: String, f: (Char) -> Char): String =
+  override fun modify(s: String, f: (Char) -> Char): String =
     s.map(f).joinToString(separator = "")
 }
 

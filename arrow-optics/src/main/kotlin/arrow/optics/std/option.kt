@@ -73,5 +73,5 @@ fun <A> PEvery.Companion.option(): Every<Option<A>, A> = object : Every<Option<A
   override fun <R> foldMap(M: Monoid<R>, s: Option<A>, f: (A) -> R): R =
     M.run { s.foldLeft(empty()) { b, a -> b.combine(f(a)) } }
 
-  override fun map(s: Option<A>, f: (A) -> A): Option<A> = s.map(f)
+  override fun modify(s: Option<A>, f: (A) -> A): Option<A> = s.map(f)
 }

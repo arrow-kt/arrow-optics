@@ -34,6 +34,6 @@ fun <K, V> PEvery.Companion.map(): Every<Map<K, V>, V> = object : Every<Map<K, V
   override fun <R> foldMap(M: Monoid<R>, s: Map<K, V>, f: (V) -> R): R =
     M.run { s.values.fold(empty()) { acc, v -> acc.combine(f(v)) } }
 
-  override fun map(s: Map<K, V>, f: (V) -> V): Map<K, V> =
+  override fun modify(s: Map<K, V>, f: (V) -> V): Map<K, V> =
     s.mapValues { (_, v) -> f(v) }
 }

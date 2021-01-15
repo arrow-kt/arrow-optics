@@ -35,7 +35,7 @@ class PrismTest : UnitSpec() {
       ),
 
       SetterLaws.laws(
-        setter = sumPrism.asSetter(),
+        setter = sumPrism,
         aGen = genSum,
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -43,7 +43,7 @@ class PrismTest : UnitSpec() {
       ),
 
       TraversalLaws.laws(
-        traversal = sumPrism.asTraversal(),
+        traversal = sumPrism,
         aGen = genSum,
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -53,7 +53,7 @@ class PrismTest : UnitSpec() {
       ),
 
       OptionalLaws.laws(
-        optional = sumPrism.asOptional(),
+        optional = sumPrism,
         aGen = genSum,
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
@@ -117,7 +117,7 @@ class PrismTest : UnitSpec() {
       )
     )
 
-    with(sumPrism.asFold()) {
+    with(sumPrism) {
 
       "asFold should behave as valid Fold: size" {
         forAll(genSum) { sum: SumType ->
@@ -127,7 +127,7 @@ class PrismTest : UnitSpec() {
 
       "asFold should behave as valid Fold: nonEmpty" {
         forAll(genSum) { sum: SumType ->
-          nonEmpty(sum) == sumPrism.getOption(sum).nonEmpty()
+          isNotEmpty(sum) == sumPrism.getOption(sum).nonEmpty()
         }
       }
 
@@ -159,13 +159,13 @@ class PrismTest : UnitSpec() {
 
       "asFold should behave as valid Fold: headOption" {
         forAll(genSum) { sum: SumType ->
-          headOption(sum) == sumPrism.getOption(sum)
+          firstOrNull(sum) == sumPrism.getOption(sum).orNull()
         }
       }
 
       "asFold should behave as valid Fold: lastOption" {
         forAll(genSum) { sum: SumType ->
-          lastOption(sum) == sumPrism.getOption(sum)
+          lastOrNull(sum) == sumPrism.getOption(sum).orNull()
         }
       }
     }
@@ -193,7 +193,7 @@ class PrismTest : UnitSpec() {
 
     "Checking if a target exists" {
       forAll(genSum) { sum ->
-        sumPrism.nonEmpty(sum) == sum is SumType.A
+        sumPrism.isNotEmpty(sum) == sum is SumType.A
       }
     }
 
@@ -205,13 +205,13 @@ class PrismTest : UnitSpec() {
 
     "Finding a target using a predicate within a Lens should be wrapped in the correct option result" {
       forAll(genSum, Gen.bool()) { sum, predicate ->
-        sumPrism.find(sum) { predicate }.fold({ false }, { true }) == (predicate && sum is SumType.A)
+        sumPrism.findOrNull(sum) { predicate }?.let { true } ?: false == (predicate && sum is SumType.A)
       }
     }
 
     "Checking existence predicate over the target should result in same result as predicate" {
       forAll(genSum, Gen.bool()) { sum, predicate ->
-        sumPrism.exist(sum) { predicate } == (predicate && sum is SumType.A)
+        sumPrism.any(sum) { predicate } == (predicate && sum is SumType.A)
       }
     }
 

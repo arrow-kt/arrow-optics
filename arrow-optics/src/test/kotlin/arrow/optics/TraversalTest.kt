@@ -30,7 +30,7 @@ class TraversalTest : UnitSpec() {
       ),
 
       SetterLaws.laws(
-        setter = Traversal.list<Int>().asSetter(),
+        setter = Traversal.list(),
         aGen = Gen.list(Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),

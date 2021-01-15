@@ -1,34 +1,12 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.Either
-
-@Deprecated(KindDeprecation)
-class ForPTraversal private constructor() {
-  companion object
-}
-@Deprecated(KindDeprecation)
-typealias PTraversalOf<S, T, A, B> = arrow.Kind4<ForPTraversal, S, T, A, B>
-@Deprecated(KindDeprecation)
-typealias PTraversalPartialOf<S, T, A> = arrow.Kind3<ForPTraversal, S, T, A>
-@Deprecated(KindDeprecation)
-typealias PTraversalKindedJ<S, T, A, B> = arrow.HkJ4<ForPTraversal, S, T, A, B>
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-@Deprecated(KindDeprecation)
-inline fun <S, T, A, B> PTraversalOf<S, T, A, B>.fix(): PTraversal<S, T, A, B> =
-  this as PTraversal<S, T, A, B>
 
 /**
  * [Traversal] is a type alias for [PTraversal] which fixes the type arguments
  * and restricts the [PTraversal] to monomorphic updates.
  */
 typealias Traversal<S, A> = PTraversal<S, S, A, A>
-
-typealias ForTraversal = ForPTraversal
-typealias TraversalOf<S, A> = PTraversalOf<S, S, A, A>
-typealias TraversalPartialOf<S> = Kind<ForTraversal, S>
-typealias TraversalKindedJ<S, A> = PTraversalKindedJ<S, S, A, A>
 
 /**
  * A [Traversal] is an optic that allows to see into a structure with 0 to N foci.
@@ -41,22 +19,30 @@ typealias TraversalKindedJ<S, A> = PTraversalKindedJ<S, S, A, A>
  * @param A the target of a [PTraversal]
  * @param B the modified target of a [PTraversal]
  */
-fun interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
+fun interface PTraversal<S, T, A, B> : PSetter<S, T, A, B> {
 
-  fun map(s: S, f: (A) -> B): T
+  override fun modify(source: S, f: (A) -> B): T
+
+  fun <U, V> choice(other: PTraversal<U, V, A, B>): PTraversal<Either<S, U>, Either<T, V>, A, B> =
+    PTraversal { s, f ->
+      s.fold(
+        { a -> Either.Left(this@PTraversal.modify(a, f)) },
+        { u -> Either.Right(other.modify(u, f)) }
+      )
+    }
 
   /**
-   * Set polymorphically the target of a [PTraversal] with a value
+   * Compose a [PTraversal] with a [PTraversal]
    */
-  fun set(s: S, b: B): T = modify(s) { b }
+  infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> =
+    PTraversal { s, f -> this@PTraversal.modify(s) { b -> other.modify(b, f) } }
 
-  /**
-   * Modify polymorphically the target of a [PTraversal] with a function [f]
-   */
-  fun modify(s: S, f: (A) -> B): T = map(s, f)
+  operator fun <C, D> plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> =
+    this compose other
 
   companion object {
-    fun <S> id() = PIso.id<S>().asTraversal()
+    fun <S> id(): PTraversal<S, S, S, S> =
+      PIso.id()
 
     fun <S> codiagonal(): Traversal<Either<S, S>, S> =
       Traversal { s, f -> s.bimap(f, f) }
@@ -64,7 +50,8 @@ fun interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
     /**
      * [PTraversal] that points to nothing
      */
-    fun <S, A> void() = POptional.void<S, A>().asTraversal()
+    fun <S, A> void(): Traversal<S, A> =
+      POptional.void()
 
     /**
      * [PTraversal] constructor from multiple getters of the same source.
@@ -164,67 +151,4 @@ fun interface PTraversal<S, T, A, B> : PTraversalOf<S, T, A, B> {
     ): PTraversal<S, T, A, B> =
       PTraversal { s, f -> set(f(get1(s)), f(get2(s)), f(get3(s)), f(get4(s)), f(get5(s)), f(get6(s)), f(get7(s)), f(get8(s)), f(get9(s)), f(get10(s)), s) }
   }
-
-  fun <U, V> choice(other: PTraversal<U, V, A, B>): PTraversal<Either<S, U>, Either<T, V>, A, B> =
-    PTraversal { s, f ->
-      s.fold(
-        { a -> Either.Left(this@PTraversal.modify(a, f)) },
-        { u -> Either.Right(other.map(u, f)) }
-      )
-    }
-
-  /**
-   * Compose a [PTraversal] with a [PTraversal]
-   */
-  infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> =
-    PTraversal { s, f ->
-      this@PTraversal.map(s) { b -> other.modify(b, f) }
-    }
-
-  /**
-   * Compose a [PTraversal] with a [PEvery]
-   */
-  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PTraversal<S, T, C, D> = compose(other.asTraversal())
-
-  /**
-   * Compose a [PTraversal] with a [PSetter]
-   */
-  infix fun <C, D> compose(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = asSetter() compose other
-
-  /**
-   * Compose a [PTraversal] with a [POptional]
-   */
-  infix fun <C, D> compose(other: POptional<A, B, C, D>): PTraversal<S, T, C, D> = compose(other.asTraversal())
-
-  /**
-   * Compose a [PTraversal] with a [PLens]
-   */
-  infix fun <C, D> compose(other: PLens<A, B, C, D>): PTraversal<S, T, C, D> = compose(other.asTraversal())
-
-  /**
-   * Compose a [PTraversal] with a [PPrism]
-   */
-  infix fun <C, D> compose(other: PPrism<A, B, C, D>): PTraversal<S, T, C, D> = compose(other.asTraversal())
-
-  /**
-   * Compose a [PTraversal] with a [PIso]
-   */
-  infix fun <C, D> compose(other: PIso<A, B, C, D>): PTraversal<S, T, C, D> = compose(other.asTraversal())
-
-  /**
-   * Plus operator overload to compose [PTraversal] with other optics
-   */
-  operator fun <C, D> plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: POptional<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PLens<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PPrism<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PIso<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
-
-  fun asSetter(): PSetter<S, T, A, B> = PSetter { s, f -> modify(s, f) }
 }

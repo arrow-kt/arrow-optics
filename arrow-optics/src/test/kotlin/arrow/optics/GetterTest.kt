@@ -2,7 +2,6 @@ package arrow.optics
 
 import arrow.core.Left
 import arrow.core.Right
-import arrow.core.Some
 import arrow.core.Tuple2
 import arrow.core.extensions.monoid
 import arrow.core.toT
@@ -26,11 +25,11 @@ class GetterTest : UnitSpec() {
 
   init {
 
-    val userGetter = userIso.asGetter()
+    val userGetter = userIso
     val length = Getter<String, Int> { it.length }
     val upper = Getter<String, String> { it.toUpperCase() }
 
-    with(tokenGetter.asFold()) {
+    with(tokenGetter) {
 
       "asFold should behave as valid Fold: size" {
         forAll(genToken) { token ->
@@ -40,7 +39,7 @@ class GetterTest : UnitSpec() {
 
       "asFold should behave as valid Fold: nonEmpty" {
         forAll(genToken) { token ->
-          nonEmpty(token)
+          isNotEmpty(token)
         }
       }
 
@@ -70,13 +69,13 @@ class GetterTest : UnitSpec() {
 
       "asFold should behave as valid Fold: headOption" {
         forAll(genToken) { token ->
-          headOption(token) == Some(token.value)
+          firstOrNull(token) == token.value
         }
       }
 
       "asFold should behave as valid Fold: lastOption" {
         forAll(genToken) { token ->
-          lastOption(token) == Some(token.value)
+          lastOrNull(token) == token.value
         }
       }
     }
@@ -91,13 +90,13 @@ class GetterTest : UnitSpec() {
 
       "Finding a target using a predicate within a Getter should be wrapped in the correct option result" {
         forAll { value: String, predicate: Boolean ->
-          find(Token(value)) { predicate }.fold({ false }, { true }) == predicate
+          findOrNull(Token(value)) { predicate }?.let { true } ?: false == predicate
         }
       }
 
       "Checking existence of a target should always result in the same result as predicate" {
         forAll { value: String, predicate: Boolean ->
-          exist(Token(value)) { predicate } == predicate
+          any(Token(value)) { predicate } == predicate
         }
       }
     }

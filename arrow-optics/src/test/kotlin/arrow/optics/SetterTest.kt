@@ -1,12 +1,8 @@
 package arrow.optics
 
-import arrow.Kind
-import arrow.core.ForOption
-import arrow.core.Option
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toT
-import arrow.core.extensions.option.functor.functor
 import arrow.core.getOrElse
 import arrow.mtl.State
 import arrow.mtl.run
@@ -14,7 +10,6 @@ import arrow.optics.mtl.assign_
 import arrow.optics.mtl.update_
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import arrow.core.test.generators.option
 import arrow.optics.test.laws.SetterLaws
 import arrow.typeclasses.Eq
 import io.kotlintest.properties.Gen
@@ -35,14 +30,6 @@ class SetterTest : UnitSpec() {
     testLaws(SetterLaws.laws(
       setter = tokenSetter,
       aGen = genToken,
-      bGen = Gen.string(),
-      funcGen = Gen.functionAToB(Gen.string()),
-      EQA = Eq.any()
-    ))
-
-    testLaws(SetterLaws.laws(
-      setter = Setter.fromFunctor<ForOption, String, String>(Option.functor()),
-      aGen = Gen.option(Gen.string()).map<Kind<ForOption, String>> { it },
       bGen = Gen.string(),
       funcGen = Gen.functionAToB(Gen.string()),
       EQA = Eq.any()

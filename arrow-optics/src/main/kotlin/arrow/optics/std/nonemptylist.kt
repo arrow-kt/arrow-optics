@@ -73,7 +73,7 @@ fun <A> PEvery.Companion.nonEmptyList(): Every<NonEmptyList<A>, A> = object : Ev
   override fun <R> foldMap(M: Monoid<R>, s: NonEmptyList<A>, f: (A) -> R): R =
     M.run { s.fold(empty()) { acc, r -> acc.combine(f(r)) } }
 
-  override fun map(s: NonEmptyList<A>, f: (A) -> A): NonEmptyList<A> =
+  override fun modify(s: NonEmptyList<A>, f: (A) -> A): NonEmptyList<A> =
     s.map(f)
 }
 
@@ -88,7 +88,7 @@ fun <A> FilterIndex.Companion.nonEmptyList(): FilterIndex<NonEmptyList<A>, Int, 
       }
     }
 
-    override fun map(s: NonEmptyList<A>, f: (A) -> A): NonEmptyList<A> =
+    override fun modify(s: NonEmptyList<A>, f: (A) -> A): NonEmptyList<A> =
       NonEmptyList.fromListUnsafe(s.mapIndexed { index, a -> if (p(index)) f(a) else a })
   }
 }

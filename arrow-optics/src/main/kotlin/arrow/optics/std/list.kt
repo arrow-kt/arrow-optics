@@ -152,7 +152,7 @@ fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> 
   override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R =
     M.run { s.fold(empty()) { acc, a -> acc.combine(f(a)) } }
 
-  override fun map(s: List<A>, f: (A) -> A): List<A> =
+  override fun modify(s: List<A>, f: (A) -> A): List<A> =
     s.map(f)
 }
 
@@ -165,7 +165,7 @@ fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
       s.foldIndexed(empty()) { index, acc, a -> if (p(index)) acc.combine(f(a)) else acc }
     }
 
-    override fun map(s: List<A>, f: (A) -> A): List<A> =
+    override fun modify(s: List<A>, f: (A) -> A): List<A> =
       s.mapIndexed { index, a -> if (p(index)) f(a) else a }
   }
 }

@@ -1,6 +1,5 @@
 package arrow.optics
 
-import arrow.core.Option
 import arrow.core.extensions.int
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
@@ -24,7 +23,7 @@ import io.kotlintest.properties.forAll
 class EveryTest : UnitSpec() {
   init {
 
-    with(Every.list<Int>().asFold()) {
+    with(Every.list<Int>()) {
 
       "asFold should behave as valid Fold: size" {
         forAll(Gen.list(Gen.int())) { ints ->
@@ -34,7 +33,7 @@ class EveryTest : UnitSpec() {
 
       "asFold should behave as valid Fold: nonEmpty" {
         forAll(Gen.list(Gen.int())) { ints ->
-          nonEmpty(ints) == ints.isNotEmpty()
+          isNotEmpty(ints) == ints.isNotEmpty()
         }
       }
 
@@ -64,13 +63,13 @@ class EveryTest : UnitSpec() {
 
       "asFold should behave as valid Fold: headOption" {
         forAll(Gen.list(Gen.int())) { ints ->
-          headOption(ints) == Option.fromNullable(ints.firstOrNull())
+          firstOrNull(ints) == ints.firstOrNull()
         }
       }
 
       "asFold should behave as valid Fold: lastOption" {
         forAll(Gen.list(Gen.int())) { ints ->
-          lastOption(ints) == Option.fromNullable(ints.lastOrNull())
+          lastOrNull(ints) == ints.lastOrNull()
         }
       }
     }
@@ -97,7 +96,7 @@ class EveryTest : UnitSpec() {
 
       "Finding an number larger than 10" {
         forAll(Gen.list(Gen.choose(-100, 100))) { ints ->
-          find(ints) { it > 10 } == Option.fromNullable(ints.firstOrNull { it > 10 })
+          findOrNull(ints) { it > 10 } == ints.firstOrNull { it > 10 }
         }
       }
 

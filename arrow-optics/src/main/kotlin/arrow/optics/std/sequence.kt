@@ -14,7 +14,7 @@ fun <A> FilterIndex.Companion.sequence(): FilterIndex<Sequence<A>, Int, A> = Fil
       }
     }
 
-    override fun map(s: Sequence<A>, f: (A) -> A): Sequence<A> =
+    override fun modify(s: Sequence<A>, f: (A) -> A): Sequence<A> =
       s.mapIndexed { index, a -> if (p(index)) f(a) else a }
   }
 }

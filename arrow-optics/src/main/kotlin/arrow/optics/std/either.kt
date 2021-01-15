@@ -37,6 +37,6 @@ fun <L, R> PEvery.Companion.either(): Every<Either<L, R>, R> = object : Every<Ei
   override fun <A> foldMap(M: Monoid<A>, s: Either<L, R>, f: (R) -> A): A =
     s.foldMap(M, f)
 
-  override fun map(s: Either<L, R>, f: (R) -> R): Either<L, R> =
+  override fun modify(s: Either<L, R>, f: (R) -> R): Either<L, R> =
     s.map(f)
 }

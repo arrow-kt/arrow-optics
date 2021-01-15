@@ -1,41 +1,19 @@
 package arrow.optics
 
-import arrow.Kind
 import arrow.core.Either
-import arrow.core.None
 import arrow.core.Option
-import arrow.core.Some
 import arrow.core.Tuple2
 import arrow.core.flatMap
 import arrow.core.getOrElse
 import arrow.core.identity
 import arrow.core.toT
-import arrow.typeclasses.Applicative
 import arrow.typeclasses.Monoid
-
-@Deprecated(KindDeprecation)
-class ForPOptional private constructor() { companion object }
-@Deprecated(KindDeprecation)
-typealias POptionalOf<S, T, A, B> = arrow.Kind4<ForPOptional, S, T, A, B>
-@Deprecated(KindDeprecation)
-typealias POptionalPartialOf<S, T, A> = arrow.Kind3<ForPOptional, S, T, A>
-@Deprecated(KindDeprecation)
-typealias POptionalKindedJ<S, T, A, B> = arrow.HkJ4<ForPOptional, S, T, A, B>
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-@Deprecated(KindDeprecation)
-inline fun <S, T, A, B> POptionalOf<S, T, A, B>.fix(): POptional<S, T, A, B> =
-  this as POptional<S, T, A, B>
 
 /**
  * [Optional] is a type alias for [POptional] which fixes the type arguments
  * and restricts the [POptional] to monomorphic updates.
  */
 typealias Optional<S, A> = POptional<S, S, A, A>
-
-typealias ForOptional = ForPOptional
-typealias OptionalOf<S, A> = POptionalOf<S, S, A, A>
-typealias OptionalPartialOf<S> = Kind<ForOptional, S>
-typealias OptionalKindedJ<S, A> = POptionalKindedJ<S, S, A, A>
 
 @Suppress("FunctionName")
 fun <S, A> Optional(getOption: (source: S) -> Option<A>, set: (source: S, focus: A) -> S): Optional<S, A> =
@@ -79,85 +57,46 @@ fun <S, A> Optional(getOption: (source: S) -> Option<A>, set: (source: S, focus:
  * @param A the focus of a [POptional]
  * @param B the modified focus of a [POptional]
  */
-interface POptional<S, T, A, B> : POptionalOf<S, T, A, B> {
+interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S, T, A, B>, PEvery<S, T, A, B> {
 
   /**
    * Get the modified source of a [POptional]
    */
-  fun set(source: S, focus: B): T
+  override fun set(source: S, focus: B): T
 
   /**
    * Get the focus of a [POptional] or return the original value while allowing the type to change if it does not match
    */
   fun getOrModify(source: S): Either<T, A>
 
-  companion object {
-
-    fun <S> id() = PIso.id<S>().asOptional()
-
-    /**
-     * [POptional] that takes either [S] or [S] and strips the choice of [S].
-     */
-    fun <S> codiagonal(): Optional<Either<S, S>, S> = POptional(
-      { sources -> sources.fold({ Either.Right(it) }, { Either.Right(it) }) },
-      { sources, focus -> sources.bimap({ focus }, { focus }) }
-    )
-
-    /**
-     * Invoke operator overload to create a [POptional] of type `S` with focus `A`.
-     * Can also be used to construct [Optional]
-     */
-    operator fun <S, T, A, B> invoke(getOrModify: (source: S) -> Either<T, A>, set: (source: S, focus: B) -> T): POptional<S, T, A, B> = object : POptional<S, T, A, B> {
-      override fun getOrModify(source: S): Either<T, A> = getOrModify(source)
-
-      override fun set(source: S, focus: B): T = set(source, focus)
-    }
-
-    /**
-     * [POptional] that never sees its focus
-     */
-    fun <A, B> void(): Optional<A, B> = POptional(
-      { Either.Left(it) },
-      { source, _ -> source }
-    )
-  }
-
   /**
-   * Modify the focus of a [POptional] with an Applicative function [f]
+   * Modify the focus of a [POptional] with a function [f]
    */
-  fun <F> modifyF(FA: Applicative<F>, source: S, f: (focus: A) -> Kind<F, B>): Kind<F, T> = FA.run {
-    getOrModify(source).fold(
-      ::just
-    ) { focus -> f(focus).map { set(source, it) } }
-  }
+  override fun modify(source: S, f: (focus: A) -> B): T =
+    getOrModify(source).fold(::identity) { a -> set(source, f(a)) }
 
-  /**
-   * Lift a function [f]: `(A) -> Kind<F, B> to the context of `S`: `(S) -> Kind<F, T>`
-   */
-  fun <F> liftF(FA: Applicative<F>, f: (focus: A) -> Kind<F, B>): (source: S) -> Kind<F, T> = { source ->
-    modifyF(FA, source, f)
-  }
+  override fun <R> foldMap(M: Monoid<R>, source: S, f: (A) -> R): R =
+    getOption(source).map(f).getOrElse(M::empty)
 
   /**
    * Get the focus of a [POptional] or [Option.None] if the is not there
    */
-  fun getOption(source: S): Option<A> = getOrModify(source).toOption()
+  fun getOption(source: S): Option<A> =
+    getOrModify(source).toOption()
 
   /**
    * Set the focus of a [POptional] with a value.
    * @return [Option.None] if the [POptional] is not matching
    */
-  fun setOption(source: S, b: B): Option<T> = modifyOption(source) { b }
+  fun setOption(source: S, b: B): Option<T> =
+    modifyOption(source) { b }
 
   /**
-   * Check if there is no focus
+   * Modify the focus of a [POptional] with a function [f]
+   * @return [Option.None] if the [POptional] is not matching
    */
-  fun isEmpty(source: S): Boolean = !nonEmpty(source)
-
-  /**
-   * Check if there is a focus
-   */
-  fun nonEmpty(source: S): Boolean = getOption(source).fold({ false }, { true })
+  fun modifyOption(source: S, f: (focus: A) -> B): Option<T> =
+    getOption(source).map { set(source, f(it)) }
 
   /**
    * Join two [POptional] with the same focus [B]
@@ -199,121 +138,38 @@ interface POptional<S, T, A, B> : POptionalOf<S, T, A, B> {
     { source, d -> modify(source) { a -> other.set(a, d) } }
   )
 
-  /**
-   * Compose a [POptional] with a [PPrism]
-   */
-  infix fun <C, D> compose(other: PPrism<A, B, C, D>): POptional<S, T, C, D> = compose(other.asOptional())
+  operator fun <C, D> plus(other: POptional<A, B, C, D>): POptional<S, T, C, D> =
+    this compose other
 
-  /**
-   * Compose a [POptional] with a [PLens]
-   */
-  infix fun <C, D> compose(other: PLens<A, B, C, D>): POptional<S, T, C, D> = compose(other.asOptional())
+  companion object {
 
-  /**
-   * Compose a [POptional] with a [PIso]
-   */
-  infix fun <C, D> compose(other: PIso<A, B, C, D>): POptional<S, T, C, D> = compose(other.asOptional())
+    fun <S> id(): POptional<S, S, S, S> =
+      PIso.id()
 
-  /**
-   * Compose a [POptional] with a [PIso]
-   */
-  infix fun <C, D> compose(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = asSetter() compose other
+    /**
+     * [POptional] that takes either [S] or [S] and strips the choice of [S].
+     */
+    fun <S> codiagonal(): Optional<Either<S, S>, S> = POptional(
+      { sources -> sources.fold({ Either.Right(it) }, { Either.Right(it) }) },
+      { sources, focus -> sources.bimap({ focus }, { focus }) }
+    )
 
-  /**
-   * Compose a [POptional] with a [Fold]
-   */
-  infix fun <C> compose(other: Fold<A, C>): Fold<S, C> = asFold() compose other
+    /**
+     * Invoke operator overload to create a [POptional] of type `S` with focus `A`.
+     * Can also be used to construct [Optional]
+     */
+    operator fun <S, T, A, B> invoke(getOrModify: (source: S) -> Either<T, A>, set: (source: S, focus: B) -> T): POptional<S, T, A, B> = object : POptional<S, T, A, B> {
+      override fun getOrModify(source: S): Either<T, A> = getOrModify(source)
 
-  /**
-   * Compose a [POptional] with a [Fold]
-   */
-  infix fun <C> compose(other: Getter<A, C>): Fold<S, C> = asFold() compose other
+      override fun set(source: S, focus: B): T = set(source, focus)
+    }
 
-  /**
-   * Compose a [POptional] with a [PTraversal]
-   */
-  infix fun <C, D> compose(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = asTraversal() compose other
-
-  /**
-   * Compose a [POptional] with a [PEvery]
-   */
-  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> = asEvery() compose other
-
-  /**
-   * Plus operator overload to compose optionals
-   */
-  operator fun <C, D> plus(other: POptional<A, B, C, D>): POptional<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PPrism<A, B, C, D>): POptional<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PLens<A, B, C, D>): POptional<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PIso<A, B, C, D>): POptional<S, T, C, D> = compose(other)
-
-  operator fun <C, D> plus(other: PSetter<A, B, C, D>): PSetter<S, T, C, D> = compose(other)
-
-  operator fun <C> plus(other: Fold<A, C>): Fold<S, C> = compose(other)
-
-  operator fun <C> plus(other: Getter<A, C>): Fold<S, C> = compose(other)
-
-  operator fun <C, D> plus(other: PTraversal<A, B, C, D>): PTraversal<S, T, C, D> = compose(other)
-
-  /**
-   * View a [POptional] as a [PSetter]
-   */
-  fun asSetter(): PSetter<S, T, A, B> = object : PSetter<S, T, A, B> {
-    override fun modify(s: S, f: (A) -> B): T = this@POptional.modify(s, f)
-
-    override fun set(s: S, b: B): T = this@POptional.set(s, b)
+    /**
+     * [POptional] that never sees its focus
+     */
+    fun <A, B> void(): Optional<A, B> = POptional(
+      { Either.Left(it) },
+      { source, _ -> source }
+    )
   }
-
-  /**
-   * View a [POptional] as a [Fold]
-   */
-  fun asFold() = object : Fold<S, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = getOption(s).map(f).getOrElse(M::empty)
-  }
-
-  /**
-   * View a [POptional] as a [PTraversal]
-   */
-  fun asTraversal(): PTraversal<S, T, A, B> =
-    PTraversal { s, f -> modify(s, f) }
-
-  fun asEvery(): PEvery<S, T, A, B> = object : PEvery<S, T, A, B> {
-    override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R = getOption(s).map(f).getOrElse(M::empty)
-    override fun map(s: S, f: (A) -> B): T = modify(s, f)
-  }
-
-  /**
-   * Modify the focus of a [POptional] with a function [f]
-   */
-  fun modify(source: S, f: (focus: A) -> B): T = getOrModify(source).fold(::identity) { a -> set(source, f(a)) }
-
-  /**
-   * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> T`
-   */
-  fun lift(f: (focus: A) -> B): (S) -> T = { s -> modify(s, f) }
-
-  /**
-   * Modify the focus of a [POptional] with a function [f]
-   * @return [Option.None] if the [POptional] is not matching
-   */
-  fun modifyOption(source: S, f: (focus: A) -> B): Option<T> = getOption(source).map { set(source, f(it)) }
-
-  /**
-   * Find the focus that satisfies the predicate [predicate]
-   */
-  fun find(source: S, predicate: (focus: A) -> Boolean): Option<A> =
-    getOption(source).flatMap { b -> if (predicate(b)) Some(b) else None }
-
-  /**
-   * Check if there is a focus and it satisfies the predicate [predicate]
-   */
-  fun exists(source: S, predicate: (focus: A) -> Boolean): Boolean = getOption(source).fold({ false }, predicate)
-
-  /**
-   * Check if there is no focus or the target satisfies the predicate [predicate]
-   */
-  fun all(source: S, predicate: (focus: A) -> Boolean): Boolean = getOption(source).fold({ true }, predicate)
 }
