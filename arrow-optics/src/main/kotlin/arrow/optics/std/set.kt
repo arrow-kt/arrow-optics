@@ -12,7 +12,7 @@ import arrow.optics.typeclasses.At
 @Deprecated(
   message = "SetK is being deprecated is being deprecated, and it will be removed in 0.13.",
   level = DeprecationLevel.WARNING
-)d
+)
 fun <A, B> SetExtensions.toPSetK(): PIso<Set<A>, Set<B>, SetK<A>, SetK<B>> = PIso(
   get = Set<A>::k,
   reverseGet = ::identity
