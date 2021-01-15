@@ -22,7 +22,7 @@ fun <A, B> SetExtensions.toPSetK(): PIso<Set<A>, Set<B>, SetK<A>, SetK<B>> = PIs
  * [Iso] that defines the equality between a [Set] and a [SetK]
  */
 @Deprecated(
-  message = "SetK is being deprecated is being deprecated, and it will be removed in 0.13.",
+  message = "SetK is being deprecated, and it will be removed in 0.13.",
   level = DeprecationLevel.WARNING
 )
 fun <A> SetExtensions.toSetK(): Iso<Set<A>, SetK<A>> = toPSetK()
