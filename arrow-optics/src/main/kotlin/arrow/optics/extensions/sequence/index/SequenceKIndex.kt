@@ -34,6 +34,10 @@ fun <A> index(i: Int): POptional<SequenceK<A>, SequenceK<A>, A, A> =
 )
 @Deprecated(
   "arrow.optics.extensions package is being deprecated, and it will be removed in 0.13.",
+  ReplaceWith(
+    "this compose Index.sequence<A>().index(i)",
+    "arrow.optics.compose", "arrow.optics.sequence", "arrow.optics.typeclasses.Index"
+  ),
   level = DeprecationLevel.WARNING
 )
 operator fun <A, T> PLens<T, T, SequenceK<A>, SequenceK<A>>.get(i: Int): POptional<T, T, A, A> =
