@@ -21,7 +21,7 @@ interface Fold<S, A> {
   /**
    * Map each target to a type R and use a Monoid to fold the results
    */
-  fun <R> foldMap(M: Monoid<R>, source: S, f: (focus: A) -> R): R
+  fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: A) -> R): R
 
   /**
    * Calculate the number of targets
@@ -32,16 +32,16 @@ interface Fold<S, A> {
   /**
    * Check if all targets satisfy the predicate
    */
-  fun all(source: S, p: (focus: A) -> Boolean): Boolean =
-    foldMap(Monoid.boolean(), source, p)
+  fun all(source: S, predicate: (focus: A) -> Boolean): Boolean =
+    foldMap(Monoid.boolean(), source, predicate)
 
-  fun forall(source: S, p: (focus: A) -> Boolean): Boolean =
-    all(source, p)
+  fun forall(source: S, predicate: (focus: A) -> Boolean): Boolean =
+    all(source, predicate)
 
   /**
    * Returns `true` if at least one focus matches the given [predicate].
    */
-  fun any(source: S, predicate: (A) -> Boolean): Boolean =
+  fun any(source: S, predicate: (focus: A) -> Boolean): Boolean =
     foldMap(Monoid.booleanOr(), source, predicate)
 
   /**
@@ -104,32 +104,32 @@ interface Fold<S, A> {
    * Join two [Fold] with the same target
    */
   infix fun <C> choice(other: Fold<C, A>): Fold<Either<S, C>, A> = object : Fold<Either<S, C>, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: Either<S, C>, f: (focus: A) -> R): R =
-      s.fold({ ac -> this@Fold.foldMap(M, ac, f) }, { c -> other.foldMap(M, c, f) })
+    override fun <R> foldMap(M: Monoid<R>, source: Either<S, C>, map: (focus: A) -> R): R =
+      source.fold({ ac -> this@Fold.foldMap(M, ac, map) }, { c -> other.foldMap(M, c, map) })
   }
 
   /**
    * Create a sum of the [Fold] and a type [C]
    */
   fun <C> left(): Fold<Either<S, C>, Either<A, C>> = object : Fold<Either<S, C>, Either<A, C>> {
-    override fun <R> foldMap(M: Monoid<R>, s: Either<S, C>, f: (Either<A, C>) -> R): R =
-      s.fold({ a1: S -> this@Fold.foldMap(M, a1) { b -> f(Either.Left(b)) } }, { c -> f(Either.Right(c)) })
+    override fun <R> foldMap(M: Monoid<R>, source: Either<S, C>, map: (Either<A, C>) -> R): R =
+      source.fold({ a1: S -> this@Fold.foldMap(M, a1) { b -> map(Either.Left(b)) } }, { c -> map(Either.Right(c)) })
   }
 
   /**
    * Create a sum of a type [C] and the [Fold]
    */
   fun <C> right(): Fold<Either<C, S>, Either<C, A>> = object : Fold<Either<C, S>, Either<C, A>> {
-    override fun <R> foldMap(M: Monoid<R>, source: Either<C, S>, f: (Either<C, A>) -> R): R =
-      source.fold({ c -> f(Either.Left(c)) }, { a1 -> this@Fold.foldMap(M, a1) { b -> f(Either.Right(b)) } })
+    override fun <R> foldMap(M: Monoid<R>, source: Either<C, S>, map: (Either<C, A>) -> R): R =
+      source.fold({ c -> map(Either.Left(c)) }, { a1 -> this@Fold.foldMap(M, a1) { b -> map(Either.Right(b)) } })
   }
 
   /**
    * Compose a [Fold] with a [Fold]
    */
   infix fun <C> compose(other: Fold<A, C>): Fold<S, C> = object : Fold<S, C> {
-    override fun <R> foldMap(M: Monoid<R>, source: S, f: (focus: C) -> R): R =
-      this@Fold.foldMap(M, source) { c -> other.foldMap(M, c, f) }
+    override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: C) -> R): R =
+      this@Fold.foldMap(M, source) { c -> other.foldMap(M, c, map) }
   }
 
   operator fun <C> plus(other: Fold<A, C>): Fold<S, C> =
@@ -144,14 +144,16 @@ interface Fold<S, A> {
      * [Fold] that takes either [S] or [S] and strips the choice of [S].
      */
     fun <S> codiagonal() = object : Fold<Either<S, S>, S> {
-      override fun <R> foldMap(M: Monoid<R>, s: Either<S, S>, f: (S) -> R): R = s.fold(f, f)
+      override fun <R> foldMap(M: Monoid<R>, source: Either<S, S>, map: (S) -> R): R =
+        source.fold(map, map)
     }
 
     /**
      * Creates a [Fold] based on a predicate of the source [S]
      */
     fun <S> select(p: (S) -> Boolean): Fold<S, S> = object : Fold<S, S> {
-      override fun <R> foldMap(M: Monoid<R>, source: S, f: (S) -> R): R = if (p(source)) f(source) else M.empty()
+      override fun <R> foldMap(M: Monoid<R>, source: S, map: (S) -> R): R =
+        if (p(source)) map(source) else M.empty()
     }
 
     /**

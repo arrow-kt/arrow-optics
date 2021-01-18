@@ -1,7 +1,5 @@
 package arrow.optics
 
-import arrow.core.ListExtensions
-import arrow.core.ListK
 import arrow.core.Tuple2
 import arrow.core.left
 import arrow.core.right
@@ -19,36 +17,8 @@ private val stringToList: Iso<String, List<Char>> = Iso(
 /**
  * [Iso] that defines equality between String and [List] of [Char]
  */
-@Deprecated(
-  "The function has been moved to Iso's companion object.",
-  ReplaceWith(
-    "Iso.stringToList()",
-    "arrow.optics.Iso", "arrow.optics.stringToList"
-  ),
-  DeprecationLevel.WARNING
-)
-fun String.Companion.toList(): Iso<String, List<Char>> =
-  stringToList
-
-/**
- * [Iso] that defines equality between String and [List] of [Char]
- */
 fun PIso.Companion.stringToList(): Iso<String, List<Char>> =
   stringToList
-
-/**
- * [Iso] that defines equality between String and [ListK] of [Char]
- */
-@Deprecated(
-  "ListK is being deprecated. Use the function defined for List from Iso's companion object.",
-  ReplaceWith(
-    "Iso.stringToList()",
-    "arrow.optics.Iso", "arrow.optics.stringToList"
-  ),
-  DeprecationLevel.WARNING
-)
-fun String.Companion.toListK(): Iso<String, ListK<Char>> =
-  stringToList compose ListExtensions.toListK()
 
 /**
  * [Traversal] for [String] that focuses in each [Char] of the source [String].
@@ -60,15 +30,15 @@ fun PTraversal.Companion.string(): Traversal<String, Char> =
   Traversal { s, f -> s.map(f).joinToString(separator = "") }
 
 fun Fold.Companion.string(): Fold<String, Char> = object : Fold<String, Char> {
-  override fun <R> foldMap(M: Monoid<R>, s: String, f: (Char) -> R): R =
-    M.run { s.map(f).fold(empty()) { acc, r -> acc.combine(r) } }
+  override fun <R> foldMap(M: Monoid<R>, s: String, map: (Char) -> R): R =
+    M.run { s.map(map).fold(empty()) { acc, r -> acc.combine(r) } }
 }
 
 fun PEvery.Companion.string(): Every<String, Char> = object : Every<String, Char> {
-  override fun <R> foldMap(M: Monoid<R>, s: String, f: (Char) -> R): R =
-    M.run { s.fold(empty()) { acc, r -> acc.combine(f(r)) } }
+  override fun <R> foldMap(M: Monoid<R>, s: String, map: (Char) -> R): R =
+    M.run { s.fold(empty()) { acc, r -> acc.combine(map(r)) } }
 
-  override fun modify(s: String, f: (Char) -> Char): String =
+  override fun modify(s: String, f: (focus: Char) -> Char): String =
     s.map(f).joinToString(separator = "")
 }
 

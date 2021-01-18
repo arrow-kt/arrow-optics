@@ -65,13 +65,13 @@ fun <A> PTraversal.Companion.option(): Traversal<Option<A>, A> =
   Traversal { s, f -> s.map(f) }
 
 fun <A> Fold.Companion.option(): Fold<Option<A>, A> = object : Fold<Option<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, f: (A) -> R): R =
-    M.run { s.foldLeft(empty()) { b, a -> b.combine(f(a)) } }
+  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, map: (A) -> R): R =
+    M.run { s.foldLeft(empty()) { b, a -> b.combine(map(a)) } }
 }
 
 fun <A> PEvery.Companion.option(): Every<Option<A>, A> = object : Every<Option<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, f: (A) -> R): R =
-    M.run { s.foldLeft(empty()) { b, a -> b.combine(f(a)) } }
+  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, map: (A) -> R): R =
+    M.run { s.foldLeft(empty()) { b, a -> b.combine(map(a)) } }
 
-  override fun modify(s: Option<A>, f: (A) -> A): Option<A> = s.map(f)
+  override fun modify(s: Option<A>, map: (focus: A) -> A): Option<A> = s.map(map)
 }

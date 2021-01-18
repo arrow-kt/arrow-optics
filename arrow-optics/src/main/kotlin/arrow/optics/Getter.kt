@@ -23,8 +23,8 @@ fun interface Getter<S, A> : Fold<S, A> {
    */
   fun get(source: S): A
 
-  override fun <R> foldMap(M: Monoid<R>, source: S, f: (A) -> R): R =
-    f(get(source))
+  override fun <R> foldMap(M: Monoid<R>, source: S, map: (A) -> R): R =
+    map(get(source))
 
   /**
    * Create a product of the [Getter] and a type [C]

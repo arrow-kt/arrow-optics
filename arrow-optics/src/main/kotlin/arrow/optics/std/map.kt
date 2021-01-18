@@ -20,14 +20,14 @@ fun <K> PIso.Companion.mapToSet(): Iso<Map<K, Unit>, Set<K>> = Iso(
 
 fun <K, V> FilterIndex.Companion.map(): FilterIndex<Map<K, V>, K, V> = FilterIndex { p ->
   object : Every<Map<K, V>, V> {
-    override fun <R> foldMap(M: Monoid<R>, source: Map<K, V>, f: (V) -> R): R = M.run {
+    override fun <R> foldMap(M: Monoid<R>, source: Map<K, V>, map: (V) -> R): R = M.run {
       source.entries.fold(empty()) { acc, (k, v) ->
-        if (p(k)) acc.combine(f(v)) else acc
+        if (p(k)) acc.combine(map(v)) else acc
       }
     }
 
-    override fun modify(source: Map<K, V>, f: (V) -> V): Map<K, V> =
-      source.mapValues { (k, v) -> if (p(k)) f(v) else v }
+    override fun modify(source: Map<K, V>, map: (focus: V) -> V): Map<K, V> =
+      source.mapValues { (k, v) -> if (p(k)) map(v) else v }
   }
 }
 
@@ -56,9 +56,9 @@ fun <K, V> At.Companion.map(): At<Map<K, V>, K, Option<V>> =
   }
 
 fun <K, V> PEvery.Companion.map(): Every<Map<K, V>, V> = object : Every<Map<K, V>, V> {
-  override fun <R> foldMap(M: Monoid<R>, s: Map<K, V>, f: (V) -> R): R =
-    M.run { s.values.fold(empty()) { acc, v -> acc.combine(f(v)) } }
+  override fun <R> foldMap(M: Monoid<R>, s: Map<K, V>, map: (V) -> R): R =
+    M.run { s.values.fold(empty()) { acc, v -> acc.combine(map(v)) } }
 
-  override fun modify(s: Map<K, V>, f: (V) -> V): Map<K, V> =
-    s.mapValues { (_, v) -> f(v) }
+  override fun modify(s: Map<K, V>, map: (focus: V) -> V): Map<K, V> =
+    s.mapValues { (_, v) -> map(v) }
 }

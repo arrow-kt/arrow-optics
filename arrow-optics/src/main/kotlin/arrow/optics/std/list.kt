@@ -1,20 +1,14 @@
 package arrow.optics
 
 import arrow.core.Either
-import arrow.core.ListExtensions
-import arrow.core.ListK
 import arrow.core.NonEmptyList
 import arrow.core.None
+import arrow.core.Nullable
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.Tuple2
-import arrow.core.extensions.option.applicative.applicative
-import arrow.core.fix
-import arrow.core.identity
-import arrow.core.k
 import arrow.core.left
 import arrow.core.right
-import arrow.core.toOption
 import arrow.optics.typeclasses.Cons
 import arrow.optics.typeclasses.FilterIndex
 import arrow.optics.typeclasses.Index
@@ -24,43 +18,9 @@ import arrow.typeclasses.Monoid
 /**
  * [Optional] to safely operate on the head of a list
  */
-@Deprecated(
-  "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith(
-    "Optional.listHead<A>()",
-    "arrow.optics.Optional", "arrow.optics.listHead"
-  ),
-  DeprecationLevel.WARNING)
-fun <A> ListK.Companion.head(): Optional<List<A>, A> = Optional(
-  getOption = { Option.fromNullable(it.firstOrNull()) },
-  set = { list, newHead -> list.mapIndexed { index, value -> if (index == 0) newHead else value } }
-)
-
-/**
- * [Optional] to safely operate on the head of a list
- */
 fun <A> POptional.Companion.listHead(): Optional<List<A>, A> = Optional(
   getOption = { Option.fromNullable(it.firstOrNull()) },
   set = { list, newHead -> list.mapIndexed { index, value -> if (index == 0) newHead else value } }
-)
-
-/**
- * [Optional] to safely operate on the tail of a list
- */
-@Deprecated(
-  "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith(
-    "Optional.listTail<A>()",
-    "arrow.optics.Optional", "arrow.optics.listTail"
-  ),
-  DeprecationLevel.WARNING)
-fun <A> ListK.Companion.tail(): Optional<List<A>, List<A>> = Optional(
-  getOption = { if (it.isEmpty()) None else Some(it.drop(1)) },
-  set = { list, newTail ->
-    list.firstOrNull()?.let {
-      listOf(it) + newTail
-    } ?: emptyList()
-  }
 )
 
 /**
@@ -78,21 +38,6 @@ fun <A> POptional.Companion.listTail(): Optional<List<A>, List<A>> = Optional(
 /**
  * [PIso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-@Deprecated(
-  "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith(
-    "Iso.listToPOptionNel<A, B>()",
-    "arrow.optics.Iso", "arrow.optics.listToPOptionNel"
-  ),
-  DeprecationLevel.WARNING)
-fun <A, B> ListK.Companion.toPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> = PIso(
-  get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
-  reverseGet = { optNel -> optNel.fold({ emptyList() }, NonEmptyList<B>::all) }
-)
-
-/**
- * [PIso] that defines equality between a [List] and [Option] [NonEmptyList]
- */
 fun <A, B> PIso.Companion.listToPOptionNel(): PIso<List<A>, List<B>, Option<NonEmptyList<A>>, Option<NonEmptyList<B>>> =
   PIso(
     get = { aas -> if (aas.isEmpty()) None else Some(NonEmptyList(aas.first(), aas.drop(1))) },
@@ -102,38 +47,7 @@ fun <A, B> PIso.Companion.listToPOptionNel(): PIso<List<A>, List<B>, Option<NonE
 /**
  * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-@Deprecated(
-  "ListK is being deprecated, use the function defined for List instead.",
-  ReplaceWith(
-    "Iso.listToOptionNel<A>()",
-    "arrow.optics.Iso", "arrow.optics.listToOptionNel"
-  ),
-  DeprecationLevel.WARNING)
-fun <A> ListK.Companion.toOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = toPOptionNel()
-
-/**
- * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
- */
 fun <A> PIso.Companion.listToOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = listToPOptionNel()
-
-/**
- * [PIso] that defines the equality between a [List] and a [ListK]
- */
-@Deprecated(
-  "ListK is being deprecated, and this function will be removed in 0.13.0.",
-  level = DeprecationLevel.WARNING)
-fun <A, B> ListExtensions.toPListK(): PIso<List<A>, List<B>, ListK<A>, ListK<B>> = PIso(
-  get = List<A>::k,
-  reverseGet = ::identity
-)
-
-/**
- * [Iso] that defines the equality between a [List] and a [ListK]
- */
-@Deprecated(
-  "ListK is being deprecated, and this function will be removed in 0.13.0.",
-  level = DeprecationLevel.WARNING)
-fun <A> ListExtensions.toListK(): Iso<List<A>, ListK<A>> = toPListK()
 
 /**
  * [Traversal] for [List] that focuses in each [A] of the source [List].
@@ -144,16 +58,16 @@ fun <A> listTraversal(): Traversal<List<A>, A> =
 fun <A> PTraversal.Companion.list(): Traversal<List<A>, A> = listTraversal()
 
 fun <A> Fold.Companion.list(): Fold<List<A>, A> = object : Fold<List<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R =
-    M.run { s.fold(empty()) { acc, a -> acc.combine(f(a)) } }
+  override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R =
+    M.run { s.fold(empty()) { acc, a -> acc.combine(map(a)) } }
 }
 
 fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R =
-    M.run { s.fold(empty()) { acc, a -> acc.combine(f(a)) } }
+  override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R =
+    M.run { s.fold(empty()) { acc, a -> acc.combine(map(a)) } }
 
-  override fun modify(s: List<A>, f: (A) -> A): List<A> =
-    s.map(f)
+  override fun modify(s: List<A>, map: (focus: A) -> A): List<A> =
+    s.map(map)
 }
 
 /**
@@ -161,12 +75,12 @@ fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> 
  */
 fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
   object : Every<List<A>, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: List<A>, f: (A) -> R): R = M.run {
-      s.foldIndexed(empty()) { index, acc, a -> if (p(index)) acc.combine(f(a)) else acc }
+    override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R = M.run {
+      s.foldIndexed(empty()) { index, acc, a -> if (p(index)) acc.combine(map(a)) else acc }
     }
 
-    override fun modify(s: List<A>, f: (A) -> A): List<A> =
-      s.mapIndexed { index, a -> if (p(index)) f(a) else a }
+    override fun modify(s: List<A>, map: (focus: A) -> A): List<A> =
+      s.mapIndexed { index, a -> if (p(index)) map(a) else a }
   }
 }
 
@@ -205,22 +119,17 @@ infix fun <A> A.cons(tail: List<A>): List<A> =
 fun <A> List<A>.uncons(): Option<Tuple2<A, List<A>>> =
   Cons.list<A>().run { this@uncons.uncons() }
 
-/**
- * [Snoc] instance definition for [List].
- */
-fun <A> listSnoc(): Snoc<List<A>, A> = Snoc {
+fun <A> Snoc.Companion.list(): Snoc<List<A>, A> = Snoc {
   object : Prism<List<A>, Tuple2<List<A>, A>> {
     override fun getOrModify(s: List<A>): Either<List<A>, Tuple2<List<A>, A>> =
-      Option.applicative().mapN(Option.just(s.dropLast(1)), s.lastOrNull().toOption(), ::identity)
-        .fix()
-        .toEither { s }
+      Nullable.mapN(s.dropLast(1), s.lastOrNull()) { a, b ->
+        Tuple2(a, b).right()
+      } ?: s.left()
 
     override fun reverseGet(b: Tuple2<List<A>, A>): List<A> =
       b.a + b.b
   }
 }
-
-fun <A> Snoc.Companion.list(): Snoc<List<A>, A> = listSnoc()
 
 infix fun <A> List<A>.snoc(last: A): List<A> =
   Snoc.list<A>().run { this@snoc.snoc(last) }

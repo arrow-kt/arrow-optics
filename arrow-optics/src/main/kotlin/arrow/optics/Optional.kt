@@ -70,19 +70,25 @@ interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S,
   fun getOrModify(source: S): Either<T, A>
 
   /**
-   * Modify the focus of a [POptional] with a function [f]
+   * Modify the focus of a [POptional] with a function [map]
    */
-  override fun modify(source: S, f: (focus: A) -> B): T =
-    getOrModify(source).fold(::identity) { a -> set(source, f(a)) }
+  override fun modify(source: S, map: (focus: A) -> B): T =
+    getOrModify(source).fold(::identity) { a -> set(source, map(a)) }
 
-  override fun <R> foldMap(M: Monoid<R>, source: S, f: (A) -> R): R =
-    getOption(source).map(f).getOrElse(M::empty)
+  override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: A) -> R): R =
+    getOption(source).map(map).getOrElse(M::empty)
 
   /**
    * Get the focus of a [POptional] or [Option.None] if the is not there
    */
   fun getOption(source: S): Option<A> =
     getOrModify(source).toOption()
+
+  /**
+   * Get the focus of a [POptional] or `null` if the is not there
+   */
+  fun getOrNull(source: S): A? =
+    getOrModify(source).orNull()
 
   /**
    * Set the focus of a [POptional] with a value.
@@ -92,11 +98,25 @@ interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S,
     modifyOption(source) { b }
 
   /**
-   * Modify the focus of a [POptional] with a function [f]
+   * Set the focus of a [POptional] with a value.
+   * @return null if the [POptional] is not matching
+   */
+  fun setNullable(source: S, b: B): T? =
+    modifyNullable(source) { b }
+
+  /**
+   * Modify the focus of a [POptional] with a function [map]
    * @return [Option.None] if the [POptional] is not matching
    */
-  fun modifyOption(source: S, f: (focus: A) -> B): Option<T> =
-    getOption(source).map { set(source, f(it)) }
+  fun modifyOption(source: S, map: (focus: A) -> B): Option<T> =
+    Option.fromNullable(modifyNullable(source, map))
+
+  /**
+   * Modify the focus of a [POptional] with a function [map]
+   * @return null if the [POptional] is not matching
+   */
+  fun modifyNullable(source: S, map: (focus: A) -> B): T? =
+    getOrNull(source)?.let { set(source, map(it)) }
 
   /**
    * Join two [POptional] with the same focus [B]

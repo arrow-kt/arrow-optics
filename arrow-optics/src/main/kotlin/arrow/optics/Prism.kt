@@ -39,8 +39,8 @@ interface PPrism<S, T, A, B> : POptional<S, T, A, B>, PSetter<S, T, A, B>, Fold<
 
   fun reverseGet(focus: B): T
 
-  override fun <R> foldMap(M: Monoid<R>, source: S, f: (A) -> R): R =
-    getOption(source).map(f).getOrElse(M::empty)
+  override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: A) -> R): R =
+    getOption(source).map(map).getOrElse(M::empty)
 
   /**
    * Modify the focus of a [PPrism] with a function
@@ -61,16 +61,16 @@ interface PPrism<S, T, A, B> : POptional<S, T, A, B>, PSetter<S, T, A, B>, Fold<
     modify(source) { focus }
 
   /**
-   * Set the focus of a [PPrism] with a value
-   */
-  override fun setOption(source: S, b: B): Option<T> =
-    modifyOption(source) { b }
-
-  /**
    * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> Option<T>`
    */
-  fun liftOption(f: (A) -> B): (S) -> Option<T> =
+  fun liftOption(f: (focus: A) -> B): (source: S) -> Option<T> =
     { s -> getOption(s).map { b -> reverseGet(f(b)) } }
+
+  /**
+   * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> T?`
+   */
+  fun liftNullable(f: (focus: A) -> B): (source: S) -> T? =
+    { s -> getOrNull(s)?.let { b -> reverseGet(f(b)) } }
 
   /**
    * Create a product of the [PPrism] and a type [C]
@@ -129,7 +129,7 @@ interface PPrism<S, T, A, B> : POptional<S, T, A, B>, PSetter<S, T, A, B>, Fold<
      * Invoke operator overload to create a [PPrism] of type `S` with focus `A`.
      * Can also be used to construct [Prism]
      */
-    operator fun <S, T, A, B> invoke(getOrModify: (S) -> Either<T, A>, reverseGet: (B) -> T) =
+    operator fun <S, T, A, B> invoke(getOrModify: (source: S) -> Either<T, A>, reverseGet: (focus: B) -> T) =
       object : PPrism<S, T, A, B> {
         override fun getOrModify(source: S): Either<T, A> = getOrModify(source)
         override fun reverseGet(focus: B): T = reverseGet(focus)
@@ -150,7 +150,7 @@ interface PPrism<S, T, A, B> : POptional<S, T, A, B>, PSetter<S, T, A, B>, Fold<
  * Can also be used to construct [Prism]
  */
 @Suppress("FunctionName")
-fun <S, A> Prism(getOption: (S) -> Option<A>, reverseGet: (A) -> S): Prism<S, A> = Prism(
+fun <S, A> Prism(getOption: (source: S) -> Option<A>, reverseGet: (focus: A) -> S): Prism<S, A> = Prism(
   getOrModify = { getOption(it).toEither { it } },
   reverseGet = { reverseGet(it) }
 )

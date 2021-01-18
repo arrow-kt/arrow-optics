@@ -26,9 +26,9 @@ typealias Setter<S, A> = PSetter<S, S, A, A>
 fun interface PSetter<S, T, A, B> {
 
   /**
-   * Modify polymorphically the focus of a [PSetter] with a function [f].
+   * Modify polymorphically the focus of a [PSetter] with a function [map].
    */
-  fun modify(source: S, f: (A) -> B): T
+  fun modify(source: S, map: (focus: A) -> B): T
 
   /**
    * Set polymorphically the focus of a [PSetter] with a value [b].
@@ -37,10 +37,10 @@ fun interface PSetter<S, T, A, B> {
     modify(source) { focus }
 
   /**
-   * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> T`
+   * Lift a function [map]: `(A) -> B to the context of `S`: `(S) -> T`
    */
-  fun lift(f: (A) -> B): (S) -> T =
-    { s -> modify(s) { f(it) } }
+  fun lift(map: (focus: A) -> B): (source: S) -> T =
+    { s -> modify(s) { map(it) } }
 
   /**
    * Join two [PSetter] with the same target

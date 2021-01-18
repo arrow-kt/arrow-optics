@@ -48,11 +48,11 @@ interface PIso<S, T, A, B> : PPrism<S, T, A, B>, PLens<S, T, A, B>, Getter<S, A>
   /**
    * Modify polymorphically the focus of a [PIso] with a function
    */
-  override fun modify(source: S, f: (A) -> B): T =
-    reverseGet(f(get(source)))
+  override fun modify(source: S, map: (focus: A) -> B): T =
+    reverseGet(map(get(source)))
 
-  override fun <R> foldMap(M: Monoid<R>, s: S, f: (A) -> R): R =
-    f(get(s))
+  override fun <R> foldMap(M: Monoid<R>, source: S, map: (A) -> R): R =
+    map(get(source))
 
   /**
    * Reverse a [PIso]: the source becomes the target and the target becomes the source
@@ -65,11 +65,6 @@ interface PIso<S, T, A, B> : PPrism<S, T, A, B>, PLens<S, T, A, B>, Getter<S, A>
    */
   fun set(b: B): T =
     reverseGet(b)
-
-  /**
-   * Modify polymorphically the focus of a [PIso] with a function
-   */
-  override fun lift(f: (A) -> B): (S) -> T = { s -> reverseGet(f(get(s))) }
 
   /**
    * Pair two disjoint [PIso]

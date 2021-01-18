@@ -21,7 +21,7 @@ typealias Traversal<S, A> = PTraversal<S, S, A, A>
  */
 fun interface PTraversal<S, T, A, B> : PSetter<S, T, A, B> {
 
-  override fun modify(source: S, f: (A) -> B): T
+  override fun modify(source: S, map: (focus: A) -> B): T
 
   fun <U, V> choice(other: PTraversal<U, V, A, B>): PTraversal<Either<S, U>, Either<T, V>, A, B> =
     PTraversal { s, f ->

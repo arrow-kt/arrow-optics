@@ -8,14 +8,14 @@ import arrow.typeclasses.Monoid
 
 fun <A> FilterIndex.Companion.sequence(): FilterIndex<Sequence<A>, Int, A> = FilterIndex { p ->
   object : Every<Sequence<A>, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: Sequence<A>, f: (A) -> R): R = M.run {
+    override fun <R> foldMap(M: Monoid<R>, s: Sequence<A>, map: (A) -> R): R = M.run {
       s.foldIndexed(empty()) { index, acc, a ->
-        if (p(index)) acc.combine(f(a)) else acc
+        if (p(index)) acc.combine(map(a)) else acc
       }
     }
 
-    override fun modify(s: Sequence<A>, f: (A) -> A): Sequence<A> =
-      s.mapIndexed { index, a -> if (p(index)) f(a) else a }
+    override fun modify(s: Sequence<A>, map: (focus: A) -> A): Sequence<A> =
+      s.mapIndexed { index, a -> if (p(index)) map(a) else a }
   }
 }
 
