@@ -14,6 +14,9 @@ class IndexInstanceTest : UnitSpec() {
 
   init {
 
+    listOf(1, 2, 3)
+      .map { it + 1}
+
     testLaws(
       OptionalLaws.laws(
         optionalGen = Gen.int().map { Index.list<String>().index(it) },
