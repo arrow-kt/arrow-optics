@@ -1,6 +1,5 @@
 package arrow.optics
 
-import arrow.core.Tuple2
 import arrow.core.left
 import arrow.core.right
 import arrow.optics.typeclasses.Cons
@@ -75,7 +74,7 @@ fun Index.Companion.string(): Index<String, Int, Char> =
 fun Cons.Companion.string(): Cons<String, Char> =
   Cons {
     Prism(
-      getOrModify = { if (it.isNotEmpty()) Tuple2(it.first(), it.drop(1)).right() else it.left() },
+      getOrModify = { if (it.isNotEmpty()) Pair(it.first(), it.drop(1)).right() else it.left() },
       reverseGet = { (h, t) -> h + t }
     )
   }
@@ -86,7 +85,7 @@ fun Cons.Companion.string(): Cons<String, Char> =
 fun Snoc.Companion.string(): Snoc<String, Char> =
   Snoc {
     Prism(
-      getOrModify = { if (it.isNotEmpty()) Tuple2(it.dropLast(1), it.last()).right() else it.left() },
+      getOrModify = { if (it.isNotEmpty()) Pair(it.dropLast(1), it.last()).right() else it.left() },
       reverseGet = { (i, l) -> i + l }
     )
   }

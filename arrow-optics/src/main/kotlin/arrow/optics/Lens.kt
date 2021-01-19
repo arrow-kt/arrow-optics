@@ -1,9 +1,7 @@
 package arrow.optics
 
 import arrow.core.Either
-import arrow.core.Tuple2
 import arrow.core.identity
-import arrow.core.toT
 import arrow.typeclasses.Monoid
 
 /**
@@ -17,7 +15,7 @@ typealias Lens<S, A> = PLens<S, S, A, A>
  * getting, setting or modifying the focus (target).
  *
  * A (polymorphic) [PLens] is useful when setting or modifying a value for a constructed type
- * i.e. PLens<Tuple2<Double, Int>, Tuple2<String, Int>, Double, String>
+ * i.e. PLens<Pair<Double, Int>, Pair<String, Int>, Double, String>
  *
  * A [PLens] can be seen as a pair of functions:
  * - `get: (S) -> A` meaning we can focus into an `S` and extract an `A`
@@ -51,26 +49,26 @@ interface PLens<S, T, A, B> : Getter<S, A>, POptional<S, T, A, B>, PSetter<S, T,
   /**
    * Pair two disjoint [PLens]
    */
-  infix fun <S1, T1, A1, B1> split(other: PLens<S1, T1, A1, B1>): PLens<Tuple2<S, S1>, Tuple2<T, T1>, Tuple2<A, A1>, Tuple2<B, B1>> =
+  infix fun <S1, T1, A1, B1> split(other: PLens<S1, T1, A1, B1>): PLens<Pair<S, S1>, Pair<T, T1>, Pair<A, A1>, Pair<B, B1>> =
     PLens(
-      { (s, c) -> get(s) toT other.get(c) },
-      { (s, s1), (b, b1) -> set(s, b) toT other.set(s1, b1) }
+      { (s, c) -> get(s) to other.get(c) },
+      { (s, s1), (b, b1) -> set(s, b) to other.set(s1, b1) }
     )
 
   /**
    * Create a product of the [PLens] and a type [C]
    */
-  override fun <C> first(): PLens<Tuple2<S, C>, Tuple2<T, C>, Tuple2<A, C>, Tuple2<B, C>> = PLens(
-    { (s, c) -> get(s) toT c },
-    { (s, _), (b, c) -> set(s, b) toT c }
+  override fun <C> first(): PLens<Pair<S, C>, Pair<T, C>, Pair<A, C>, Pair<B, C>> = PLens(
+    { (s, c) -> get(s) to c },
+    { (s, _), (b, c) -> set(s, b) to c }
   )
 
   /**
    * Create a product of a type [C] and the [PLens]
    */
-  override fun <C> second(): PLens<Tuple2<C, S>, Tuple2<C, T>, Tuple2<C, A>, Tuple2<C, B>> = PLens(
-    { (c, s) -> c toT get(s) },
-    { (_, s), (c, b) -> c toT set(s, b) }
+  override fun <C> second(): PLens<Pair<C, S>, Pair<C, T>, Pair<C, A>, Pair<C, B>> = PLens(
+    { (c, s) -> c to get(s) },
+    { (_, s), (c, b) -> c to set(s, b) }
   )
 
   /**

@@ -88,13 +88,13 @@ val successToInt: Prism<NetworkResult.Success, Int> = Prism(
 val networkInt: Prism<NetworkResult, Int> = networkSuccessPrism compose successToInt
 ```
 ```kotlin:ank
-networkInt.getOption(NetworkResult.Success("invalid int"))
+networkInt.getOrNull(NetworkResult.Success("invalid int"))
 ```
 ```kotlin:ank
-networkInt.getOption(NetworkResult.Failure)
+networkInt.getOrNull(NetworkResult.Failure)
 ```
 ```kotlin:ank
-networkInt.getOption(NetworkResult.Success("5"))
+networkInt.getOrNull(NetworkResult.Success("5"))
 ```
 `Prism` can be composed with all optics but `Getter`, and result in the following optics:
 

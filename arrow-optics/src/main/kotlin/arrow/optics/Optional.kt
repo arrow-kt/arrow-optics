@@ -2,11 +2,8 @@ package arrow.optics
 
 import arrow.core.Either
 import arrow.core.Option
-import arrow.core.Tuple2
 import arrow.core.flatMap
-import arrow.core.getOrElse
 import arrow.core.identity
-import arrow.core.toT
 import arrow.typeclasses.Monoid
 
 /**
@@ -76,13 +73,7 @@ interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S,
     getOrModify(source).fold(::identity) { a -> set(source, map(a)) }
 
   override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: A) -> R): R =
-    getOption(source).map(map).getOrElse(M::empty)
-
-  /**
-   * Get the focus of a [POptional] or [Option.None] if the is not there
-   */
-  fun getOption(source: S): Option<A> =
-    getOrModify(source).toOption()
+    getOrNull(source)?.let(map) ?: M.empty()
 
   /**
    * Get the focus of a [POptional] or `null` if the is not there
@@ -92,24 +83,10 @@ interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S,
 
   /**
    * Set the focus of a [POptional] with a value.
-   * @return [Option.None] if the [POptional] is not matching
-   */
-  fun setOption(source: S, b: B): Option<T> =
-    modifyOption(source) { b }
-
-  /**
-   * Set the focus of a [POptional] with a value.
    * @return null if the [POptional] is not matching
    */
   fun setNullable(source: S, b: B): T? =
     modifyNullable(source) { b }
-
-  /**
-   * Modify the focus of a [POptional] with a function [map]
-   * @return [Option.None] if the [POptional] is not matching
-   */
-  fun modifyOption(source: S, map: (focus: A) -> B): Option<T> =
-    Option.fromNullable(modifyNullable(source, map))
 
   /**
    * Modify the focus of a [POptional] with a function [map]
@@ -135,28 +112,29 @@ interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S,
   /**
    * Create a product of the [POptional] and a type [C]
    */
-  fun <C> first(): POptional<Tuple2<S, C>, Tuple2<T, C>, Tuple2<A, C>, Tuple2<B, C>> =
+  fun <C> first(): POptional<Pair<S, C>, Pair<T, C>, Pair<A, C>, Pair<B, C>> =
     POptional(
-      { (source, c) -> getOrModify(source).bimap({ it toT c }, { it toT c }) },
-      { (source, c2), (update, c) -> setOption(source, update).fold({ set(source, update) toT c2 }, { it toT c }) }
+      { (source, c) -> getOrModify(source).bimap({ Pair(it, c) }, { Pair(it, c) }) },
+      { (source, c2), (update, c) -> setNullable(source, update)?.let { Pair(it, c) } ?: Pair(set(source, update), c2) }
     )
 
   /**
    * Create a product of a type [C] and the [POptional]
    */
-  fun <C> second(): POptional<Tuple2<C, S>, Tuple2<C, T>, Tuple2<C, A>, Tuple2<C, B>> =
+  fun <C> second(): POptional<Pair<C, S>, Pair<C, T>, Pair<C, A>, Pair<C, B>> =
     POptional(
-      { (c, s) -> getOrModify(s).bimap({ c toT it }, { c toT it }) },
-      { (c2, s), (c, b) -> setOption(s, b).fold({ c2 toT set(s, b) }, { c toT it }) }
+      { (c, s) -> getOrModify(s).bimap({ c to it }, { c to it }) },
+      { (c2, s), (c, b) -> setNullable(s, b)?.let { c to it } ?: c2 to set(s, b) }
     )
 
   /**
    * Compose a [POptional] with a [POptional]
    */
-  infix fun <C, D> compose(other: POptional<A, B, C, D>): POptional<S, T, C, D> = POptional(
-    { source -> getOrModify(source).flatMap { a -> other.getOrModify(a).bimap({ b -> set(source, b) }, ::identity) } },
-    { source, d -> modify(source) { a -> other.set(a, d) } }
-  )
+  infix fun <C, D> compose(other: POptional<A, B, C, D>): POptional<S, T, C, D> =
+    POptional(
+      { source -> getOrModify(source).flatMap { a -> other.getOrModify(a).bimap({ b -> set(source, b) }, ::identity) } },
+      { source, d -> modify(source) { a -> other.set(a, d) } }
+    )
 
   operator fun <C, D> plus(other: POptional<A, B, C, D>): POptional<S, T, C, D> =
     this compose other
@@ -178,11 +156,12 @@ interface POptional<S, T, A, B> : PSetter<S, T, A, B>, Fold<S, A>, PTraversal<S,
      * Invoke operator overload to create a [POptional] of type `S` with focus `A`.
      * Can also be used to construct [Optional]
      */
-    operator fun <S, T, A, B> invoke(getOrModify: (source: S) -> Either<T, A>, set: (source: S, focus: B) -> T): POptional<S, T, A, B> = object : POptional<S, T, A, B> {
-      override fun getOrModify(source: S): Either<T, A> = getOrModify(source)
+    operator fun <S, T, A, B> invoke(getOrModify: (source: S) -> Either<T, A>, set: (source: S, focus: B) -> T): POptional<S, T, A, B> =
+      object : POptional<S, T, A, B> {
+        override fun getOrModify(source: S): Either<T, A> = getOrModify(source)
 
-      override fun set(source: S, focus: B): T = set(source, focus)
-    }
+        override fun set(source: S, focus: B): T = set(source, focus)
+      }
 
     /**
      * [POptional] that never sees its focus

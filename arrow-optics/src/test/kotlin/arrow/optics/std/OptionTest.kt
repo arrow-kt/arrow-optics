@@ -6,9 +6,7 @@ import arrow.core.Right
 import arrow.core.extensions.monoid
 import arrow.core.extensions.option.monoid.monoid
 import arrow.core.map2
-import arrow.optics.none
 import arrow.optics.some
-import arrow.optics.toEither
 import arrow.optics.toNullable
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.either
@@ -29,8 +27,7 @@ class OptionTest : UnitSpec() {
       aGen = Gen.option(Gen.int()),
       bGen = Gen.int(),
       funcGen = Gen.functionAToB(Gen.int()),
-      EQA = Eq.any(),
-      EQOptionB = Eq.any()
+      EQA = Eq.any()
     ))
 
     testLaws(PrismLaws.laws(
@@ -38,8 +35,7 @@ class OptionTest : UnitSpec() {
       aGen = Gen.option(Gen.int()),
       bGen = Gen.create { Unit },
       funcGen = Gen.functionAToB(Gen.create { Unit }),
-      EQA = Eq.any(),
-      EQOptionB = Eq.any()
+      EQA = Eq.any()
     ))
 
     testLaws(IsoLaws.laws(

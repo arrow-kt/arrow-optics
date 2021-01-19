@@ -34,7 +34,7 @@ val filterIndexStringByIndex : FilterIndex<List<String>, Int, String> = FilterIn
 Given a `FilterIndex` instance, we can create a `Traversal` that filters out the foci that do not match the predicate.
 
 ```kotlin:ank
-val filter: Every<ListOf<String>, String> = filterIndexStringByIndex.filter { length -> length > 3 }
+val filter: Every<List<String>, String> = filterIndexStringByIndex.filter { length -> length > 3 }
 
 filter.getAll(listOf("H", "He", "Hel", "Hell", "Hello"))
 ```

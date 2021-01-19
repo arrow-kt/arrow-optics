@@ -1,10 +1,8 @@
 package arrow.optics
 
 import arrow.core.Either
-import arrow.core.Tuple2
 import arrow.core.compose
 import arrow.core.identity
-import arrow.core.toT
 import arrow.typeclasses.Monoid
 
 /**
@@ -29,14 +27,14 @@ fun interface Getter<S, A> : Fold<S, A> {
   /**
    * Create a product of the [Getter] and a type [C]
    */
-  fun <C> first(): Getter<Tuple2<S, C>, Tuple2<A, C>> =
-    Getter { (s, c) -> get(s) toT c }
+  fun <C> first(): Getter<Pair<S, C>, Pair<A, C>> =
+    Getter { (s, c) -> get(s) to c }
 
   /**
    * Create a product of type [C] and the [Getter]
    */
-  fun <C> second(): Getter<Tuple2<C, S>, Tuple2<C, A>> =
-    Getter { (c, s) -> c toT get(s) }
+  fun <C> second(): Getter<Pair<C, S>, Pair<C, A>> =
+    Getter { (c, s) -> c to get(s) }
 
   /**
    * Create a sum of the [Getter] and type [C]
@@ -59,14 +57,14 @@ fun interface Getter<S, A> : Fold<S, A> {
   /**
    * Pair two disjoint [Getter]
    */
-  infix fun <C, D> split(other: Getter<C, D>): Getter<Tuple2<S, C>, Tuple2<A, D>> =
-    Getter { (s, c) -> get(s) toT other.get(c) }
+  infix fun <C, D> split(other: Getter<C, D>): Getter<Pair<S, C>, Pair<A, D>> =
+    Getter { (s, c) -> get(s) to other.get(c) }
 
   /**
    * Zip two [Getter] optics with the same source [S]
    */
-  infix fun <C> zip(other: Getter<S, C>): Getter<S, Tuple2<A, C>> =
-    Getter { s -> get(s) toT other.get(s) }
+  infix fun <C> zip(other: Getter<S, C>): Getter<S, Pair<A, C>> =
+    Getter { s -> get(s) to other.get(s) }
 
   /**
    * Compose a [Getter] with a [Getter]

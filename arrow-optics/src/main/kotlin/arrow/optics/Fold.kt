@@ -103,34 +103,38 @@ interface Fold<S, A> {
   /**
    * Join two [Fold] with the same target
    */
-  infix fun <C> choice(other: Fold<C, A>): Fold<Either<S, C>, A> = object : Fold<Either<S, C>, A> {
-    override fun <R> foldMap(M: Monoid<R>, source: Either<S, C>, map: (focus: A) -> R): R =
-      source.fold({ ac -> this@Fold.foldMap(M, ac, map) }, { c -> other.foldMap(M, c, map) })
-  }
+  infix fun <C> choice(other: Fold<C, A>): Fold<Either<S, C>, A> =
+    object : Fold<Either<S, C>, A> {
+      override fun <R> foldMap(M: Monoid<R>, source: Either<S, C>, map: (focus: A) -> R): R =
+        source.fold({ ac -> this@Fold.foldMap(M, ac, map) }, { c -> other.foldMap(M, c, map) })
+    }
 
   /**
    * Create a sum of the [Fold] and a type [C]
    */
-  fun <C> left(): Fold<Either<S, C>, Either<A, C>> = object : Fold<Either<S, C>, Either<A, C>> {
-    override fun <R> foldMap(M: Monoid<R>, source: Either<S, C>, map: (Either<A, C>) -> R): R =
-      source.fold({ a1: S -> this@Fold.foldMap(M, a1) { b -> map(Either.Left(b)) } }, { c -> map(Either.Right(c)) })
-  }
+  fun <C> left(): Fold<Either<S, C>, Either<A, C>> =
+    object : Fold<Either<S, C>, Either<A, C>> {
+      override fun <R> foldMap(M: Monoid<R>, source: Either<S, C>, map: (Either<A, C>) -> R): R =
+        source.fold({ a1: S -> this@Fold.foldMap(M, a1) { b -> map(Either.Left(b)) } }, { c -> map(Either.Right(c)) })
+    }
 
   /**
    * Create a sum of a type [C] and the [Fold]
    */
-  fun <C> right(): Fold<Either<C, S>, Either<C, A>> = object : Fold<Either<C, S>, Either<C, A>> {
-    override fun <R> foldMap(M: Monoid<R>, source: Either<C, S>, map: (Either<C, A>) -> R): R =
-      source.fold({ c -> map(Either.Left(c)) }, { a1 -> this@Fold.foldMap(M, a1) { b -> map(Either.Right(b)) } })
-  }
+  fun <C> right(): Fold<Either<C, S>, Either<C, A>> =
+    object : Fold<Either<C, S>, Either<C, A>> {
+      override fun <R> foldMap(M: Monoid<R>, source: Either<C, S>, map: (Either<C, A>) -> R): R =
+        source.fold({ c -> map(Either.Left(c)) }, { a1 -> this@Fold.foldMap(M, a1) { b -> map(Either.Right(b)) } })
+    }
 
   /**
    * Compose a [Fold] with a [Fold]
    */
-  infix fun <C> compose(other: Fold<A, C>): Fold<S, C> = object : Fold<S, C> {
-    override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: C) -> R): R =
-      this@Fold.foldMap(M, source) { c -> other.foldMap(M, c, map) }
-  }
+  infix fun <C> compose(other: Fold<A, C>): Fold<S, C> =
+    object : Fold<S, C> {
+      override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: C) -> R): R =
+        this@Fold.foldMap(M, source) { c -> other.foldMap(M, c, map) }
+    }
 
   operator fun <C> plus(other: Fold<A, C>): Fold<S, C> =
     this compose other

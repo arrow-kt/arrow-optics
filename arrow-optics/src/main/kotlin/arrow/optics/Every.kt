@@ -20,22 +20,24 @@ interface PEvery<S, T, A, B> : PTraversal<S, T, A, B>, Fold<S, A>, PSetter<S, T,
   /**
    * Compose a [PEvery] with a [PEvery]
    */
-  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> = object : PEvery<S, T, C, D> {
-    override fun <R> foldMap(M: Monoid<R>, source: S, map: (C) -> R): R =
-      this@PEvery.foldMap(M, source) { c -> other.foldMap(M, c, map) }
+  infix fun <C, D> compose(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> =
+    object : PEvery<S, T, C, D> {
+      override fun <R> foldMap(M: Monoid<R>, source: S, map: (C) -> R): R =
+        this@PEvery.foldMap(M, source) { c -> other.foldMap(M, c, map) }
 
-    override fun modify(source: S, map: (focus: C) -> D): T =
-      this@PEvery.modify(source) { b -> other.modify(b, map) }
-  }
+      override fun modify(source: S, map: (focus: C) -> D): T =
+        this@PEvery.modify(source) { b -> other.modify(b, map) }
+    }
 
   operator fun <C, D> plus(other: PEvery<A, B, C, D>): PEvery<S, T, C, D> =
     this compose other
 
   companion object {
-    fun <S, A> from(T: Traversal<S, A>, F: Fold<S, A>): Every<S, A> = object : Every<S, A> {
-      override fun <R> foldMap(M: Monoid<R>, source: S, map: (A) -> R): R = F.foldMap(M, source, map)
-      override fun modify(source: S, map: (focus: A) -> A): S = T.modify(source, map)
-    }
+    fun <S, A> from(T: Traversal<S, A>, F: Fold<S, A>): Every<S, A> =
+      object : Every<S, A> {
+        override fun <R> foldMap(M: Monoid<R>, source: S, map: (A) -> R): R = F.foldMap(M, source, map)
+        override fun modify(source: S, map: (focus: A) -> A): S = T.modify(source, map)
+      }
   }
 
   /**

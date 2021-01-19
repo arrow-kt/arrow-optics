@@ -2,7 +2,6 @@ package arrow.optics
 
 import arrow.core.Option
 import arrow.core.getOption
-import arrow.core.k
 import arrow.core.left
 import arrow.core.right
 import arrow.optics.typeclasses.At
@@ -50,9 +49,9 @@ fun <K, V> At.Companion.map(): At<Map<K, V>, K, Option<V>> =
       get = { it.getOption(i) },
       set = { map, optV ->
         optV.fold({
-          (map - i).k()
+          (map - i)
         }, {
-          (map + (i to it)).k()
+          (map + (i to it))
         })
       }
     )
@@ -60,9 +59,9 @@ fun <K, V> At.Companion.map(): At<Map<K, V>, K, Option<V>> =
 
 fun <K, V> PEvery.Companion.map(): Every<Map<K, V>, V> =
   object : Every<Map<K, V>, V> {
-    override fun <R> foldMap(M: Monoid<R>, s: Map<K, V>, map: (V) -> R): R =
-      M.run { s.values.fold(empty()) { acc, v -> acc.combine(map(v)) } }
+    override fun <R> foldMap(M: Monoid<R>, source: Map<K, V>, map: (V) -> R): R =
+      M.run { source.values.fold(empty()) { acc, v -> acc.combine(map(v)) } }
 
-    override fun modify(s: Map<K, V>, map: (focus: V) -> V): Map<K, V> =
-      s.mapValues { (_, v) -> map(v) }
+    override fun modify(source: Map<K, V>, map: (focus: V) -> V): Map<K, V> =
+      source.mapValues { (_, v) -> map(v) }
   }

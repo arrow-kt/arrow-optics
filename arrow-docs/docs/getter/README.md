@@ -39,7 +39,7 @@ import arrow.core.*
 import arrow.optics.*
 
 val headGetter: Getter<NonEmptyList<String>, String> = Lens.nonEmptyListHead<String>()
-val tupleGetter: Getter<Tuple2<String, Int>, String> = Tuple2.first<String, Int>()
+val tupleGetter: Getter<Pair<String, Int>, String> = PLens.pairFirst<String, Int>()
 ```
 
 ## Composition

@@ -56,7 +56,6 @@ class MapInstanceTest : UnitSpec() {
         aGen = Gen.map(Gen.string(), Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
-        EQOptionB = Eq.any(),
         EQA = Eq.any()
       )
     )

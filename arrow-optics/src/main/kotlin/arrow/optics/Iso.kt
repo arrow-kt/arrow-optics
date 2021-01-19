@@ -1,10 +1,8 @@
 package arrow.optics
 
 import arrow.core.Either
-import arrow.core.Tuple2
 import arrow.core.compose
 import arrow.core.identity
-import arrow.core.toT
 import arrow.typeclasses.Monoid
 
 /**
@@ -69,25 +67,26 @@ interface PIso<S, T, A, B> : PPrism<S, T, A, B>, PLens<S, T, A, B>, Getter<S, A>
   /**
    * Pair two disjoint [PIso]
    */
-  infix fun <S1, T1, A1, B1> split(other: PIso<S1, T1, A1, B1>): PIso<Tuple2<S, S1>, Tuple2<T, T1>, Tuple2<A, A1>, Tuple2<B, B1>> = PIso(
-    { (a, c) -> get(a) toT other.get(c) },
-    { (b, d) -> reverseGet(b) toT other.reverseGet(d) }
-  )
+  infix fun <S1, T1, A1, B1> split(other: PIso<S1, T1, A1, B1>): PIso<Pair<S, S1>, Pair<T, T1>, Pair<A, A1>, Pair<B, B1>> =
+    PIso(
+      { (a, c) -> get(a) to other.get(c) },
+      { (b, d) -> reverseGet(b) to other.reverseGet(d) }
+    )
 
   /**
    * Create a pair of the [PIso] and a type [C]
    */
-  override fun <C> first(): PIso<Tuple2<S, C>, Tuple2<T, C>, Tuple2<A, C>, Tuple2<B, C>> = Iso(
-    { (a, c) -> get(a) toT c },
-    { (b, c) -> reverseGet(b) toT c }
+  override fun <C> first(): PIso<Pair<S, C>, Pair<T, C>, Pair<A, C>, Pair<B, C>> = Iso(
+    { (a, c) -> get(a) to c },
+    { (b, c) -> reverseGet(b) to c }
   )
 
   /**
    * Create a pair of a type [C] and the [PIso]
    */
-  override fun <C> second(): PIso<Tuple2<C, S>, Tuple2<C, T>, Tuple2<C, A>, Tuple2<C, B>> = PIso(
-    { (c, a) -> c toT get(a) },
-    { (c, b) -> c toT reverseGet(b) }
+  override fun <C> second(): PIso<Pair<C, S>, Pair<C, T>, Pair<C, A>, Pair<C, B>> = PIso(
+    { (c, a) -> c to get(a) },
+    { (c, b) -> c to reverseGet(b) }
   )
 
   /**
@@ -133,8 +132,8 @@ interface PIso<S, T, A, B> : PPrism<S, T, A, B>, PLens<S, T, A, B>, Getter<S, A>
      */
     operator fun <S, T, A, B> invoke(get: (S) -> (A), reverseGet: (B) -> T) =
       object : PIso<S, T, A, B> {
-        override fun get(s: S): A = get(s)
-        override fun reverseGet(b: B): T = reverseGet(b)
+        override fun get(source: S): A = get(source)
+        override fun reverseGet(focus: B): T = reverseGet(focus)
       }
   }
 }

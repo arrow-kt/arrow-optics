@@ -2,12 +2,9 @@ package arrow.optics
 
 import arrow.core.Either
 import arrow.core.Option
-import arrow.core.Tuple2
 import arrow.core.compose
 import arrow.core.flatMap
-import arrow.core.getOrElse
 import arrow.core.identity
-import arrow.core.toT
 import arrow.typeclasses.Eq
 import arrow.typeclasses.Monoid
 
@@ -40,31 +37,19 @@ interface PPrism<S, T, A, B> : POptional<S, T, A, B>, PSetter<S, T, A, B>, Fold<
   fun reverseGet(focus: B): T
 
   override fun <R> foldMap(M: Monoid<R>, source: S, map: (focus: A) -> R): R =
-    getOption(source).map(map).getOrElse(M::empty)
+    getOrNull(source)?.let(map) ?: M.empty()
 
   /**
    * Modify the focus of a [PPrism] with a function
    */
-  override fun modify(source: S, f: (A) -> B): T =
-    getOrModify(source).fold(::identity) { a -> reverseGet(f(a)) }
-
-  /**
-   * Get the focus or [Option.None] if focus cannot be seen
-   */
-  override fun getOption(source: S): Option<A> =
-    getOrModify(source).toOption()
+  override fun modify(source: S, map: (A) -> B): T =
+    getOrModify(source).fold(::identity) { a -> reverseGet(map(a)) }
 
   /**
    * Set the focus of a [PPrism] with a value
    */
   override fun set(source: S, focus: B): T =
     modify(source) { focus }
-
-  /**
-   * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> Option<T>`
-   */
-  fun liftOption(f: (focus: A) -> B): (source: S) -> Option<T> =
-    { s -> getOption(s).map { b -> reverseGet(f(b)) } }
 
   /**
    * Lift a function [f]: `(A) -> B to the context of `S`: `(S) -> T?`
@@ -75,47 +60,52 @@ interface PPrism<S, T, A, B> : POptional<S, T, A, B>, PSetter<S, T, A, B>, Fold<
   /**
    * Create a product of the [PPrism] and a type [C]
    */
-  override fun <C> first(): PPrism<Tuple2<S, C>, Tuple2<T, C>, Tuple2<A, C>, Tuple2<B, C>> = PPrism(
-    { (s, c) -> getOrModify(s).bimap({ it toT c }, { it toT c }) },
-    { (b, c) -> reverseGet(b) toT c }
-  )
+  override fun <C> first(): PPrism<Pair<S, C>, Pair<T, C>, Pair<A, C>, Pair<B, C>> =
+    PPrism(
+      { (s, c) -> getOrModify(s).bimap({ it to c }, { it to c }) },
+      { (b, c) -> reverseGet(b) to c }
+    )
 
   /**
    * Create a product of a type [C] and the [PPrism]
    */
-  override fun <C> second(): PPrism<Tuple2<C, S>, Tuple2<C, T>, Tuple2<C, A>, Tuple2<C, B>> = PPrism(
-    { (c, s) -> getOrModify(s).bimap({ c toT it }, { c toT it }) },
-    { (c, b) -> c toT reverseGet(b) }
-  )
+  override fun <C> second(): PPrism<Pair<C, S>, Pair<C, T>, Pair<C, A>, Pair<C, B>> =
+    PPrism(
+      { (c, s) -> getOrModify(s).bimap({ c to it }, { c to it }) },
+      { (c, b) -> c to reverseGet(b) }
+    )
 
   /**
    * Create a sum of the [PPrism] and a type [C]
    */
-  override fun <C> left(): PPrism<Either<S, C>, Either<T, C>, Either<A, C>, Either<B, C>> = PPrism(
-    { it.fold({ a -> getOrModify(a).bimap({ Either.Left(it) }, { Either.Left(it) }) }, { c -> Either.Right(Either.Right(c)) }) },
-    {
-      when (it) {
-        is Either.Left -> Either.Left(reverseGet(it.a))
-        is Either.Right -> Either.Right(it.b)
+  override fun <C> left(): PPrism<Either<S, C>, Either<T, C>, Either<A, C>, Either<B, C>> =
+    PPrism(
+      { it.fold({ a -> getOrModify(a).bimap({ Either.Left(it) }, { Either.Left(it) }) }, { c -> Either.Right(Either.Right(c)) }) },
+      {
+        when (it) {
+          is Either.Left -> Either.Left(reverseGet(it.a))
+          is Either.Right -> Either.Right(it.b)
+        }
       }
-    }
-  )
+    )
 
   /**
    * Create a sum of a type [C] and the [PPrism]
    */
-  override fun <C> right(): PPrism<Either<C, S>, Either<C, T>, Either<C, A>, Either<C, B>> = PPrism(
-    { it.fold({ c -> Either.Right(Either.Left(c)) }, { s -> getOrModify(s).bimap({ Either.Right(it) }, { Either.Right(it) }) }) },
-    { it.map(this::reverseGet) }
-  )
+  override fun <C> right(): PPrism<Either<C, S>, Either<C, T>, Either<C, A>, Either<C, B>> =
+    PPrism(
+      { it.fold({ c -> Either.Right(Either.Left(c)) }, { s -> getOrModify(s).bimap({ Either.Right(it) }, { Either.Right(it) }) }) },
+      { it.map(this::reverseGet) }
+    )
 
   /**
    * Compose a [PPrism] with another [PPrism]
    */
-  infix fun <C, D> compose(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> = PPrism(
-    getOrModify = { s -> getOrModify(s).flatMap { a -> other.getOrModify(a).bimap({ set(s, it) }, ::identity) } },
-    reverseGet = this::reverseGet compose other::reverseGet
-  )
+  infix fun <C, D> compose(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> =
+    PPrism(
+      getOrModify = { s -> getOrModify(s).flatMap { a -> other.getOrModify(a).bimap({ set(s, it) }, ::identity) } },
+      reverseGet = this::reverseGet compose other::reverseGet
+    )
 
   operator fun <C, D> plus(other: PPrism<A, B, C, D>): PPrism<S, T, C, D> =
     this compose other

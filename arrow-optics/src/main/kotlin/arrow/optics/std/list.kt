@@ -6,7 +6,6 @@ import arrow.core.None
 import arrow.core.Nullable
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.Tuple2
 import arrow.core.left
 import arrow.core.right
 import arrow.optics.typeclasses.Cons
@@ -104,7 +103,7 @@ operator fun <A, T> PLens<T, T, List<A>, List<A>>.get(i: Int): POptional<T, T, A
 fun <A> Cons.Companion.list(): Cons<List<A>, A> =
   Cons {
     PPrism(
-      getOrModify = { list -> list.firstOrNull()?.let { Tuple2(it, list.drop(1)) }?.right() ?: list.left() },
+      getOrModify = { list -> list.firstOrNull()?.let { Pair(it, list.drop(1)) }?.right() ?: list.left() },
       reverseGet = { (a, aas) -> listOf(a) + aas }
     )
   }
@@ -112,23 +111,23 @@ fun <A> Cons.Companion.list(): Cons<List<A>, A> =
 infix fun <A> A.cons(tail: List<A>): List<A> =
   Cons.list<A>().run { this@cons.cons(tail) }
 
-fun <A> List<A>.uncons(): Option<Tuple2<A, List<A>>> =
+fun <A> List<A>.uncons(): Pair<A, List<A>>? =
   Cons.list<A>().run { this@uncons.uncons() }
 
 fun <A> Snoc.Companion.list(): Snoc<List<A>, A> = Snoc {
-  object : Prism<List<A>, Tuple2<List<A>, A>> {
-    override fun getOrModify(s: List<A>): Either<List<A>, Tuple2<List<A>, A>> =
+  object : Prism<List<A>, Pair<List<A>, A>> {
+    override fun getOrModify(s: List<A>): Either<List<A>, Pair<List<A>, A>> =
       Nullable.mapN(s.dropLast(1), s.lastOrNull()) { a, b ->
-        Tuple2(a, b).right()
+        Pair(a, b).right()
       } ?: s.left()
 
-    override fun reverseGet(b: Tuple2<List<A>, A>): List<A> =
-      b.a + b.b
+    override fun reverseGet(b: Pair<List<A>, A>): List<A> =
+      b.first + b.second
   }
 }
 
 infix fun <A> List<A>.snoc(last: A): List<A> =
   Snoc.list<A>().run { this@snoc.snoc(last) }
 
-fun <A> List<A>.unsnoc(): Option<Tuple2<List<A>, A>> =
+fun <A> List<A>.unsnoc(): Pair<List<A>, A>? =
   Snoc.list<A>().run { this@unsnoc.unsnoc() }

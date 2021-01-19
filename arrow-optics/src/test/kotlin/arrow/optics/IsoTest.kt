@@ -46,8 +46,7 @@ class IsoTest : UnitSpec() {
         aGen = genSumTypeA,
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       ),
 
       TraversalLaws.laws(

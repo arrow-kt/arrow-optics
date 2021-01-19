@@ -23,7 +23,6 @@ class IndexInstanceTest : UnitSpec() {
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
-        EQOptionB = Eq.any(),
         EQA = Eq.list(Eq.string())
       )
     )

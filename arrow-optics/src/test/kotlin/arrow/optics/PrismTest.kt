@@ -2,10 +2,8 @@ package arrow.optics
 
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.getOrElse
 import arrow.core.identity
 import arrow.core.ListK
-import arrow.core.k
 import arrow.core.extensions.monoid
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
@@ -30,8 +28,7 @@ class PrismTest : UnitSpec() {
         aGen = genSum,
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       ),
 
       SetterLaws.laws(
@@ -68,8 +65,7 @@ class PrismTest : UnitSpec() {
         aGen = Gen.tuple2(genSum, Gen.int()),
         bGen = Gen.tuple2(Gen.string(), Gen.int()),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.string(), Gen.int())),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       )
     )
 
@@ -79,8 +75,7 @@ class PrismTest : UnitSpec() {
         aGen = Gen.tuple2(Gen.int(), genSum),
         bGen = Gen.tuple2(Gen.int(), Gen.string()),
         funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.string())),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       )
     )
 
@@ -90,8 +85,7 @@ class PrismTest : UnitSpec() {
         aGen = Gen.either(Gen.int(), genSum),
         bGen = Gen.either(Gen.int(), Gen.string()),
         funcGen = Gen.functionAToB(Gen.either(Gen.int(), Gen.string())),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       )
     )
 
@@ -101,8 +95,7 @@ class PrismTest : UnitSpec() {
         aGen = Gen.either(genSum, Gen.int()),
         bGen = Gen.either(Gen.string(), Gen.int()),
         funcGen = Gen.functionAToB(Gen.either(Gen.string(), Gen.int())),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       )
     )
 
@@ -112,8 +105,7 @@ class PrismTest : UnitSpec() {
         aGen = Gen.either(Gen.int(), Gen.int()),
         bGen = Gen.either(Gen.int(), Gen.int()),
         funcGen = Gen.functionAToB(Gen.either(Gen.int(), Gen.int())),
-        EQA = Eq.any(),
-        EQOptionB = Eq.any()
+        EQA = Eq.any()
       )
     )
 

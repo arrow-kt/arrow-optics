@@ -45,9 +45,10 @@ fun interface PSetter<S, T, A, B> {
   /**
    * Join two [PSetter] with the same target
    */
-  infix fun <U, V> choice(other: PSetter<U, V, A, B>): PSetter<Either<S, U>, Either<T, V>, A, B> = PSetter { su, f ->
-    su.bimap({ s -> modify(s, f) }, { u -> other.modify(u, f) })
-  }
+  infix fun <U, V> choice(other: PSetter<U, V, A, B>): PSetter<Either<S, U>, Either<T, V>, A, B> =
+    PSetter { su, f ->
+      su.bimap({ s -> modify(s, f) }, { u -> other.modify(u, f) })
+    }
 
   /**
    * Compose a [PSetter] with a [PSetter]

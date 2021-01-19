@@ -26,7 +26,7 @@ thirdListItemOptional.set(listOf("0", "1", "2", "3"), "newValue")
 thirdListItemOptional.set(listOf("0", "1", "2"), "newValue")
 ```
 ```kotlin:ank
-thirdListItemOptional.setOption(listOf("0", "1", "2"), "newValue")
+thirdListItemOptional.setNullable(listOf("0", "1", "2"), "newValue")
 ```
 
 #### Creating your own `Index` instances

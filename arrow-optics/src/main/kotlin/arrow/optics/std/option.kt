@@ -9,9 +9,21 @@ import arrow.core.identity
 import arrow.typeclasses.Monoid
 
 /**
+ * [PIso] that defines the equality between the nullable platform type and [Option].
+ */
+fun <A, B> PIso.Companion.pNullableToOption(): PIso<A?, B?, Option<A>, Option<B>> =
+  PIso(
+    get = Option.Companion::fromNullable,
+    reverseGet = { it.fold({ null }, ::identity) }
+  )
+
+fun <A, B> PIso.Companion.nullableToOption(): PIso<A?, B?, Option<A>, Option<B>> =
+  pNullableToOption()
+
+/**
  * [PIso] that defines the equality between [Option] and the nullable platform type.
  */
-fun <A, B> Option.Companion.toPNullable(): PIso<Option<A>, Option<B>, A?, B?> =
+fun <A, B> PIso.Companion.pOptionToNullable(): PIso<Option<A>, Option<B>, A?, B?> =
   PIso(
     get = { it.fold({ null }, ::identity) },
     reverseGet = Option.Companion::fromNullable
@@ -20,13 +32,13 @@ fun <A, B> Option.Companion.toPNullable(): PIso<Option<A>, Option<B>, A?, B?> =
 /**
  * [PIso] that defines the isomorphic relationship between [Option] and the nullable platform type.
  */
-fun <A> Option.Companion.toNullable(): Iso<Option<A>, A?> =
-  toPNullable()
+fun <A> PIso.Companion.optionToNullable(): Iso<Option<A>, A?> =
+  pOptionToNullable()
 
 /**
  * [PPrism] to focus into an [arrow.core.Some]
  */
-fun <A, B> Option.Companion.PSome(): PPrism<Option<A>, Option<B>, A, B> =
+fun <A, B> PPrism.Companion.pOption(): PPrism<Option<A>, Option<B>, A, B> =
   PPrism(
     getOrModify = { option -> option.fold({ Either.Left(None) }, ::Right) },
     reverseGet = ::Some
@@ -35,13 +47,13 @@ fun <A, B> Option.Companion.PSome(): PPrism<Option<A>, Option<B>, A, B> =
 /**
  * [Prism] to focus into an [arrow.core.Some]
  */
-fun <A> Option.Companion.some(): Prism<Option<A>, A> =
-  PSome()
+fun <A> PPrism.Companion.option(): Prism<Option<A>, A> =
+  pOption()
 
 /**
  * [Prism] to focus into an [arrow.core.None]
  */
-fun <A> Option.Companion.none(): Prism<Option<A>, Unit> =
+fun <A> PPrism.Companion.none(): Prism<Option<A>, Unit> =
   Prism(
     getOrModify = { option -> option.fold({ Either.Right(Unit) }, { Either.Left(option) }) },
     reverseGet = { _ -> None }
@@ -50,7 +62,7 @@ fun <A> Option.Companion.none(): Prism<Option<A>, Unit> =
 /**
  * [Iso] that defines the equality between and [arrow.core.Option] and [arrow.core.Either]
  */
-fun <A, B> Option.Companion.toPEither(): PIso<Option<A>, Option<B>, Either<Unit, A>, Either<Unit, B>> =
+fun <A, B> PIso.Companion.pOptionToEither(): PIso<Option<A>, Option<B>, Either<Unit, A>, Either<Unit, B>> =
   PIso(
     get = { opt -> opt.fold({ Either.Left(Unit) }, ::Right) },
     reverseGet = { either -> either.fold({ None }, ::Some) }
@@ -59,8 +71,8 @@ fun <A, B> Option.Companion.toPEither(): PIso<Option<A>, Option<B>, Either<Unit,
 /**
  * [Iso] that defines the equality between and [arrow.core.Option] and [arrow.core.Either]
  */
-fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> =
-  toPEither()
+fun <A> PIso.Companion.optionToEither(): Iso<Option<A>, Either<Unit, A>> =
+  pOptionToEither()
 
 /**
  * [Traversal] for [Option] that has focus in each [arrow.core.Some].
