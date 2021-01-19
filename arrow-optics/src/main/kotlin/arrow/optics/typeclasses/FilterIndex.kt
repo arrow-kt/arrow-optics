@@ -5,8 +5,6 @@ import arrow.optics.Every
 import arrow.optics.Iso
 
 /**
- * ank_macro_hierarchy(arrow.optics.typeclasses.FilterIndex)
- *
  * [FilterIndex] provides a [Every] for a structure [S] with all its foci [A] whose index [I] satisfies a predicate.
  *
  * @param S source of [Every]
