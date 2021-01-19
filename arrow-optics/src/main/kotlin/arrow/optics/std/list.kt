@@ -18,22 +18,24 @@ import arrow.typeclasses.Monoid
 /**
  * [Optional] to safely operate on the head of a list
  */
-fun <A> POptional.Companion.listHead(): Optional<List<A>, A> = Optional(
-  getOption = { Option.fromNullable(it.firstOrNull()) },
-  set = { list, newHead -> list.mapIndexed { index, value -> if (index == 0) newHead else value } }
-)
+fun <A> POptional.Companion.listHead(): Optional<List<A>, A> =
+  Optional(
+    getOption = { Option.fromNullable(it.firstOrNull()) },
+    set = { list, newHead -> list.mapIndexed { index, value -> if (index == 0) newHead else value } }
+  )
 
 /**
  * [Optional] to safely operate on the tail of a list
  */
-fun <A> POptional.Companion.listTail(): Optional<List<A>, List<A>> = Optional(
-  getOption = { if (it.isEmpty()) None else Some(it.drop(1)) },
-  set = { list, newTail ->
-    list.firstOrNull()?.let {
-      listOf(it) + newTail
-    } ?: emptyList()
-  }
-)
+fun <A> POptional.Companion.listTail(): Optional<List<A>, List<A>> =
+  Optional(
+    getOption = { if (it.isEmpty()) None else Some(it.drop(1)) },
+    set = { list, newTail ->
+      list.firstOrNull()?.let {
+        listOf(it) + newTail
+      } ?: emptyList()
+    }
+  )
 
 /**
  * [PIso] that defines equality between a [List] and [Option] [NonEmptyList]
@@ -47,20 +49,17 @@ fun <A, B> PIso.Companion.listToPOptionNel(): PIso<List<A>, List<B>, Option<NonE
 /**
  * [Iso] that defines equality between a [List] and [Option] [NonEmptyList]
  */
-fun <A> PIso.Companion.listToOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> = listToPOptionNel()
+fun <A> PIso.Companion.listToOptionNel(): Iso<List<A>, Option<NonEmptyList<A>>> =
+  listToPOptionNel()
 
 /**
  * [Traversal] for [List] that focuses in each [A] of the source [List].
  */
-fun <A> listTraversal(): Traversal<List<A>, A> =
-  Traversal { s, f -> s.map(f) }
+fun <A> PTraversal.Companion.list(): Traversal<List<A>, A> =
+  Every.list()
 
-fun <A> PTraversal.Companion.list(): Traversal<List<A>, A> = listTraversal()
-
-fun <A> Fold.Companion.list(): Fold<List<A>, A> = object : Fold<List<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R =
-    M.run { s.fold(empty()) { acc, a -> acc.combine(map(a)) } }
-}
+fun <A> Fold.Companion.list(): Fold<List<A>, A> =
+  Every.list()
 
 fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> {
   override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R =
@@ -73,30 +72,28 @@ fun <A> PEvery.Companion.list(): Every<List<A>, A> = object : Every<List<A>, A> 
 /**
  * [FilterIndex] instance definition for [List].
  */
-fun <A> listFilterIndex(): FilterIndex<List<A>, Int, A> = FilterIndex { p ->
-  object : Every<List<A>, A> {
-    override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R = M.run {
-      s.foldIndexed(empty()) { index, acc, a -> if (p(index)) acc.combine(map(a)) else acc }
+fun <A> FilterIndex.Companion.list(): FilterIndex<List<A>, Int, A> =
+  FilterIndex { p ->
+    object : Every<List<A>, A> {
+      override fun <R> foldMap(M: Monoid<R>, s: List<A>, map: (A) -> R): R = M.run {
+        s.foldIndexed(empty()) { index, acc, a -> if (p(index)) acc.combine(map(a)) else acc }
+      }
+
+      override fun modify(s: List<A>, map: (focus: A) -> A): List<A> =
+        s.mapIndexed { index, a -> if (p(index)) map(a) else a }
     }
-
-    override fun modify(s: List<A>, map: (focus: A) -> A): List<A> =
-      s.mapIndexed { index, a -> if (p(index)) map(a) else a }
   }
-}
-
-fun <A> FilterIndex.Companion.list(): FilterIndex<List<A>, Int, A> = listFilterIndex()
 
 /**
  * [Index] instance definition for [List].
  */
-fun <A> listIndex(): Index<List<A>, Int, A> = Index { i ->
-  POptional(
-    getOrModify = { it.getOrNull(i)?.right() ?: it.left() },
-    set = { l, a -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa } }
-  )
-}
-
-fun <A> Index.Companion.list(): Index<List<A>, Int, A> = listIndex()
+fun <A> Index.Companion.list(): Index<List<A>, Int, A> =
+  Index { i ->
+    POptional(
+      getOrModify = { it.getOrNull(i)?.right() ?: it.left() },
+      set = { l, a -> l.mapIndexed { index: Int, aa: A -> if (index == i) a else aa } }
+    )
+  }
 
 operator fun <A, T> PLens<T, T, List<A>, List<A>>.get(i: Int): POptional<T, T, A, A> =
   Index.list<A>().run { this@get.get(i) }
@@ -104,14 +101,13 @@ operator fun <A, T> PLens<T, T, List<A>, List<A>>.get(i: Int): POptional<T, T, A
 /**
  * [Cons] instance definition for [List].
  */
-fun <A> listCons(): Cons<List<A>, A> = Cons {
-  PPrism(
-    getOrModify = { list -> list.firstOrNull()?.let { Tuple2(it, list.drop(1)) }?.right() ?: list.left() },
-    reverseGet = { (a, aas) -> listOf(a) + aas }
-  )
-}
-
-fun <A> Cons.Companion.list(): Cons<List<A>, A> = listCons()
+fun <A> Cons.Companion.list(): Cons<List<A>, A> =
+  Cons {
+    PPrism(
+      getOrModify = { list -> list.firstOrNull()?.let { Tuple2(it, list.drop(1)) }?.right() ?: list.left() },
+      reverseGet = { (a, aas) -> listOf(a) + aas }
+    )
+  }
 
 infix fun <A> A.cons(tail: List<A>): List<A> =
   Cons.list<A>().run { this@cons.cons(tail) }

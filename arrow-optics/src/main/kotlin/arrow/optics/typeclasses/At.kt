@@ -111,8 +111,8 @@ fun interface At<S, I, A> {
      * @param iso [Iso] that defines an isomorphism between [S] and [U]
      * @return [At] to provide [Lens] for structure [S] with focus in [A] at given index [I]
      */
-//    fun <S, U, I, A> fromIso(AT: At<U, I, A>, iso: Iso<S, U>): At<S, I, A> =
-//      At { i -> iso compose AT.at(i) }
+    fun <S, U, I, A> fromIso(AT: At<U, I, A>, iso: Iso<S, U>): At<S, I, A> =
+      At { i -> iso compose AT.at(i) }
   }
 }
 

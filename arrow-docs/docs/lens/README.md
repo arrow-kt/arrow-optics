@@ -43,21 +43,6 @@ val lift: (Player) -> Player = playerLens.lift { it + 10 }
 lift(player)
 ```
 
-We can also `modify` and `lift` the focus of a `Lens` using a `Functor`.
-
-```kotlin:ank
-import arrow.*
-import arrow.core.*
-import arrow.core.extensions.option.functor.*
-
-playerLens.modifyF(Option.functor(), player) { it.some() }.fix()
-```
-
-```kotlin:ank
-val liftF: (Player) -> OptionOf<Player> = playerLens.liftF(Option.functor()) { (it + 1).some() }
-liftF(player)
-```
-
 ### Composition
 
 By composing lenses, we can create a telescope that allows us to focus in on nested structures.

@@ -30,39 +30,19 @@ val optionalHead: Optional<ListK<Int>, Int> = Optional(
 Our `optionalHead` allows us to operate on the head of `List<Int>` without having to worry if it is available. You can find `optionalHead` in the optics library: `ListK.head<Int>()`.
 
 ```kotlin:ank
-import arrow.optics.extensions.*
+import arrow.optics.*
 
-ListK.head<Int>().set(listOf(1, 3, 6).k(), 5)
+POptional.listHead<Int>().set(listOf(1, 3, 6), 5)
 ```
 ```kotlin:ank
-ListK.head<Int>().modify(listOf(1, 3, 6).k()) { head -> head * 5 }
+POptional.listHead<Int>().modify(listOf(1, 3, 6).k()) { head -> head * 5 }
 ```
 
 We can also lift such functions.
 
 ```kotlin:ank
-val lifted = ListK.head<Int>().lift { head -> head * 5 }
+val lifted = POptional.listHead<Int>().lift { head -> head * 5 }
 lifted(emptyList<Int>().k())
-```
-
-Or modify or lift functions using `Applicative`.
-
-```kotlin:ank
-import arrow.fx.IO
-import arrow.core.extensions.option.applicative.*
-
-ListK.head<Int>().modifyF(Option.applicative(), listOf(1, 3, 6).k()) { head ->
-    Option.just(head/2)
-}
-```
-```kotlin:ank
-import arrow.fx.extensions.io.applicative.*
-import arrow.fx.fix
-
-val liftedFO = ListK.head<Int>().liftF(IO.applicative()) { head ->
-    IO.effect { head / 0 }
-}
-liftedFO(listOf(1, 3, 6).k()).fix().attempt().unsafeRunSync()
 ```
 
 An `Optional` instance can be manually constructed from any default or custom `Iso`, `Lens`, or `Prism` instance by calling their `asOptional()` or by creating a custom `Optional` instance as shown above.

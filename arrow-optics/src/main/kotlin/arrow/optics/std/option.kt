@@ -11,49 +11,56 @@ import arrow.typeclasses.Monoid
 /**
  * [PIso] that defines the equality between [Option] and the nullable platform type.
  */
-fun <A, B> Option.Companion.toPNullable(): PIso<Option<A>, Option<B>, A?, B?> = PIso(
-  get = { it.fold({ null }, ::identity) },
-  reverseGet = Option.Companion::fromNullable
-)
+fun <A, B> Option.Companion.toPNullable(): PIso<Option<A>, Option<B>, A?, B?> =
+  PIso(
+    get = { it.fold({ null }, ::identity) },
+    reverseGet = Option.Companion::fromNullable
+  )
 
 /**
  * [PIso] that defines the isomorphic relationship between [Option] and the nullable platform type.
  */
-fun <A> Option.Companion.toNullable(): Iso<Option<A>, A?> = toPNullable()
+fun <A> Option.Companion.toNullable(): Iso<Option<A>, A?> =
+  toPNullable()
 
 /**
  * [PPrism] to focus into an [arrow.core.Some]
  */
-fun <A, B> Option.Companion.PSome(): PPrism<Option<A>, Option<B>, A, B> = PPrism(
-  getOrModify = { option -> option.fold({ Either.Left(None) }, ::Right) },
-  reverseGet = ::Some
-)
+fun <A, B> Option.Companion.PSome(): PPrism<Option<A>, Option<B>, A, B> =
+  PPrism(
+    getOrModify = { option -> option.fold({ Either.Left(None) }, ::Right) },
+    reverseGet = ::Some
+  )
 
 /**
  * [Prism] to focus into an [arrow.core.Some]
  */
-fun <A> Option.Companion.some(): Prism<Option<A>, A> = PSome()
+fun <A> Option.Companion.some(): Prism<Option<A>, A> =
+  PSome()
 
 /**
  * [Prism] to focus into an [arrow.core.None]
  */
-fun <A> Option.Companion.none(): Prism<Option<A>, Unit> = Prism(
-  getOrModify = { option -> option.fold({ Either.Right(Unit) }, { Either.Left(option) }) },
-  reverseGet = { _ -> None }
-)
+fun <A> Option.Companion.none(): Prism<Option<A>, Unit> =
+  Prism(
+    getOrModify = { option -> option.fold({ Either.Right(Unit) }, { Either.Left(option) }) },
+    reverseGet = { _ -> None }
+  )
 
 /**
  * [Iso] that defines the equality between and [arrow.core.Option] and [arrow.core.Either]
  */
-fun <A, B> Option.Companion.toPEither(): PIso<Option<A>, Option<B>, Either<Unit, A>, Either<Unit, B>> = PIso(
-  get = { opt -> opt.fold({ Either.Left(Unit) }, ::Right) },
-  reverseGet = { either -> either.fold({ None }, ::Some) }
-)
+fun <A, B> Option.Companion.toPEither(): PIso<Option<A>, Option<B>, Either<Unit, A>, Either<Unit, B>> =
+  PIso(
+    get = { opt -> opt.fold({ Either.Left(Unit) }, ::Right) },
+    reverseGet = { either -> either.fold({ None }, ::Some) }
+  )
 
 /**
  * [Iso] that defines the equality between and [arrow.core.Option] and [arrow.core.Either]
  */
-fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> = toPEither()
+fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> =
+  toPEither()
 
 /**
  * [Traversal] for [Option] that has focus in each [arrow.core.Some].
@@ -64,14 +71,16 @@ fun <A> Option.Companion.toEither(): Iso<Option<A>, Either<Unit, A>> = toPEither
 fun <A> PTraversal.Companion.option(): Traversal<Option<A>, A> =
   Traversal { s, f -> s.map(f) }
 
-fun <A> Fold.Companion.option(): Fold<Option<A>, A> = object : Fold<Option<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, map: (A) -> R): R =
-    M.run { s.foldLeft(empty()) { b, a -> b.combine(map(a)) } }
-}
+fun <A> Fold.Companion.option(): Fold<Option<A>, A> =
+  object : Fold<Option<A>, A> {
+    override fun <R> foldMap(M: Monoid<R>, s: Option<A>, map: (A) -> R): R =
+      M.run { s.foldLeft(empty()) { b, a -> b.combine(map(a)) } }
+  }
 
-fun <A> PEvery.Companion.option(): Every<Option<A>, A> = object : Every<Option<A>, A> {
-  override fun <R> foldMap(M: Monoid<R>, s: Option<A>, map: (A) -> R): R =
-    M.run { s.foldLeft(empty()) { b, a -> b.combine(map(a)) } }
+fun <A> PEvery.Companion.option(): Every<Option<A>, A> =
+  object : Every<Option<A>, A> {
+    override fun <R> foldMap(M: Monoid<R>, s: Option<A>, map: (A) -> R): R =
+      M.run { s.foldLeft(empty()) { b, a -> b.combine(map(a)) } }
 
-  override fun modify(s: Option<A>, map: (focus: A) -> A): Option<A> = s.map(map)
-}
+    override fun modify(s: Option<A>, map: (focus: A) -> A): Option<A> = s.map(map)
+  }

@@ -56,25 +56,6 @@ val liftedAddFive: (Point2D) -> Point2D = pointIsoTuple.lift(addFive)
 liftedAddFive(point)
 ```
 
-We can do the same with a Functor mapping.
-
-```kotlin:ank
-import arrow.core.*
-import arrow.core.extensions.either.functor.*
-
-pointIsoTuple.modifyF(Either.functor(), point) {
-    try { Either.right((tuple.a / 2) toT (tuple.b / 2)) } catch(e: Exception) { Either.left(e) }
-}
-```
-
-```kotlin:ank
-val liftF: (Point2D) -> EitherOf<Throwable, Point2D> = pointIsoTuple.liftF(Either.functor()) {
-    try { Either.right((tuple.a / 2) toT (tuple.b / 0)) } catch(e:Throwable) { Either.left(e) }
-}
-
-liftF(point)
-```
-
 ### Composition
 
 By composing Isos, we can create additional Isos without defining them. When dealing with different APIs or frameworks, we frequently run into multiple equivalent but different structures like `Point2D`, `Tuple2`, `Pair`, `Coord`, etc.

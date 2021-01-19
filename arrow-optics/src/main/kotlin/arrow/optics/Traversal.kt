@@ -11,8 +11,8 @@ typealias Traversal<S, A> = PTraversal<S, S, A, A>
 /**
  * A [Traversal] is an optic that allows to see into a structure with 0 to N foci.
  *
- * [Traversal] is a generalisation of [arrow.Traverse] and can be seen as a representation of modifyF.
- * all methods are written in terms of modifyF
+ * [Traversal] is a generalisation of [kotlin.collections.map] and can be seen as a representation of modify.
+ * all methods are written in terms of modify
  *
  * @param S the source of a [PTraversal]
  * @param T the modified source of a [PTraversal]

@@ -9,10 +9,11 @@ import arrow.optics.typeclasses.Index
 import arrow.optics.typeclasses.Snoc
 import arrow.typeclasses.Monoid
 
-private val stringToList: Iso<String, List<Char>> = Iso(
-  get = CharSequence::toList,
-  reverseGet = { it.joinToString(separator = "") }
-)
+private val stringToList: Iso<String, List<Char>> =
+  Iso(
+    get = CharSequence::toList,
+    reverseGet = { it.joinToString(separator = "") }
+  )
 
 /**
  * [Iso] that defines equality between String and [List] of [Char]
@@ -29,18 +30,20 @@ fun PIso.Companion.stringToList(): Iso<String, List<Char>> =
 fun PTraversal.Companion.string(): Traversal<String, Char> =
   Traversal { s, f -> s.map(f).joinToString(separator = "") }
 
-fun Fold.Companion.string(): Fold<String, Char> = object : Fold<String, Char> {
-  override fun <R> foldMap(M: Monoid<R>, s: String, map: (Char) -> R): R =
-    M.run { s.map(map).fold(empty()) { acc, r -> acc.combine(r) } }
-}
+fun Fold.Companion.string(): Fold<String, Char> =
+  object : Fold<String, Char> {
+    override fun <R> foldMap(M: Monoid<R>, source: String, map: (Char) -> R): R =
+      M.run { source.map(map).fold(empty()) { acc, r -> acc.combine(r) } }
+  }
 
-fun PEvery.Companion.string(): Every<String, Char> = object : Every<String, Char> {
-  override fun <R> foldMap(M: Monoid<R>, s: String, map: (Char) -> R): R =
-    M.run { s.fold(empty()) { acc, r -> acc.combine(map(r)) } }
+fun PEvery.Companion.string(): Every<String, Char> =
+  object : Every<String, Char> {
+    override fun <R> foldMap(M: Monoid<R>, source: String, map: (Char) -> R): R =
+      M.run { source.fold(empty()) { acc, r -> acc.combine(map(r)) } }
 
-  override fun modify(s: String, f: (focus: Char) -> Char): String =
-    s.map(f).joinToString(separator = "")
-}
+    override fun modify(source: String, map: (focus: Char) -> Char): String =
+      source.map(map).joinToString(separator = "")
+  }
 
 /**
  * [FilterIndex] instance for [String].
@@ -49,8 +52,10 @@ fun PEvery.Companion.string(): Every<String, Char> = object : Every<String, Char
  * @receiver [FilterIndex.Companion] to make the instance statically available.
  * @return [FilterIndex] instance
  */
-fun FilterIndex.Companion.string(): FilterIndex<String, Int, Char> = FilterIndex { p ->
-  Iso.stringToList() compose FilterIndex.list<Char>().filter(p) }
+fun FilterIndex.Companion.string(): FilterIndex<String, Int, Char> =
+  FilterIndex { p ->
+    Iso.stringToList() compose FilterIndex.list<Char>().filter(p)
+  }
 
 /**
  * [Index] instance for [String].
@@ -59,25 +64,29 @@ fun FilterIndex.Companion.string(): FilterIndex<String, Int, Char> = FilterIndex
  * @receiver [Index.Companion] to make the instance statically available.
  * @return [Index] instance
  */
-fun Index.Companion.string(): Index<String, Int, Char> = Index { i ->
-  Iso.stringToList() compose Index.list<Char>().index(i) }
+fun Index.Companion.string(): Index<String, Int, Char> =
+  Index { i ->
+    Iso.stringToList() compose Index.list<Char>().index(i)
+  }
 
 /**
  * [Cons] instance for [String].
  */
-fun Cons.Companion.string(): Cons<String, Char> = Cons {
-  Prism(
-    getOrModify = { if (it.isNotEmpty()) Tuple2(it.first(), it.drop(1)).right() else it.left() },
-    reverseGet = { (h, t) -> h + t }
-  )
-}
+fun Cons.Companion.string(): Cons<String, Char> =
+  Cons {
+    Prism(
+      getOrModify = { if (it.isNotEmpty()) Tuple2(it.first(), it.drop(1)).right() else it.left() },
+      reverseGet = { (h, t) -> h + t }
+    )
+  }
 
 /**
  * [Snoc] instance for [String].
  */
-fun Snoc.Companion.string(): Snoc<String, Char> = Snoc {
-  Prism(
-    getOrModify = { if (it.isNotEmpty()) Tuple2(it.dropLast(1), it.last()).right() else it.left() },
-    reverseGet = { (i, l) -> i + l }
-  )
-}
+fun Snoc.Companion.string(): Snoc<String, Char> =
+  Snoc {
+    Prism(
+      getOrModify = { if (it.isNotEmpty()) Tuple2(it.dropLast(1), it.last()).right() else it.left() },
+      reverseGet = { (i, l) -> i + l }
+    )
+  }
