@@ -1,7 +1,7 @@
 package arrow.optics
 
-import arrow.core.extensions.int
 import arrow.core.extensions.list.foldable.nonEmpty
+import arrow.core.int
 import arrow.core.test.UnitSpec
 import arrow.typeclasses.Monoid
 import io.kotlintest.properties.Gen

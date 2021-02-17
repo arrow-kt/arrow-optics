@@ -1,6 +1,5 @@
 package arrow.optics.test.laws
 
-import arrow.core.Some
 import arrow.core.compose
 import arrow.core.identity
 import arrow.optics.Prism
@@ -29,7 +28,7 @@ object PrismLaws {
   fun <A, B> Prism<A, B>.roundTripOtherWay(bGen: Gen<B>): Unit =
     forAll(bGen) { b ->
       getOrNull(reverseGet(b))
-        .equalUnderTheLaw(Some(b), Eq.any())
+        .equalUnderTheLaw(b, Eq.any())
     }
 
   fun <A, B> Prism<A, B>.modifyIdentity(aGen: Gen<A>, EQA: Eq<A>): Unit =

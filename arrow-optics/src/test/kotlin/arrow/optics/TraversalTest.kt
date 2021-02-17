@@ -4,9 +4,7 @@ import arrow.core.Option
 import arrow.core.extensions.option.eq.eq
 import arrow.core.toT
 import arrow.core.ListK
-import arrow.core.extensions.int
 import arrow.core.extensions.listk.eq.eq
-import arrow.core.list
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.core.test.generators.tuple2
@@ -26,7 +24,7 @@ class TraversalTest : UnitSpec() {
         funcGen = Gen.functionAToB(Gen.int()),
         EQA = Eq.any(),
         EQOptionB = Option.eq(Eq.any()),
-        EQListB = Eq.list(Eq.int())
+        EQListB = Eq.any()
       ),
 
       SetterLaws.laws(
@@ -34,7 +32,7 @@ class TraversalTest : UnitSpec() {
         aGen = Gen.list(Gen.int()),
         bGen = Gen.int(),
         funcGen = Gen.functionAToB(Gen.int()),
-        EQA = Eq.list(Eq.int())
+        EQA = Eq.any()
       )
     )
 

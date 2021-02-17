@@ -1,8 +1,6 @@
 package arrow.optics
 
 import arrow.core.Option
-import arrow.core.Some
-import arrow.core.identity
 import arrow.core.ListK
 import arrow.core.extensions.monoid
 import arrow.core.extensions.listk.eq.eq
@@ -10,7 +8,6 @@ import arrow.core.extensions.option.eq.eq
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.either
 import arrow.core.test.generators.functionAToB
-import arrow.core.test.generators.tuple2
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.PrismLaws
 import arrow.optics.test.laws.SetterLaws
@@ -62,9 +59,9 @@ class PrismTest : UnitSpec() {
     testLaws(
       PrismLaws.laws(
         prism = sumPrism.first(),
-        aGen = Gen.tuple2(genSum, Gen.int()),
-        bGen = Gen.tuple2(Gen.string(), Gen.int()),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.string(), Gen.int())),
+        aGen = Gen.pair(genSum, Gen.int()),
+        bGen = Gen.pair(Gen.string(), Gen.int()),
+        funcGen = Gen.functionAToB(Gen.pair(Gen.string(), Gen.int())),
         EQA = Eq.any()
       )
     )
@@ -72,9 +69,9 @@ class PrismTest : UnitSpec() {
     testLaws(
       PrismLaws.laws(
         prism = sumPrism.second(),
-        aGen = Gen.tuple2(Gen.int(), genSum),
-        bGen = Gen.tuple2(Gen.int(), Gen.string()),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.string())),
+        aGen = Gen.pair(Gen.int(), genSum),
+        bGen = Gen.pair(Gen.int(), Gen.string()),
+        funcGen = Gen.functionAToB(Gen.pair(Gen.int(), Gen.string())),
         EQA = Eq.any()
       )
     )
@@ -113,59 +110,59 @@ class PrismTest : UnitSpec() {
 
       "asFold should behave as valid Fold: size" {
         forAll(genSum) { sum: SumType ->
-          size(sum) == sumPrism.getOption(sum).map { 1 }.getOrElse { 0 }
+          size(sum) == sumPrism.getOrNull(sum)?.let { 1 } ?: 0
         }
       }
 
       "asFold should behave as valid Fold: nonEmpty" {
         forAll(genSum) { sum: SumType ->
-          isNotEmpty(sum) == sumPrism.getOption(sum).nonEmpty()
+          isNotEmpty(sum) == (sumPrism.getOrNull(sum) != null)
         }
       }
 
       "asFold should behave as valid Fold: isEmpty" {
         forAll(genSum) { sum: SumType ->
-          isEmpty(sum) == sumPrism.getOption(sum).isEmpty()
+          isEmpty(sum) == (sumPrism.getOrNull(sum) == null)
         }
       }
 
       "asFold should behave as valid Fold: getAll" {
         forAll(genSum) { sum: SumType ->
-          getAll(sum) == sumPrism.getOption(sum).toList().k()
+          getAll(sum) == listOfNotNull(sumPrism.getOrNull(sum))
         }
       }
 
       "asFold should behave as valid Fold: combineAll" {
         forAll(genSum) { sum: SumType ->
           combineAll(String.monoid(), sum) ==
-              sumPrism.getOption(sum).fold({ String.monoid().empty() }, ::identity)
+              sumPrism.getOrNull(sum) ?: String.monoid().empty()
         }
       }
 
       "asFold should behave as valid Fold: fold" {
         forAll(genSum) { sum: SumType ->
           fold(String.monoid(), sum) ==
-              sumPrism.getOption(sum).fold({ String.monoid().empty() }, ::identity)
+              sumPrism.getOrNull(sum) ?: String.monoid().empty()
         }
       }
 
       "asFold should behave as valid Fold: headOption" {
         forAll(genSum) { sum: SumType ->
-          firstOrNull(sum) == sumPrism.getOption(sum).orNull()
+          firstOrNull(sum) == sumPrism.getOrNull(sum)
         }
       }
 
       "asFold should behave as valid Fold: lastOption" {
         forAll(genSum) { sum: SumType ->
-          lastOrNull(sum) == sumPrism.getOption(sum).orNull()
+          lastOrNull(sum) == sumPrism.getOrNull(sum)
         }
       }
     }
 
     "Joining two prisms together with same target should yield same result" {
       forAll(genSum) { a ->
-        (sumPrism compose stringPrism).getOption(a) == sumPrism.getOption(a).flatMap(stringPrism::getOption) &&
-            (sumPrism + stringPrism).getOption(a) == (sumPrism compose stringPrism).getOption(a)
+        (sumPrism compose stringPrism).getOrNull(a) == sumPrism.getOrNull(a)?.let(stringPrism::getOrNull) &&
+            (sumPrism + stringPrism).getOrNull(a) == (sumPrism compose stringPrism).getOrNull(a)
       }
     }
 
@@ -191,7 +188,7 @@ class PrismTest : UnitSpec() {
 
     "Setting a target on a prism should set the correct target" {
       forAll(genSumTypeA, Gen.string()) { a, string ->
-        sumPrism.setOption(a, string) == Some(a.copy(string = string))
+        (sumPrism.setNullable(a, string)!!) == a.copy(string = string)
       }
     }
 

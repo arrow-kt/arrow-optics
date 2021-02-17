@@ -2,11 +2,9 @@ package arrow.optics
 
 import arrow.core.Left
 import arrow.core.Right
-import arrow.core.Tuple2
 import arrow.core.extensions.monoid
 import arrow.core.k
 import arrow.core.test.UnitSpec
-import arrow.core.toT
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll
 
@@ -92,7 +90,7 @@ class GetterTest : UnitSpec() {
 
     "Zipping two lenses should yield a tuple of the targets" {
       forAll { value: String ->
-        length.zip(upper).get(value) == value.length toT value.toUpperCase()
+        length.zip(upper).get(value) == value.length to value.toUpperCase()
       }
     }
 
@@ -108,23 +106,23 @@ class GetterTest : UnitSpec() {
     }
 
     "Pairing two disjoint getters should yield a pair of their results" {
-      val splitGetter: Getter<Tuple2<Token, User>, Tuple2<String, Token>> = tokenGetter.split(userGetter)
+      val splitGetter: Getter<Pair<Token, User>, Pair<String, Token>> = tokenGetter.split(userGetter)
       forAll(genToken, genUser) { token: Token, user: User ->
-        splitGetter.get(token toT user) == token.value toT user.token
+        splitGetter.get(token to user) == token.value to user.token
       }
     }
 
     "Creating a first pair with a type should result in the target to value" {
       val first = tokenGetter.first<Int>()
       forAll(genToken, Gen.int()) { token: Token, int: Int ->
-        first.get(token toT int) == token.value toT int
+        first.get(token to int) == token.value to int
       }
     }
 
     "Creating a second pair with a type should result in the value target" {
       val first = tokenGetter.second<Int>()
       forAll(Gen.int(), genToken) { int: Int, token: Token ->
-        first.get(int toT token) == int toT token.value
+        first.get(int to token) == int to token.value
       }
     }
   }

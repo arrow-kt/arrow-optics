@@ -2,7 +2,6 @@ package arrow.optics
 
 import arrow.core.Left
 import arrow.core.ListK
-import arrow.core.None
 import arrow.core.Option
 import arrow.core.Right
 import arrow.core.extensions.list.foldable.nonEmpty
@@ -14,7 +13,6 @@ import arrow.core.identity
 import arrow.core.k
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import arrow.core.test.generators.tuple2
 import arrow.core.toOption
 import arrow.optics.test.laws.OptionalLaws
 import arrow.optics.test.laws.SetterLaws
@@ -47,27 +45,27 @@ class OptionalTest : UnitSpec() {
 
     testLaws(OptionalLaws.laws(
       optional = Optional.listHead<Int>().first(),
-      aGen = Gen.tuple2(Gen.list(Gen.int()), Gen.bool()),
-      bGen = Gen.tuple2(Gen.int(), Gen.bool()),
-      funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.bool())),
+      aGen = Gen.pair(Gen.list(Gen.int()), Gen.bool()),
+      bGen = Gen.pair(Gen.int(), Gen.bool()),
+      funcGen = Gen.functionAToB(Gen.pair(Gen.int(), Gen.bool())),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(OptionalLaws.laws(
       optional = Optional.listHead<Int>().first(),
-      aGen = Gen.tuple2(Gen.list(Gen.int()), Gen.bool()),
-      bGen = Gen.tuple2(Gen.int(), Gen.bool()),
-      funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.bool())),
+      aGen = Gen.pair(Gen.list(Gen.int()), Gen.bool()),
+      bGen = Gen.pair(Gen.int(), Gen.bool()),
+      funcGen = Gen.functionAToB(Gen.pair(Gen.int(), Gen.bool())),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
 
     testLaws(OptionalLaws.laws(
       optional = Optional.listHead<Int>().second(),
-      aGen = Gen.tuple2(Gen.bool(), Gen.list(Gen.int())),
-      bGen = Gen.tuple2(Gen.bool(), Gen.int()),
-      funcGen = Gen.functionAToB(Gen.tuple2(Gen.bool(), Gen.int())),
+      aGen = Gen.pair(Gen.bool(), Gen.list(Gen.int())),
+      bGen = Gen.pair(Gen.bool(), Gen.int()),
+      funcGen = Gen.functionAToB(Gen.pair(Gen.bool(), Gen.int())),
       EQA = Eq.any(),
       EQOptionB = Option.eq(Eq.any())
     ))
@@ -93,7 +91,7 @@ class OptionalTest : UnitSpec() {
     "asSetter should set absent optional" {
       forAll(genIncompleteUser, genToken) { user, token ->
         val updatedUser = incompleteUserTokenOptional.set(user, token)
-        incompleteUserTokenOptional.getOption(updatedUser).nonEmpty()
+        incompleteUserTokenOptional.getOrNull(updatedUser) != null
       }
     }
 
@@ -153,7 +151,7 @@ class OptionalTest : UnitSpec() {
 
     "unit should always " {
       forAll { string: String ->
-        Optional.void<String, Int>().getOption(string) == None
+        Optional.void<String, Int>().getOrNull(string) == null
       }
     }
 
@@ -204,7 +202,7 @@ class OptionalTest : UnitSpec() {
       val joinedOptional = Optional.listHead<Int>().choice(defaultHead)
 
       forAll(Gen.int()) { int ->
-        joinedOptional.getOption(Left(listOf(int))) == joinedOptional.getOption(Right(int))
+        joinedOptional.getOrNull(Left(listOf(int))) == joinedOptional.getOrNull(Right(int))
       }
     }
   }

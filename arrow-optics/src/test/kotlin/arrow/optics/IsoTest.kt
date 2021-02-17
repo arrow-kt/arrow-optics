@@ -3,11 +3,10 @@ package arrow.optics
 import arrow.core.Either
 import arrow.core.Option
 import arrow.core.extensions.monoid
-import arrow.core.extensions.string
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.core.toT
 import arrow.core.ListK
+import arrow.core.string
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.optics.test.laws.IsoLaws
@@ -168,14 +167,14 @@ class IsoTest : UnitSpec() {
     "Creating a first pair with a type should result in the target to value" {
       val first = tokenIso.first<Int>()
       forAll(genToken, Gen.int()) { token: Token, int: Int ->
-        first.get(token toT int) == token.value toT int
+        first.get(token to int) == token.value to int
       }
     }
 
     "Creating a second pair with a type should result in the value to target" {
       val second = tokenIso.second<Int>()
       forAll(Gen.int(), genToken) { int: Int, token: Token ->
-        second.get(int toT token) == int toT token.value
+        second.get(int to token) == int to token.value
       }
     }
 
@@ -213,7 +212,7 @@ class IsoTest : UnitSpec() {
       forAll { tokenValue: String ->
         val token = Token(tokenValue)
         val user = User(token)
-        joinedIso.get(token toT user) == tokenValue toT token
+        joinedIso.get(token to user) == tokenValue to token
       }
     }
 

@@ -4,12 +4,10 @@ import arrow.core.Left
 import arrow.core.ListK
 import arrow.core.Option
 import arrow.core.Right
-import arrow.core.Tuple2
-import arrow.core.extensions.int
-import arrow.core.extensions.string
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.core.toT
+import arrow.core.int
+import arrow.core.string
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.optics.test.laws.LensLaws
@@ -171,23 +169,23 @@ class LensTest : UnitSpec() {
     }
 
     "Pairing two disjoint lenses should yield a pair of their results" {
-      val spiltLens: Lens<Tuple2<Token, User>, Tuple2<String, Token>> = tokenLens split userLens
+      val spiltLens: Lens<Pair<Token, User>, Pair<String, Token>> = tokenLens split userLens
       forAll(genToken, genUser) { token: Token, user: User ->
-        spiltLens.get(token toT user) == token.value toT user.token
+        spiltLens.get(token to user) == token.value to user.token
       }
     }
 
     "Creating a first pair with a type should result in the target to value" {
       val first = tokenLens.first<Int>()
       forAll(genToken, Gen.int()) { token: Token, int: Int ->
-        first.get(token toT int) == token.value toT int
+        first.get(token to int) == token.value to int
       }
     }
 
     "Creating a second pair with a type should result in the value target" {
       val second = tokenLens.second<Int>()
       forAll(Gen.int(), genToken) { int: Int, token: Token ->
-        second.get(int toT token) == int toT token.value
+        second.get(int to token) == int to token.value
       }
     }
   }

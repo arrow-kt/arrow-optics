@@ -2,13 +2,10 @@ package arrow.optics.instances
 
 import arrow.core.ListK
 import arrow.core.Option
-import arrow.core.extensions.eq
 import arrow.core.extensions.listk.eq.eq
 import arrow.core.extensions.option.eq.eq
-import arrow.core.list
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
-import arrow.core.test.generators.tuple2
 import arrow.optics.Traversal
 import arrow.optics.list
 import arrow.optics.test.laws.OptionalLaws
@@ -109,9 +106,9 @@ class ListInstanceTest : UnitSpec() {
       PrismLaws.laws(
         prism = Cons.list<Int>().cons(),
         aGen = Gen.list(Gen.int()),
-        bGen = Gen.tuple2(Gen.int(), Gen.list(Gen.int())),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.int(), Gen.list(Gen.int()))),
-        EQA = Eq.list(Int.eq())
+        bGen = Gen.pair(Gen.int(), Gen.list(Gen.int())),
+        funcGen = Gen.functionAToB(Gen.pair(Gen.int(), Gen.list(Gen.int()))),
+        EQA = Eq.any()
       )
     )
 
@@ -130,9 +127,9 @@ class ListInstanceTest : UnitSpec() {
       PrismLaws.laws(
         prism = Snoc.list<Int>().snoc(),
         aGen = Gen.list(Gen.int()),
-        bGen = Gen.tuple2(Gen.list(Gen.int()), Gen.int()),
-        funcGen = Gen.functionAToB(Gen.tuple2(Gen.list(Gen.int()), Gen.int())),
-        EQA = Eq.list(Int.eq())
+        bGen = Gen.pair(Gen.list(Gen.int()), Gen.int()),
+        funcGen = Gen.functionAToB(Gen.pair(Gen.list(Gen.int()), Gen.int())),
+        EQA = Eq.any()
       )
     )
   }

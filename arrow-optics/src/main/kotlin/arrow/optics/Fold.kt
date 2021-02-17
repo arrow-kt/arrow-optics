@@ -1,9 +1,9 @@
 package arrow.optics
 
 import arrow.core.Either
-import arrow.core.extensions.boolean
-import arrow.core.extensions.int
+import arrow.core.boolean
 import arrow.core.identity
+import arrow.core.int
 import arrow.core.list
 import arrow.typeclasses.Foldable
 import arrow.typeclasses.Monoid

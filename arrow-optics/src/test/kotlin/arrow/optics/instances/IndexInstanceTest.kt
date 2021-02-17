@@ -1,7 +1,5 @@
 package arrow.optics.instances
 
-import arrow.core.extensions.string
-import arrow.core.list
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.optics.list
@@ -23,7 +21,7 @@ class IndexInstanceTest : UnitSpec() {
         aGen = Gen.list(Gen.string()),
         bGen = Gen.string(),
         funcGen = Gen.functionAToB(Gen.string()),
-        EQA = Eq.list(Eq.string())
+        EQA = Eq.any()
       )
     )
   }

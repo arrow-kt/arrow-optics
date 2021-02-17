@@ -1,6 +1,6 @@
 package arrow.optics.instances
 
-import arrow.core.extensions.boolean
+import arrow.core.boolean
 import arrow.core.test.UnitSpec
 import arrow.core.test.generators.functionAToB
 import arrow.optics.set
